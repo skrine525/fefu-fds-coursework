@@ -16,7 +16,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionFileExit_triggered();
+    void on_menuFileFileExit_triggered();
+
+    void on_menuFileOpen_triggered();
 
 private:
     Ui::MainWindow *ui;

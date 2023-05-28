@@ -166,27 +166,87 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="actionFileOpen"/>
-    <addaction name="actionFileSave"/>
+    <addaction name="menuFileOpen"/>
+    <addaction name="menuFileSave"/>
     <addaction name="separator"/>
-    <addaction name="actionFileExit"/>
+    <addaction name="menuFileFileExit"/>
+   </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="title">
+     <string>Отладка</string>
+    </property>
+    <widget class="QMenu" name="menuDebugDoctors">
+     <property name="title">
+      <string>Доктора</string>
+     </property>
+     <addaction name="menuDebugDoctorsShowTree"/>
+     <addaction name="menuDebugDoctorsShowHash"/>
+    </widget>
+    <widget class="QMenu" name="menuDebugPatients">
+     <property name="title">
+      <string>Пациенты</string>
+     </property>
+     <addaction name="menuDebugPatientsShowTree"/>
+     <addaction name="menuDebugPatientsShowHash"/>
+    </widget>
+    <widget class="QMenu" name="menuDebugAppointments">
+     <property name="title">
+      <string>Записи</string>
+     </property>
+     <addaction name="menuDebugAppointmentsShowTree"/>
+     <addaction name="menuDebugAppointmentsShowHash"/>
+    </widget>
+    <addaction name="menuDebugDoctors"/>
+    <addaction name="menuDebugPatients"/>
+    <addaction name="menuDebugAppointments"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuDebug"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionFileOpen">
+  <action name="menuFileOpen">
    <property name="text">
     <string>Открыть...</string>
    </property>
   </action>
-  <action name="actionFileSave">
+  <action name="menuFileSave">
    <property name="text">
     <string>Сохранить</string>
    </property>
   </action>
-  <action name="actionFileExit">
+  <action name="menuFileFileExit">
    <property name="text">
     <string>Выход</string>
+   </property>
+  </action>
+  <action name="menuDebugDoctorsShowTree">
+   <property name="text">
+    <string>Показать дерево</string>
+   </property>
+  </action>
+  <action name="menuDebugDoctorsShowHash">
+   <property name="text">
+    <string>Показать Хеш-функцию</string>
+   </property>
+  </action>
+  <action name="menuDebugPatientsShowTree">
+   <property name="text">
+    <string>Показать дерево</string>
+   </property>
+  </action>
+  <action name="menuDebugPatientsShowHash">
+   <property name="text">
+    <string> Показать Хеш-функцию</string>
+   </property>
+  </action>
+  <action name="menuDebugAppointmentsShowTree">
+   <property name="text">
+    <string>Показать дерево</string>
+   </property>
+  </action>
+  <action name="menuDebugAppointmentsShowHash">
+   <property name="text">
+    <string>Показать Хеш-функцию</string>
    </property>
   </action>
  </widget>

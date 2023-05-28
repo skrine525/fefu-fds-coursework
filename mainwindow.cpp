@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFileDialog>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,9 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
     doctorLabels.append("Специальность");
     doctorLabels.append("Стаж");
     doctorLabels.append("Номер телефона");
+    for (int i = 0; i < doctorLabels.count(); i++) {
+        ui->tableDoctors->setColumnWidth(i, ui->tableDoctors->width() / doctorLabels.count());
+    }
     ui->tableDoctors->horizontalHeader()->setStretchLastSection(true);
     ui->tableDoctors->setHorizontalHeaderLabels(doctorLabels);
-    ui->tableDoctors->resizeColumnsToContents();
+    //ui->tableDoctors->resizeColumnsToContents();
 
     // Инициализация столбцов таблицы Пациенты
     ui->tablePatients->setColumnCount(4);
@@ -46,9 +51,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::on_actionFileExit_triggered()
+void MainWindow::on_menuFileFileExit_triggered()
 {
     QApplication::quit();
+}
+
+
+void MainWindow::on_menuFileOpen_triggered()
+{
+    // Получение пути к текстовому файлу
+    QString fileName =
+            QFileDialog::getOpenFileName(this, "Откройте текстовый файл",
+                                         QDir::homePath(), "Текстовый файл (*.txt)");
 }
 
