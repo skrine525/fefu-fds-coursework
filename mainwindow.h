@@ -20,6 +20,8 @@ private slots:
 
     void on_menuFileOpen_triggered();
 
+    void on_pushButtonAppointmentsAdd_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

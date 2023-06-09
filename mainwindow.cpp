@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "addappointmentdialog.h"
 #include <QFileDialog>
 #include <QDir>
 
@@ -63,5 +64,12 @@ void MainWindow::on_menuFileOpen_triggered()
     QString fileName =
             QFileDialog::getOpenFileName(this, "Откройте текстовый файл",
                                          QDir::homePath(), "Текстовый файл (*.txt)");
+}
+
+
+void MainWindow::on_pushButtonAppointmentsAdd_clicked()
+{
+    AddAppointmentDialog dialog(this);
+    dialog.exec();
 }
 
