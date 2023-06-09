@@ -15,112 +15,104 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayoutDoctorPhone">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Номер телефона Врача</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-      </layout>
+      <widget class="QLabel" name="labelDoctorPhone">
+       <property name="text">
+        <string>Номер телефона Врача</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditDoctorPhone"/>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayoutPatientPhone">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="labelPatientPhone">
        <property name="text">
         <string>Номер телефона Пациента</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="lineEditPatientPhone"/>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Дата и Время приёма</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+    <widget class="QGroupBox" name="groupBoxAppointmentDatetime">
+     <property name="title">
+      <string>Дата и Время приёма</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalAppointmentDate">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Дата</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox"/>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_2"/>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_3"/>
-          </item>
-         </layout>
+         <widget class="QLabel" name="labelAppointmentDate">
+          <property name="text">
+           <string>Дата</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Время</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_4"/>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_5"/>
-          </item>
-         </layout>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateDay"/>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateMonth"/>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateYear"/>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayoutAppointmentTime">
+        <item>
+         <widget class="QLabel" name="labelAppointmentTime">
+          <property name="text">
+           <string>Время</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxAppointmentTimeHour"/>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxAppointmentTimeMinute"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <layout class="QHBoxLayout" name="horizontalLayoutAppointmentCost">
      <item>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="labelAppointmentCost">
        <property name="text">
         <string>Стоимость</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBox_6"/>
+      <widget class="QSpinBox" name="spinBoxAppointmentCost"/>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayoutAppointmentAction">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButtonAppointmentActionAdd">
        <property name="text">
         <string>Добавить</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="pushButtonAppointmentActionCancel">
        <property name="text">
         <string>Отменить</string>
        </property>

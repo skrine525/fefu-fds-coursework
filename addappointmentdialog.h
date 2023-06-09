@@ -2,6 +2,7 @@
 #define ADDAPPOINTMENTDIALOG_H
 
 #include <QDialog>
+#include <mainwindow.h>
 
 namespace Ui {
 class AddAppointmentDialog;
@@ -15,8 +16,14 @@ public:
     explicit AddAppointmentDialog(QWidget *parent = nullptr);
     ~AddAppointmentDialog();
 
+private slots:
+    void on_pushButtonAppointmentActionAdd_clicked();
+
+    void on_pushButtonAppointmentActionCancel_clicked();
+
 private:
     Ui::AddAppointmentDialog *ui;
+    MainWindow *mainWindow;
 };
 
 #endif // ADDAPPOINTMENTDIALOG_H

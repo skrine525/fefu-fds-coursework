@@ -3,6 +3,7 @@
 #include "addappointmentdialog.h"
 #include <QFileDialog>
 #include <QDir>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Инициализация столбцов таблицы Записи
     ui->tableAppointments->setColumnCount(4);
     QStringList appointmentLabels;
-    appointmentLabels.append("ФИО Врача");
-    appointmentLabels.append("Фио Пациента");
+    appointmentLabels.append("Номер врача");
+    appointmentLabels.append("Номер пациента");
     appointmentLabels.append("Время и Дата приема");
     appointmentLabels.append("Стоимость");
     ui->tableAppointments->horizontalHeader()->setStretchLastSection(true);
@@ -50,6 +51,19 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addRecordToAppointments(table3::Record record)
+{
+    appointments.records.append(record);
+
+    int rowIndex = ui->tableAppointments->rowCount();
+    ui->tableAppointments->insertRow(rowIndex);
+    ui->tableAppointments->setItem(rowIndex, 0, new QTableWidgetItem(QString::number(record.doctorPhoneNumber)));
+    ui->tableAppointments->setItem(rowIndex, 1, new QTableWidgetItem(QString::number(record.patientPhoneNumber)));
+    ui->tableAppointments->setItem(rowIndex, 2, new QTableWidgetItem(QString(record.appointmentDatetime)));
+    ui->tableAppointments->setItem(rowIndex, 3, new QTableWidgetItem(QString::number(record.appointmentCost)));
+    ui->tableAppointments->resizeColumnsToContents();
 }
 
 void MainWindow::on_menuFileFileExit_triggered()

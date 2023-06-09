@@ -2,6 +2,7 @@
 #define TABLE3_H
 
 #include <QString>
+#include <QVector>
 
 namespace table3
 {
@@ -38,9 +39,9 @@ namespace table3
 
     struct Record
     {
-        Fullname doctorFullname;
-        Fullname patientFullname;
-        Datetime appointmentTime;
+        long long doctorPhoneNumber;
+        long long patientPhoneNumber;
+        Datetime appointmentDatetime;
         unsigned appointmentCost;
     };
 
@@ -86,6 +87,11 @@ namespace table3
                              RBTreeNode<Key, Value>* grandparent, RBTree<Key,
                              Value>& tree);
         QString getPrintableHtml(RBTreeNode<Key, Value>* node, int h, int l) const;
+    };
+
+    struct Appointments
+    {
+        QVector<Record> records;
     };
 }
 
@@ -439,5 +445,6 @@ QString table3::RBTree<Key, Value>::getPrintableHtml(RBTreeNode<Key, Value>* nod
     }
     return "";
 }
+
 
 #endif // TABLE3_H
