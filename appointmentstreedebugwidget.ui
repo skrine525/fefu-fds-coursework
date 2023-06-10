@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AppointmentsTreeDebugWidget</class>
+ <widget class="QWidget" name="AppointmentsTreeDebugWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Записи - Дерево</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTextBrowser" name="textBrowserTree"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutActions">
+     <item>
+      <widget class="QPushButton" name="pushButtonShowDoctorPhoneNumberTree">
+       <property name="text">
+        <string>Поле - Номер доктора</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonShowPatientPhoneNumberTree">
+       <property name="text">
+        <string>Поле - Номер пациента</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonShowAppointmentDatetimeTree">
+       <property name="text">
+        <string>Поле - Дата и Время приёма</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonShowAppointmentCostTree">
+       <property name="text">
+        <string>Поле - Стоимость</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -10,17 +10,20 @@ CONFIG += c++11
 
 SOURCES += \
     addappointmentdialog.cpp \
+    appointmentstreedebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
     table3.cpp
 
 HEADERS += \
     addappointmentdialog.h \
+    appointmentstreedebugwidget.h \
     mainwindow.h \
     table3.h
 
 FORMS += \
     addappointmentdialog.ui \
+    appointmentstreedebugwidget.ui \
     mainwindow.ui
 
 # Default rules for deployment.

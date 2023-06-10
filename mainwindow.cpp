@@ -3,6 +3,8 @@
 #include "addappointmentdialog.h"
 #include <QFileDialog>
 #include <QDir>
+#include <QFile>
+#include <QTextStream>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -18,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     doctorLabels.append("Специальность");
     doctorLabels.append("Стаж");
     doctorLabels.append("Номер телефона");
-    for (int i = 0; i < doctorLabels.count(); i++) {
+    for (int i = 0; i < doctorLabels.count(); i++)
+    {
         ui->tableDoctors->setColumnWidth(i, ui->tableDoctors->width() / doctorLabels.count());
     }
     ui->tableDoctors->horizontalHeader()->setStretchLastSection(true);
@@ -57,10 +60,10 @@ void MainWindow::addRecordToAppointments(table3::Record record)
 {
     appointments.records.append(record);
     int appendedIndex = appointments.records.count() - 1;
-    appointments.doctorPhoneNumberTree.InsertNode(record.doctorPhoneNumber, appendedIndex);
-    appointments.patientPhoneNumberTree.InsertNode(record.patientPhoneNumber, appendedIndex);
-    appointments.appointmentDatetimeTree.InsertNode(record.appointmentDatetime, appendedIndex);
-    appointments.appointmentCostTree.InsertNode(record.appointmentCost, appendedIndex);
+    appointments.doctorPhoneNumberTree.insertNode(record.doctorPhoneNumber, appendedIndex);
+    appointments.patientPhoneNumberTree.insertNode(record.patientPhoneNumber, appendedIndex);
+    appointments.appointmentDatetimeTree.insertNode(record.appointmentDatetime, appendedIndex);
+    appointments.appointmentCostTree.insertNode(record.appointmentCost, appendedIndex);
 
     int rowIndex = ui->tableAppointments->rowCount();
     ui->tableAppointments->insertRow(rowIndex);
@@ -77,18 +80,99 @@ void MainWindow::on_menuFileFileExit_triggered()
 }
 
 
+void MainWindow::on_pushButtonAppointmentsAdd_clicked()
+{
+    AddAppointmentDialog dialog(this);
+    dialog.exec();
+}
+
+
+void MainWindow::on_menuDebugAppointmentsShowTree_triggered()
+{
+    appointmentsTreeDebugWidget.setAppointments(appointments);
+    appointmentsTreeDebugWidget.show();
+}
+
 void MainWindow::on_menuFileOpen_triggered()
 {
     // Получение пути к текстовому файлу
     QString fileName =
             QFileDialog::getOpenFileName(this, "Откройте текстовый файл",
                                          QDir::homePath(), "Текстовый файл (*.txt)");
+
+    // Создаем объект класса QFile и открываем файл для чтения
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() <<"huy";
+        // Создаем объект класса QTextStream и связываем его с файлом
+        QTextStream stream(&file);
+
+        // Читаем данные из потока и выводим их на консоль
+        QStringList splittedLine;
+        bool isFirstLine = true;
+        while (!stream.atEnd()) {
+            splittedLine = stream.readLine().split(" ");
+
+            if(isFirstLine)
+            {
+                isFirstLine = false;
+            }
+            else
+            {
+                table3::Record record;
+                record.doctorPhoneNumber = splittedLine[0].toLongLong();
+                record.patientPhoneNumber = splittedLine[1].toLongLong();
+                record.appointmentDatetime.year = splittedLine[2].toUInt();
+                record.appointmentDatetime.month = splittedLine[3].toUInt();
+                record.appointmentDatetime.day = splittedLine[4].toUInt();
+                record.appointmentDatetime.hour = splittedLine[5].toUInt();
+                record.appointmentDatetime.minute = splittedLine[6].toUInt();
+                record.appointmentCost = splittedLine[7].toUInt();
+
+                this->addRecordToAppointments(record);
+            }
+        }
+
+        // Закрываем файл
+        file.close();
+    }
 }
 
-
-void MainWindow::on_pushButtonAppointmentsAdd_clicked()
+void MainWindow::on_menuFileSave_triggered()
 {
-    AddAppointmentDialog dialog(this);
-    dialog.exec();
+    // Получение пути к текстовому файлу
+    QString fileName =
+            QFileDialog::getSaveFileName(this, "Сохранить в текстовый файл",
+                                         QDir::homePath(), "Текстовый файл (*.txt)");
+
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        // Создаем объект класса QTextStream и связываем его с файлом
+        QTextStream stream(&file);
+
+        // Записываем данные в поток
+        int appointmentsCount = appointments.records.count();
+        stream << appointmentsCount;
+        for(int i = 0; i < appointmentsCount; i++)
+        {
+            stream << "\n";
+            stream << appointments.records[i].doctorPhoneNumber << " ";
+            stream << appointments.records[i].patientPhoneNumber << " ";
+
+            stream << appointments.records[i].appointmentDatetime.year << " ";
+            stream << appointments.records[i].appointmentDatetime.month << " ";
+            stream << appointments.records[i].appointmentDatetime.day << " ";
+            stream << appointments.records[i].appointmentDatetime.hour << " ";
+            stream << appointments.records[i].appointmentDatetime.minute << " ";
+
+            stream << appointments.records[i].appointmentCost;
+        }
+
+        // Закрываем файл
+        file.close();
+    }
+    else
+        qDebug() << "нахуй иди";
 }
 

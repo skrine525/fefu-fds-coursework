@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <table3.h>
-#include <QVector>
+#include "table3.h"
+#include "appointmentstreedebugwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,8 +26,13 @@ private slots:
 
     void on_pushButtonAppointmentsAdd_clicked();
 
+    void on_menuDebugAppointmentsShowTree_triggered();
+
+    void on_menuFileSave_triggered();
+
 private:
     Ui::MainWindow *ui;
+    AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
     table3::Appointments appointments;
 };
 #endif // MAINWINDOW_H

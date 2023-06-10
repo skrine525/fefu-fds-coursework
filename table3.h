@@ -43,11 +43,11 @@ namespace table3
     public:
         DoublyLinkedRingList() : head(nullptr) {}
         ~DoublyLinkedRingList();
-        void Insert(Value value);
-        void Delete(Value value);
+        void insertNode(Value value);
+        void deleteNode(Value value);
         QString getPrintableString();
-        bool IsEmpty();
-        void Clear();
+        bool isEmpty();
+        void clear();
 
     private:
         DoublyLinkedRingListNode<Value> *head;
@@ -76,25 +76,25 @@ namespace table3
     public:
         RBTree() : root(nullptr) {}
 
-        void InsertNode(Key key, Value value);
-        void DeleteNode(Key key, Value value);
-        QString GetPrintableHtml(int l) const;
+        void insertNode(Key key, Value value);
+        void deleteNode(Key key, Value value);
+        QString getPrintableHtml(int l) const;
 
     private:
         RBTreeNode<Key, Value> *root;
 
-        void InsertNodeFixup(RBTreeNode<Key, Value>* node);
-        void RotateLeft(RBTreeNode<Key, Value>* node);
-        void RotateRight(RBTreeNode<Key, Value>* node);
+        void insertNodeFixup(RBTreeNode<Key, Value>* node);
+        void rotateLeft(RBTreeNode<Key, Value>* node);
+        void rotateRight(RBTreeNode<Key, Value>* node);
         RBTreeNode<Key, Value>* minimumNode(RBTreeNode<Key, Value>* node);
-        void DeleteNode(RBTreeNode<Key, Value>* node,
+        void deleteNode(RBTreeNode<Key, Value>* node,
                         RBTreeNode<Key, Value>* parent,
                         RBTreeNode<Key, Value>* grandparent, RBTree<Key, Value>& tree);
-        void DeleteNodeFixup(RBTreeNode<Key, Value>* node,
+        void deleteNodeFixup(RBTreeNode<Key, Value>* node,
                              RBTreeNode<Key, Value>* parent,
                              RBTreeNode<Key, Value>* grandparent, RBTree<Key,
                              Value>& tree);
-        QString GetPrintableHtml(RBTreeNode<Key, Value>* node, int h, int l) const;
+        QString getPrintableHtml(RBTreeNode<Key, Value>* node, int h, int l) const;
     };
 
     struct Appointments
@@ -111,11 +111,11 @@ template <typename Value>
 table3::DoublyLinkedRingList<Value>::~DoublyLinkedRingList()
 {
     qDebug() << "List Destroy";
-    this->Clear();
+    this->clear();
 }
 
 template <typename Value>
-void table3::DoublyLinkedRingList<Value>::Clear()
+void table3::DoublyLinkedRingList<Value>::clear()
 {
     table3::DoublyLinkedRingListNode<Value> *curr = head;
     if (curr != nullptr)
@@ -131,7 +131,7 @@ void table3::DoublyLinkedRingList<Value>::Clear()
 }
 
 template <typename Value>
-bool table3::DoublyLinkedRingList<Value>::IsEmpty()
+bool table3::DoublyLinkedRingList<Value>::isEmpty()
 {
     return (head == nullptr);
 }
@@ -156,7 +156,7 @@ QString table3::DoublyLinkedRingList<Value>::getPrintableString()
 }
 
 template <typename Value>
-void table3::DoublyLinkedRingList<Value>::Delete(Value value)
+void table3::DoublyLinkedRingList<Value>::deleteNode(Value value)
 {
     table3::DoublyLinkedRingListNode<Value> *curr = head;
     if (curr != nullptr)
@@ -189,7 +189,7 @@ void table3::DoublyLinkedRingList<Value>::Delete(Value value)
 }
 
 template <typename Value>
-void table3::DoublyLinkedRingList<Value>::Insert(Value value)
+void table3::DoublyLinkedRingList<Value>::insertNode(Value value)
 {
     if (head == nullptr)
     {
@@ -233,15 +233,15 @@ void table3::DoublyLinkedRingList<Value>::Insert(Value value)
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::InsertNode(Key key, Value value)
+void table3::RBTree<Key, Value>::insertNode(Key key, Value value)
 {
     if (root == nullptr)
     {
         table3::DoublyLinkedRingList<Value> *valueList =
                 new table3::DoublyLinkedRingList<Value>;
-        valueList->Insert(value);
+        valueList->insertNode(value);
         root = new RBTreeNode<Key, Value>(key, valueList);
-        InsertNodeFixup(root);
+        insertNodeFixup(root);
     }
     else
     {
@@ -260,31 +260,31 @@ void table3::RBTree<Key, Value>::InsertNode(Key key, Value value)
         }
 
         if(appendList)
-            current->valueList->Insert(value);
+            current->valueList->insertNode(value);
         else
         {
             table3::DoublyLinkedRingList<Value> *valueList =
                     new table3::DoublyLinkedRingList<Value>;
-            valueList->Insert(value);
+            valueList->insertNode(value);
             RBTreeNode<Key, Value> *newNode = new RBTreeNode<Key, Value>(key, valueList);
             newNode->parent = parent;
             if (key < parent->key)
                 parent->left = newNode;
             else
                 parent->right = newNode;
-            InsertNodeFixup(newNode);
+            insertNodeFixup(newNode);
         }
     }
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::DeleteNode(Key key, Value value)
+void table3::RBTree<Key, Value>::deleteNode(Key key, Value value)
 {
     RBTreeNode<Key, Value>* current = root;
     RBTreeNode<Key, Value>* parent = nullptr;
     RBTreeNode<Key, Value>* grandparent = nullptr;
 
-    // Find the node to delete
+    // Find the node to deleteNode
     while (current != nullptr && current->key != key)
     {
         grandparent = parent;
@@ -301,8 +301,8 @@ void table3::RBTree<Key, Value>::DeleteNode(Key key, Value value)
         return;
 
     // Удаление элемента из списка
-    current->valueList->Delete(value);
-    if(current->valueList->IsEmpty())
+    current->valueList->deleteNode(value);
+    if(current->valueList->isEmpty())
         delete current->valueList;
     else
         return;
@@ -334,18 +334,18 @@ void table3::RBTree<Key, Value>::DeleteNode(Key key, Value value)
         }
     }
 
-    DeleteNode(current, parent, grandparent, *this);
+    deleteNode(current, parent, grandparent, *this);
 }
 
 template <typename Key, typename Value>
-QString table3::RBTree<Key, Value>::GetPrintableHtml(int l) const
+QString table3::RBTree<Key, Value>::getPrintableHtml(int l) const
 {
-    QString outputStr = GetPrintableHtml(root, 0, l);
+    QString outputStr = getPrintableHtml(root, 0, l);
     return outputStr + "\n";
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::InsertNodeFixup(RBTreeNode<Key, Value>* node)
+void table3::RBTree<Key, Value>::insertNodeFixup(RBTreeNode<Key, Value>* node)
 {
     while (node->parent != nullptr && node->parent->color == Color::RED)
     {
@@ -364,11 +364,11 @@ void table3::RBTree<Key, Value>::InsertNodeFixup(RBTreeNode<Key, Value>* node)
                 if (node == node->parent->right)
                 {
                     node = node->parent;
-                    RotateLeft(node);
+                    rotateLeft(node);
                 }
                 node->parent->color = Color::BLACK;
                 node->parent->parent->color = Color::RED;
-                RotateRight(node->parent->parent);
+                rotateRight(node->parent->parent);
             }
         }
         else
@@ -386,11 +386,11 @@ void table3::RBTree<Key, Value>::InsertNodeFixup(RBTreeNode<Key, Value>* node)
                 if (node == node->parent->left)
                 {
                     node = node->parent;
-                    RotateRight(node);
+                    rotateRight(node);
                 }
                 node->parent->color = Color::BLACK;
                 node->parent->parent->color = Color::RED;
-                RotateLeft(node->parent->parent);
+                rotateLeft(node->parent->parent);
             }
         }
     }
@@ -398,7 +398,7 @@ void table3::RBTree<Key, Value>::InsertNodeFixup(RBTreeNode<Key, Value>* node)
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::RotateLeft(RBTreeNode<Key, Value>* node)
+void table3::RBTree<Key, Value>::rotateLeft(RBTreeNode<Key, Value>* node)
 {
     RBTreeNode<Key, Value>* rightChild = node->right;
     node->right = rightChild->left;
@@ -416,7 +416,7 @@ void table3::RBTree<Key, Value>::RotateLeft(RBTreeNode<Key, Value>* node)
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::RotateRight(RBTreeNode<Key, Value>* node)
+void table3::RBTree<Key, Value>::rotateRight(RBTreeNode<Key, Value>* node)
 {
     RBTreeNode<Key, Value>* leftChild = node->left;
     node->left = leftChild->right;
@@ -444,7 +444,7 @@ table3::RBTreeNode<Key, Value>* table3::RBTree<Key, Value>::minimumNode(
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::DeleteNode(RBTreeNode<Key, Value>* node,
+void table3::RBTree<Key, Value>::deleteNode(RBTreeNode<Key, Value>* node,
                                             RBTreeNode<Key, Value>* parent,
                                             RBTreeNode<Key, Value>* grandparent,
                                             RBTree<Key, Value>& tree)
@@ -471,7 +471,7 @@ void table3::RBTree<Key, Value>::DeleteNode(RBTreeNode<Key, Value>* node,
                 child->color = Color::BLACK;
             else
                 // Case 1.2: Node is black and its child is black
-                DeleteNodeFixup(child, parent, grandparent, tree);
+                deleteNodeFixup(child, parent, grandparent, tree);
         }
 
         delete node;
@@ -487,12 +487,12 @@ void table3::RBTree<Key, Value>::DeleteNode(RBTreeNode<Key, Value>* node,
     node->key = successor->key;
     node->valueList = successor->valueList;
 
-    // Recursively delete the successor node
-    DeleteNode(successor, successor->parent, grandparent, tree);
+    // Recursively deleteNode the successor node
+    deleteNode(successor, successor->parent, grandparent, tree);
 }
 
 template <typename Key, typename Value>
-void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
+void table3::RBTree<Key, Value>::deleteNodeFixup(RBTreeNode<Key, Value>* node,
                                                  RBTreeNode<Key, Value>* parent,
                                                  RBTreeNode<Key, Value>* grandparent,
                                                  RBTree<Key, Value>& tree)
@@ -508,7 +508,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
             {
                 sibling->color = Color::BLACK;
                 parent->color = Color::RED;
-                tree.RotateLeft(parent);
+                tree.rotateLeft(parent);
                 sibling = parent->right;
             }
 
@@ -528,7 +528,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
                 {
                     sibling->left->color = Color::BLACK;
                     sibling->color = Color::RED;
-                    tree.RotateRight(sibling);
+                    tree.rotateRight(sibling);
                     sibling = parent->right;
                 }
 
@@ -536,7 +536,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
                 sibling->color = parent->color;
                 parent->color = Color::BLACK;
                 sibling->right->color = Color::BLACK;
-                tree.RotateLeft(parent);
+                tree.rotateLeft(parent);
                 node = tree.root;
                 break;
             }
@@ -550,7 +550,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
             {
                 sibling->color = Color::BLACK;
                 parent->color = Color::RED;
-                tree.RotateRight(parent);
+                tree.rotateRight(parent);
                 sibling = parent->left;
             }
 
@@ -570,7 +570,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
                 {
                     sibling->right->color = Color::BLACK;
                     sibling->color = Color::RED;
-                    tree.RotateLeft(sibling);
+                    tree.rotateLeft(sibling);
                     sibling = parent->left;
                 }
 
@@ -578,7 +578,7 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
                 sibling->color = parent->color;
                 parent->color = Color::BLACK;
                 sibling->left->color = Color::BLACK;
-                tree.RotateRight(parent);
+                tree.rotateRight(parent);
                 node = tree.root;
                 break;
             }
@@ -590,11 +590,11 @@ void table3::RBTree<Key, Value>::DeleteNodeFixup(RBTreeNode<Key, Value>* node,
 }
 
 template <typename Key, typename Value>
-QString table3::RBTree<Key, Value>::GetPrintableHtml(RBTreeNode<Key, Value>* node,
+QString table3::RBTree<Key, Value>::getPrintableHtml(RBTreeNode<Key, Value>* node,
                                                      int h, int l) const
 {
     if (node != nullptr) {
-        QString outputStr = GetPrintableHtml(node->right, h + l, l);
+        QString outputStr = getPrintableHtml(node->right, h + l, l);
         QString spaceSymbol(" ");
         QString listPrintableString = node->valueList->getPrintableString();
         if(node->color == Color::RED)
@@ -605,7 +605,7 @@ QString table3::RBTree<Key, Value>::GetPrintableHtml(RBTreeNode<Key, Value>* nod
             outputStr+= "<p style=\"color:black; white-space:pre\">" +
                     spaceSymbol.repeated(h) + QVariant(node->key).toString() +
                     " [" + listPrintableString + "]" "</p>";
-        outputStr += GetPrintableHtml(node->left, h + l, l);
+        outputStr += getPrintableHtml(node->left, h + l, l);
         return outputStr;
     }
     return "";

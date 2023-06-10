@@ -58,13 +58,34 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxAppointmentDateDay"/>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateDay">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>31</number>
+          </property>
+         </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxAppointmentDateMonth"/>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateMonth">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>12</number>
+          </property>
+         </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxAppointmentDateYear"/>
+         <widget class="QSpinBox" name="spinBoxAppointmentDateYear">
+          <property name="minimum">
+           <number>2012</number>
+          </property>
+          <property name="maximum">
+           <number>2023</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -78,10 +99,18 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxAppointmentTimeHour"/>
+         <widget class="QSpinBox" name="spinBoxAppointmentTimeHour">
+          <property name="maximum">
+           <number>23</number>
+          </property>
+         </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxAppointmentTimeMinute"/>
+         <widget class="QSpinBox" name="spinBoxAppointmentTimeMinute">
+          <property name="maximum">
+           <number>59</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -98,7 +127,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBoxAppointmentCost"/>
+      <widget class="QSpinBox" name="spinBoxAppointmentCost">
+       <property name="minimum">
+        <number>1000</number>
+       </property>
+       <property name="maximum">
+        <number>5000</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
