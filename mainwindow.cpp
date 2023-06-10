@@ -109,27 +109,49 @@ void MainWindow::on_menuFileOpen_triggered()
 
         // Читаем данные из потока и выводим их на консоль
         QStringList splittedLine;
-        bool isFirstLine = true;
+        int tableNumber = 0;
+        unsigned lineCountToRead;
         while (!stream.atEnd()) {
             splittedLine = stream.readLine().split(" ");
 
-            if(isFirstLine)
+            if(splittedLine.count() == 2)
             {
-                isFirstLine = false;
+                if(splittedLine[0] == "__TABLE1__")
+                    tableNumber = 1;
+                else if(splittedLine[0] == "__TABLE2__")
+                    tableNumber = 2;
+                else if(splittedLine[0] == "__TABLE3__")
+                    tableNumber = 3;
+                lineCountToRead = splittedLine[1].toUInt();
             }
             else
             {
-                table3::Record record;
-                record.doctorPhoneNumber = splittedLine[0].toLongLong();
-                record.patientPhoneNumber = splittedLine[1].toLongLong();
-                record.appointmentDatetime.year = splittedLine[2].toUInt();
-                record.appointmentDatetime.month = splittedLine[3].toUInt();
-                record.appointmentDatetime.day = splittedLine[4].toUInt();
-                record.appointmentDatetime.hour = splittedLine[5].toUInt();
-                record.appointmentDatetime.minute = splittedLine[6].toUInt();
-                record.appointmentCost = splittedLine[7].toUInt();
+                if(tableNumber == 1)
+                {
 
-                this->addRecordToAppointments(record);
+                }
+                else if(tableNumber == 2)
+                {
+
+                }
+                else if(tableNumber == 3 && splittedLine.count() == 8)
+                {
+                    if(lineCountToRead > 0)
+                    {
+                        lineCountToRead--;
+                        table3::Record record;
+                        record.doctorPhoneNumber = splittedLine[0].toLongLong();
+                        record.patientPhoneNumber = splittedLine[1].toLongLong();
+                        record.appointmentDatetime.year = splittedLine[2].toUInt();
+                        record.appointmentDatetime.month = splittedLine[3].toUInt();
+                        record.appointmentDatetime.day = splittedLine[4].toUInt();
+                        record.appointmentDatetime.hour = splittedLine[5].toUInt();
+                        record.appointmentDatetime.minute = splittedLine[6].toUInt();
+                        record.appointmentCost = splittedLine[7].toUInt();
+
+                        this->addRecordToAppointments(record);
+                    }
+                }
             }
         }
 
@@ -151,9 +173,13 @@ void MainWindow::on_menuFileSave_triggered()
         // Создаем объект класса QTextStream и связываем его с файлом
         QTextStream stream(&file);
 
+        // Временно, пока нет первых двух таблиц
+        stream << "__TABLE1__ 0\n";
+        stream << "__TABLE2__ 0\n";
+
         // Записываем данные в поток
         int appointmentsCount = appointments.records.count();
-        stream << appointmentsCount;
+        stream << "__TABLE3__ " << appointmentsCount;
         for(int i = 0; i < appointmentsCount; i++)
         {
             stream << "\n";
