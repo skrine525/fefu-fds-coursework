@@ -56,6 +56,11 @@ MainWindow::~MainWindow()
 void MainWindow::addRecordToAppointments(table3::Record record)
 {
     appointments.records.append(record);
+    int appendedIndex = appointments.records.count() - 1;
+    appointments.doctorPhoneNumberTree.InsertNode(record.doctorPhoneNumber, appendedIndex);
+    appointments.patientPhoneNumberTree.InsertNode(record.patientPhoneNumber, appendedIndex);
+    appointments.appointmentDatetimeTree.InsertNode(record.appointmentDatetime, appendedIndex);
+    appointments.appointmentCostTree.InsertNode(record.appointmentCost, appendedIndex);
 
     int rowIndex = ui->tableAppointments->rowCount();
     ui->tableAppointments->insertRow(rowIndex);
