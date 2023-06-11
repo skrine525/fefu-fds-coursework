@@ -13,18 +13,21 @@ SOURCES += \
     appointmentstreedebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
+    searchappointmentdialog.cpp \
     table3.cpp
 
 HEADERS += \
     addappointmentdialog.h \
     appointmentstreedebugwidget.h \
     mainwindow.h \
+    searchappointmentdialog.h \
     table3.h
 
 FORMS += \
     addappointmentdialog.ui \
     appointmentstreedebugwidget.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    searchappointmentdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

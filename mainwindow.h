@@ -30,6 +30,8 @@ private slots:
 
     void on_menuFileSave_triggered();
 
+    void on_pushButtonAppointmentsSearch_clicked();
+
 private:
     Ui::MainWindow *ui;
     AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;

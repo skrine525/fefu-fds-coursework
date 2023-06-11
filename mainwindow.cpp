@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "addappointmentdialog.h"
+#include "searchappointmentdialog.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QFile>
@@ -82,8 +83,8 @@ void MainWindow::on_menuFileFileExit_triggered()
 
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()
 {
-    AddAppointmentDialog dialog(this);
-    dialog.exec();
+    AddAppointmentDialog addAppointmentDialog(this);
+    addAppointmentDialog.exec();
 }
 
 
@@ -198,7 +199,12 @@ void MainWindow::on_menuFileSave_triggered()
         // Закрываем файл
         file.close();
     }
-    else
-        qDebug() << "нахуй иди";
+}
+
+
+void MainWindow::on_pushButtonAppointmentsSearch_clicked()
+{
+    SearchAppointmentDialog searchAppointmentDialog(this);
+    searchAppointmentDialog.exec();
 }
 
