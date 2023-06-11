@@ -1,9 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include "table3.h"
 #include "appointmentstreedebugwidget.h"
+
+#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,6 +19,7 @@ public:
     ~MainWindow();
 
     void addRecordToAppointments(table3::Record record);
+    void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
 private slots:
     void on_menuFileFileExit_triggered();
@@ -31,6 +33,8 @@ private slots:
     void on_menuFileSave_triggered();
 
     void on_pushButtonAppointmentsSearch_clicked();
+
+    void on_pushButtonAppointmentsClearSearch_clicked();
 
 private:
     Ui::MainWindow *ui;

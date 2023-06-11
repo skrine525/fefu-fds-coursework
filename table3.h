@@ -48,6 +48,7 @@ namespace table3
         QString getPrintableString();
         bool isEmpty();
         void clear();
+        DoublyLinkedRingListNode<Value>* getHead();
 
     private:
         DoublyLinkedRingListNode<Value> *head;
@@ -78,6 +79,7 @@ namespace table3
 
         void insertNode(Key key, Value value);
         void deleteNode(Key key, Value value);
+        RBTreeNode<Key, Value>* findNode(Key key);
         QString getPrintableHtml(int l) const;
 
     private:
@@ -110,8 +112,13 @@ namespace table3
 template <typename Value>
 table3::DoublyLinkedRingList<Value>::~DoublyLinkedRingList()
 {
-    qDebug() << "List Destroy";
     this->clear();
+}
+
+template <typename Value>
+table3::DoublyLinkedRingListNode<Value>* table3::DoublyLinkedRingList<Value>::getHead()
+{
+    return head;
 }
 
 template <typename Value>
@@ -230,6 +237,27 @@ void table3::DoublyLinkedRingList<Value>::insertNode(Value value)
                 curr = curr->next;
         } while (curr->prev->value < value);
     }
+}
+
+template <typename Key, typename Value>
+table3::RBTreeNode<Key, Value>* table3::RBTree<Key, Value>::findNode(Key key)
+{
+    table3::RBTreeNode<Key, Value>* curr = root;
+    table3::RBTreeNode<Key, Value>* desired = nullptr;
+    if (curr != nullptr)
+    {
+        do
+        {
+            if (key < curr->key)
+                curr = curr->left;
+            else if (key > curr->key)
+                curr = curr->right;
+            else
+                desired = curr;
+        } while (curr != nullptr && desired == nullptr);
+    }
+
+    return desired;
 }
 
 template <typename Key, typename Value>

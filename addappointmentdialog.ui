@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Записи - Добавление</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -84,24 +84,10 @@
      <item row="3" column="1">
       <layout class="QHBoxLayout" name="horizontalLayoutAppointmentTime">
        <item>
-        <widget class="QSpinBox" name="spinBoxAppointmentTimeHour">
-         <property name="minimum">
-          <number>8</number>
-         </property>
-         <property name="maximum">
-          <number>17</number>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="comboBoxAppointmentTimeHour"/>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBoxAppointmentTimeMinute">
-         <property name="maximum">
-          <number>59</number>
-         </property>
-         <property name="singleStep">
-          <number>30</number>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="comboBoxAppointmentTimeMinute"/>
        </item>
       </layout>
      </item>

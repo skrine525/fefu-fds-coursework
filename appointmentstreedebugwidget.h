@@ -1,8 +1,9 @@
 #ifndef APPOINTMENTSTREEDEBUGWIDGET_H
 #define APPOINTMENTSTREEDEBUGWIDGET_H
 
+#include "table3.h"
+
 #include <QWidget>
-#include <table3.h>
 
 namespace Ui {
 class AppointmentsTreeDebugWidget;

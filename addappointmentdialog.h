@@ -1,8 +1,9 @@
 #ifndef ADDAPPOINTMENTDIALOG_H
 #define ADDAPPOINTMENTDIALOG_H
 
+#include "mainwindow.h"
+
 #include <QDialog>
-#include <mainwindow.h>
 
 namespace Ui {
 class AddAppointmentDialog;
