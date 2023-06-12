@@ -15,9 +15,9 @@ AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
 
     // Настройка валидации полей Номер врача и Номер пациента
     ui->lineEditDoctorPhone->setValidator(
-                new QRegExpValidator(QRegExp("[0-9]*"), ui->lineEditDoctorPhone));
+                new QRegExpValidator(QRegExp("\\d{1,11}$"), ui->lineEditDoctorPhone));
     ui->lineEditPatientPhone->setValidator(
-                new QRegExpValidator(QRegExp("[0-9]*"), ui->lineEditPatientPhone));
+                new QRegExpValidator(QRegExp("\\d{1,11}$"), ui->lineEditPatientPhone));
 
     // Добавление элементов времени в ComboBox
     for(int i = 8; i < 18; i++)
@@ -25,10 +25,10 @@ AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
         QString hourString = QString::number(i);
         if (i < 10)
             hourString = "0" + hourString;
-        ui->comboBoxAppointmentTimeHour->addItem(hourString, QVariant(i));
+        ui->comboBoxTimeHour->addItem(hourString, QVariant(i));
     }
-    ui->comboBoxAppointmentTimeMinute->addItem("00", QVariant(0));
-    ui->comboBoxAppointmentTimeMinute->addItem("30", QVariant(30));
+    ui->comboBoxTimeMinute->addItem("00", QVariant(0));
+    ui->comboBoxTimeMinute->addItem("30", QVariant(30));
 }
 
 AddAppointmentDialog::~AddAppointmentDialog()
@@ -36,17 +36,18 @@ AddAppointmentDialog::~AddAppointmentDialog()
     delete ui;
 }
 
-void AddAppointmentDialog::on_pushButtonAppointmentActionAdd_clicked()
+
+void AddAppointmentDialog::on_pushButtonAdd_clicked()
 {
     // Проверка наличия данных в lineEdit полях
-    if(ui->lineEditDoctorPhone->text().length() == 0)
+    if(ui->lineEditDoctorPhone->text().length() < 11)
     {
-        QMessageBox::warning(this, "Внимание", "Укажите Номер врача!");
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
         return;
     }
     else if(ui->lineEditPatientPhone->text().length() == 0)
     {
-        QMessageBox::warning(this, "Внимание", "Укажите Номер пациета!");
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
         return;
     }
 
@@ -55,14 +56,14 @@ void AddAppointmentDialog::on_pushButtonAppointmentActionAdd_clicked()
 
     newRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
     newRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
-    newRecord.appointmentCost = ui->spinBoxAppointmentCost->value();
+    newRecord.appointmentCost = ui->spinBoxCost->value();
 
     table3::Datetime appointmentDatetime;
-    appointmentDatetime.day = ui->spinBoxAppointmentDateDay->value();
-    appointmentDatetime.month = ui->spinBoxAppointmentDateMonth->value();
-    appointmentDatetime.year = ui->spinBoxAppointmentDateYear->value();
-    appointmentDatetime.hour = ui->comboBoxAppointmentTimeHour->currentData().toUInt();
-    appointmentDatetime.minute = ui->comboBoxAppointmentTimeMinute->currentData().toUInt();
+    appointmentDatetime.day = ui->spinBoxDateDay->value();
+    appointmentDatetime.month = ui->spinBoxDateMonth->value();
+    appointmentDatetime.year = ui->spinBoxDateYear->value();
+    appointmentDatetime.hour = ui->comboBoxTimeHour->currentData().toUInt();
+    appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
     newRecord.appointmentDatetime = appointmentDatetime;
 
     MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
@@ -71,7 +72,7 @@ void AddAppointmentDialog::on_pushButtonAppointmentActionAdd_clicked()
 }
 
 
-void AddAppointmentDialog::on_pushButtonAppointmentActionCancel_clicked()
+void AddAppointmentDialog::on_pushButtonCancel_clicked()
 {
     this->close();
 }

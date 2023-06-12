@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     addappointmentdialog.cpp \
+    addpatientdialog.cpp \
     appointmentstreedebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     addappointmentdialog.h \
+    addpatientdialog.h \
     appointmentstreedebugwidget.h \
     mainwindow.h \
     searchappointmentdialog.h \
@@ -25,6 +27,7 @@ HEADERS += \
 
 FORMS += \
     addappointmentdialog.ui \
+    addpatientdialog.ui \
     appointmentstreedebugwidget.ui \
     mainwindow.ui \
     searchappointmentdialog.ui

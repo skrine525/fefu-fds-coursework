@@ -40,10 +40,13 @@ private slots:
 
     void on_pushButtonAppointmentsDelete_clicked();
 
+    void on_pushButtonPatientsAdd_clicked();
+
 private:
     Ui::MainWindow *ui;
-    AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
     table3::Appointments appointments;
+
+    AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
 
     void resetViewAndData();
 };

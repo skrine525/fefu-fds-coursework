@@ -12,10 +12,10 @@ SearchAppointmentDialog::SearchAppointmentDialog(QWidget *parent) :
     ui->setupUi(this);
 
     // Настройка валидации полей Номер врача и Номер пациента
-    ui->lineEditAppointmentDoctorPhone->setValidator(
-                new QRegExpValidator(QRegExp("[0-9]*"), ui->lineEditAppointmentDoctorPhone));
-    ui->lineEditAppointmentPatientPhone->setValidator(
-                new QRegExpValidator(QRegExp("[0-9]*"), ui->lineEditAppointmentPatientPhone));
+    ui->lineEditDoctorPhone->setValidator(
+                new QRegExpValidator(QRegExp("\\d{1,11}$"), ui->lineEditDoctorPhone));
+    ui->lineEditPatientPhone->setValidator(
+                new QRegExpValidator(QRegExp("\\d{1,11}$"), ui->lineEditPatientPhone));
 
     // Добавление элементов времени в ComboBox
     for(int i = 8; i < 18; i++)
@@ -23,21 +23,21 @@ SearchAppointmentDialog::SearchAppointmentDialog(QWidget *parent) :
         QString hourString = QString::number(i);
         if (i < 10)
             hourString = "0" + hourString;
-        ui->comboBoxAppointmentDatetimeHour->addItem(hourString, QVariant(i));
+        ui->comboBoxTimeHour->addItem(hourString, QVariant(i));
     }
-    ui->comboBoxAppointmentDatetimeMinute->addItem("00", QVariant(0));
-    ui->comboBoxAppointmentDatetimeMinute->addItem("30", QVariant(30));
+    ui->comboBoxTimeMinute->addItem("00", QVariant(0));
+    ui->comboBoxTimeMinute->addItem("30", QVariant(30));
 
     // Отключаем все элементы ввода
     ui->pushButtonSearch->setEnabled(false);
-    ui->lineEditAppointmentDoctorPhone->setEnabled(false);
-    ui->lineEditAppointmentPatientPhone->setEnabled(false);
-    ui->spinBoxAppointmentDatetimeDay->setEnabled(false);
-    ui->spinBoxAppointmentDatetimeMonth->setEnabled(false);
-    ui->spinBoxAppointmentDatetimeYear->setEnabled(false);
-    ui->comboBoxAppointmentDatetimeHour->setEnabled(false);
-    ui->comboBoxAppointmentDatetimeMinute->setEnabled(false);
-    ui->spinBoxAppointmentCost->setEnabled(false);
+    ui->lineEditDoctorPhone->setEnabled(false);
+    ui->lineEditPatientPhone->setEnabled(false);
+    ui->spinBoxDateDay->setEnabled(false);
+    ui->spinBoxDateMonth->setEnabled(false);
+    ui->spinBoxDateYear->setEnabled(false);
+    ui->comboBoxTimeHour->setEnabled(false);
+    ui->comboBoxTimeMinute->setEnabled(false);
+    ui->spinBoxCost->setEnabled(false);
 }
 
 SearchAppointmentDialog::~SearchAppointmentDialog()
@@ -45,9 +45,9 @@ SearchAppointmentDialog::~SearchAppointmentDialog()
     delete ui;
 }
 
-void SearchAppointmentDialog::on_radioButtonAppointmentDoctorPhone_toggled(bool checked)
+void SearchAppointmentDialog::on_radioButtonDoctorPhone_toggled(bool checked)
 {
-    ui->lineEditAppointmentDoctorPhone->setEnabled(checked);
+    ui->lineEditDoctorPhone->setEnabled(checked);
     if(checked)
     {
         ui->pushButtonSearch->setEnabled(true);
@@ -56,9 +56,9 @@ void SearchAppointmentDialog::on_radioButtonAppointmentDoctorPhone_toggled(bool 
 }
 
 
-void SearchAppointmentDialog::on_radioButtonAppointmentPatientPhone_toggled(bool checked)
+void SearchAppointmentDialog::on_radioButtonPatientPhone_toggled(bool checked)
 {
-    ui->lineEditAppointmentPatientPhone->setEnabled(checked);
+    ui->lineEditPatientPhone->setEnabled(checked);
     if(checked)
     {
         ui->pushButtonSearch->setEnabled(true);
@@ -67,13 +67,13 @@ void SearchAppointmentDialog::on_radioButtonAppointmentPatientPhone_toggled(bool
 }
 
 
-void SearchAppointmentDialog::on_radioButtonAppointmentDatetime_toggled(bool checked)
+void SearchAppointmentDialog::on_radioButtonDatetime_toggled(bool checked)
 {
-    ui->spinBoxAppointmentDatetimeDay->setEnabled(checked);
-    ui->spinBoxAppointmentDatetimeMonth->setEnabled(checked);
-    ui->spinBoxAppointmentDatetimeYear->setEnabled(checked);
-    ui->comboBoxAppointmentDatetimeHour->setEnabled(checked);
-    ui->comboBoxAppointmentDatetimeMinute->setEnabled(checked);
+    ui->spinBoxDateDay->setEnabled(checked);
+    ui->spinBoxDateMonth->setEnabled(checked);
+    ui->spinBoxDateYear->setEnabled(checked);
+    ui->comboBoxTimeHour->setEnabled(checked);
+    ui->comboBoxTimeMinute->setEnabled(checked);
     if(checked)
     {
         ui->pushButtonSearch->setEnabled(true);
@@ -82,9 +82,9 @@ void SearchAppointmentDialog::on_radioButtonAppointmentDatetime_toggled(bool che
 }
 
 
-void SearchAppointmentDialog::on_radioButtonAppointmentCost_toggled(bool checked)
+void SearchAppointmentDialog::on_radioButtonCost_toggled(bool checked)
 {
-    ui->spinBoxAppointmentCost->setEnabled(checked);
+    ui->spinBoxCost->setEnabled(checked);
     if(checked)
     {
         ui->pushButtonSearch->setEnabled(true);
@@ -107,41 +107,41 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
     {
         // Номер врача
 
-        if(ui->lineEditAppointmentDoctorPhone->text().length() > 0)
+        if(ui->lineEditDoctorPhone->text().length() == 11)
         {
-            searchRecord.doctorPhoneNumber = ui->lineEditAppointmentDoctorPhone->text().toLongLong();
+            searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
 
             MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
             mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
             this->close();
         }
         else
-            QMessageBox::warning(this, "Внимание", "Укажите Номер врача!");
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
     }
     else if(fieldIndex == 1)
     {
         // Номер пациента
 
-        if(ui->lineEditAppointmentPatientPhone->text().length() > 0)
+        if(ui->lineEditPatientPhone->text().length() == 11)
         {
-            searchRecord.patientPhoneNumber = ui->lineEditAppointmentPatientPhone->text().toLongLong();
+            searchRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
 
             MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
             mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
             this->close();
         }
         else
-            QMessageBox::warning(this, "Внимание", "Укажите Номер пациета!");
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
     }
     else if(fieldIndex == 2)
     {
         // Дата и Время приёма
 
-        searchRecord.appointmentDatetime.day = ui->spinBoxAppointmentDatetimeDay->value();
-        searchRecord.appointmentDatetime.month = ui->spinBoxAppointmentDatetimeMonth->value();
-        searchRecord.appointmentDatetime.year = ui->spinBoxAppointmentDatetimeYear->value();
-        searchRecord.appointmentDatetime.hour = ui->comboBoxAppointmentDatetimeHour->currentData().toUInt();
-        searchRecord.appointmentDatetime.minute = ui->comboBoxAppointmentDatetimeMinute->currentData().toUInt();
+        searchRecord.appointmentDatetime.day = ui->spinBoxDateDay->value();
+        searchRecord.appointmentDatetime.month = ui->spinBoxDateMonth->value();
+        searchRecord.appointmentDatetime.year = ui->spinBoxDateYear->value();
+        searchRecord.appointmentDatetime.hour = ui->comboBoxTimeHour->currentData().toUInt();
+        searchRecord.appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
 
         MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
         mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
@@ -151,7 +151,7 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
     {
         // Стоимость
 
-        searchRecord.appointmentCost = ui->spinBoxAppointmentCost->value();
+        searchRecord.appointmentCost = ui->spinBoxCost->value();
 
         MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
         mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);

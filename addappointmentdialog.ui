@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
-    <height>190</height>
+    <width>400</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,16 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayoutAppointmentForm">
+    <layout class="QGridLayout" name="gridLayoutDataForm">
      <item row="4" column="0">
-      <widget class="QLabel" name="labelAppointmentTime">
+      <widget class="QLabel" name="labelTime">
        <property name="text">
         <string>Время приёма</string>
        </property>
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="labelAppointmentCost">
+      <widget class="QLabel" name="labelCost">
        <property name="text">
         <string>Стоимость</string>
        </property>
@@ -38,7 +38,7 @@
       </widget>
      </item>
      <item row="5" column="2">
-      <widget class="QSpinBox" name="spinBoxAppointmentCost">
+      <widget class="QSpinBox" name="spinBoxCost">
        <property name="minimum">
         <number>1000</number>
        </property>
@@ -48,16 +48,16 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="labelAppointmentDate">
+      <widget class="QLabel" name="labelDate">
        <property name="text">
         <string>Дата приёма</string>
        </property>
       </widget>
      </item>
      <item row="3" column="2">
-      <layout class="QHBoxLayout" name="horizontalAppointmentDate">
+      <layout class="QHBoxLayout" name="horizontalLayoutDate">
        <item>
-        <widget class="QSpinBox" name="spinBoxAppointmentDateDay">
+        <widget class="QSpinBox" name="spinBoxDateDay">
          <property name="minimum">
           <number>1</number>
          </property>
@@ -67,7 +67,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBoxAppointmentDateMonth">
+        <widget class="QSpinBox" name="spinBoxDateMonth">
          <property name="minimum">
           <number>1</number>
          </property>
@@ -77,7 +77,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBoxAppointmentDateYear">
+        <widget class="QSpinBox" name="spinBoxDateYear">
          <property name="minimum">
           <number>2012</number>
          </property>
@@ -89,12 +89,12 @@
       </layout>
      </item>
      <item row="4" column="2">
-      <layout class="QHBoxLayout" name="horizontalLayoutAppointmentTime">
+      <layout class="QHBoxLayout" name="horizontalLayoutTime">
        <item>
-        <widget class="QComboBox" name="comboBoxAppointmentTimeHour"/>
+        <widget class="QComboBox" name="comboBoxTimeHour"/>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBoxAppointmentTimeMinute"/>
+        <widget class="QComboBox" name="comboBoxTimeMinute"/>
        </item>
       </layout>
      </item>
@@ -114,16 +114,16 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayoutAppointmentAction">
+    <layout class="QHBoxLayout" name="horizontalLayoutAction">
      <item>
-      <widget class="QPushButton" name="pushButtonAppointmentActionAdd">
+      <widget class="QPushButton" name="pushButtonAdd">
        <property name="text">
         <string>Добавить</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonAppointmentActionCancel">
+      <widget class="QPushButton" name="pushButtonCancel">
        <property name="text">
         <string>Отменить</string>
        </property>

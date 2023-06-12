@@ -17,22 +17,20 @@ public:
     ~SearchAppointmentDialog();
 
 private slots:
-    void on_radioButtonAppointmentDoctorPhone_toggled(bool checked);
-
-    void on_radioButtonAppointmentPatientPhone_toggled(bool checked);
-
-    void on_radioButtonAppointmentDatetime_toggled(bool checked);
-
-    void on_radioButtonAppointmentCost_toggled(bool checked);
-
     void on_pushButtonCancel_clicked();
 
     void on_pushButtonSearch_clicked();
 
+    void on_radioButtonDoctorPhone_toggled(bool checked);
+
+    void on_radioButtonPatientPhone_toggled(bool checked);
+
+    void on_radioButtonDatetime_toggled(bool checked);
+
+    void on_radioButtonCost_toggled(bool checked);
+
 private:
     Ui::SearchAppointmentDialog *ui;
-    QRegExpValidator* validatorDoctorPhone;
-    QRegExpValidator* validatorPatientPhone;
     unsigned fieldIndex;
 };
 

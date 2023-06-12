@@ -18,7 +18,7 @@
     <widget class="QTextBrowser" name="textBrowserTree"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayoutActions">
+    <layout class="QHBoxLayout" name="horizontalLayoutAction">
      <item>
       <widget class="QPushButton" name="pushButtonShowDoctorPhoneNumberTree">
        <property name="text">

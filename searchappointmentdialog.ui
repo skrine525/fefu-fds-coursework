@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
+    <width>400</width>
     <height>181</height>
    </rect>
   </property>
@@ -15,27 +15,27 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayoutAppointmentForm">
+    <layout class="QGridLayout" name="gridLayoutDataForm">
      <item row="0" column="0">
-      <widget class="QRadioButton" name="radioButtonAppointmentDoctorPhone">
+      <widget class="QRadioButton" name="radioButtonDoctorPhone">
        <property name="text">
         <string>Номер врача</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QRadioButton" name="radioButtonAppointmentPatientPhone">
+      <widget class="QRadioButton" name="radioButtonPatientPhone">
        <property name="text">
         <string>Номер пациента</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <layout class="QVBoxLayout" name="verticalLayoutAppointmentDatetime">
+      <layout class="QVBoxLayout" name="verticalLayoutDatetime">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayoutAppointmentDatetimeDate">
+        <layout class="QHBoxLayout" name="horizontalLayoutDate">
          <item>
-          <widget class="QSpinBox" name="spinBoxAppointmentDatetimeDay">
+          <widget class="QSpinBox" name="spinBoxDateDay">
            <property name="minimum">
             <number>1</number>
            </property>
@@ -45,7 +45,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBoxAppointmentDatetimeMonth">
+          <widget class="QSpinBox" name="spinBoxDateMonth">
            <property name="minimum">
             <number>1</number>
            </property>
@@ -55,7 +55,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBoxAppointmentDatetimeYear">
+          <widget class="QSpinBox" name="spinBoxDateYear">
            <property name="minimum">
             <number>2012</number>
            </property>
@@ -67,39 +67,39 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayoutAppointmentDatetimeTime">
+        <layout class="QHBoxLayout" name="horizontalLayoutTime">
          <item>
-          <widget class="QComboBox" name="comboBoxAppointmentDatetimeHour"/>
+          <widget class="QComboBox" name="comboBoxTimeHour"/>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBoxAppointmentDatetimeMinute"/>
+          <widget class="QComboBox" name="comboBoxTimeMinute"/>
          </item>
         </layout>
        </item>
       </layout>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEditAppointmentDoctorPhone"/>
+      <widget class="QLineEdit" name="lineEditDoctorPhone"/>
      </item>
      <item row="6" column="0">
-      <widget class="QRadioButton" name="radioButtonAppointmentCost">
+      <widget class="QRadioButton" name="radioButtonCost">
        <property name="text">
         <string>Стоимость</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEditAppointmentPatientPhone"/>
+      <widget class="QLineEdit" name="lineEditPatientPhone"/>
      </item>
      <item row="2" column="0">
-      <widget class="QRadioButton" name="radioButtonAppointmentDatetime">
+      <widget class="QRadioButton" name="radioButtonDatetime">
        <property name="text">
         <string>Дата и Время приёма</string>
        </property>
       </widget>
      </item>
      <item row="6" column="1">
-      <widget class="QSpinBox" name="spinBoxAppointmentCost">
+      <widget class="QSpinBox" name="spinBoxCost">
        <property name="minimum">
         <number>1000</number>
        </property>
@@ -111,7 +111,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayoutActions">
+    <layout class="QHBoxLayout" name="horizontalLayoutAction">
      <item>
       <widget class="QPushButton" name="pushButtonSearch">
        <property name="text">

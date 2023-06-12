@@ -18,9 +18,9 @@ public:
     ~AddAppointmentDialog();
 
 private slots:
-    void on_pushButtonAppointmentActionAdd_clicked();
+    void on_pushButtonAdd_clicked();
 
-    void on_pushButtonAppointmentActionCancel_clicked();
+    void on_pushButtonCancel_clicked();
 
 private:
     Ui::AddAppointmentDialog *ui;

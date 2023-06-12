@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "addappointmentdialog.h"
 #include "searchappointmentdialog.h"
+#include "addpatientdialog.h"
 
 #include <QFileDialog>
 #include <QDir>
@@ -56,6 +57,29 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resetViewAndData()
+{
+    // Очищаем визуальную часть
+    ui->tableDoctors->clearContents();
+    ui->tableDoctors->setRowCount(0);
+    ui->tablePatients->clearContents();
+    ui->tablePatients->setRowCount(0);
+    ui->tableAppointments->clearContents();
+    ui->tableAppointments->setRowCount(0);
+
+    // Отключаем кнопку Очистка поиска
+    ui->pushButtonDoctorsClearSearch->setEnabled(false);
+    ui->pushButtonPatientsClearSearch->setEnabled(false);
+    ui->pushButtonAppointmentsClearSearch->setEnabled(false);
+
+    // Очищаем векторы и структуры данных
+    appointments.records.clear();
+    appointments.doctorPhoneNumberTree.clear();
+    appointments.patientPhoneNumberTree.clear();
+    appointments.appointmentDatetimeTree.clear();
+    appointments.appointmentCostTree.clear();
 }
 
 void MainWindow::addRecordToAppointments(table3::Record record)
@@ -308,29 +332,6 @@ void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
     ui->statusbar->showMessage("Записи - Поиск очищен.");
 }
 
-void MainWindow::resetViewAndData()
-{
-    // Очищаем визуальную часть
-    ui->tableDoctors->clearContents();
-    ui->tableDoctors->setRowCount(0);
-    ui->tablePatients->clearContents();
-    ui->tablePatients->setRowCount(0);
-    ui->tableAppointments->clearContents();
-    ui->tableAppointments->setRowCount(0);
-
-    // Отключаем кнопку Очистка поиска
-    ui->pushButtonDoctorsClearSearch->setEnabled(false);
-    ui->pushButtonPatientsClearSearch->setEnabled(false);
-    ui->pushButtonAppointmentsClearSearch->setEnabled(false);
-
-    // Очищаем векторы и структуры данных
-    appointments.records.clear();
-    appointments.doctorPhoneNumberTree.clear();
-    appointments.patientPhoneNumberTree.clear();
-    appointments.appointmentDatetimeTree.clear();
-    appointments.appointmentCostTree.clear();
-}
-
 void MainWindow::on_menuFileCreate_triggered()
 {
     this->resetViewAndData();
@@ -352,5 +353,12 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
     }
     else
         QMessageBox::warning(this, "Внимание", "Сначала выберите строку!");
+}
+
+
+void MainWindow::on_pushButtonPatientsAdd_clicked()
+{
+    AddPatientDialog addPatientDialog(this);
+    addPatientDialog.exec();
 }
 
