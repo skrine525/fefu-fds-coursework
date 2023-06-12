@@ -36,9 +36,15 @@ private slots:
 
     void on_pushButtonAppointmentsClearSearch_clicked();
 
+    void on_menuFileCreate_triggered();
+
+    void on_pushButtonAppointmentsDelete_clicked();
+
 private:
     Ui::MainWindow *ui;
     AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
     table3::Appointments appointments;
+
+    void resetViewAndData();
 };
 #endif // MAINWINDOW_H

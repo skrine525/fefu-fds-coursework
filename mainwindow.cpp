@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,22 +16,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Инициализация объектов таблицы Доктора
+    // Инициализация таблицы Доктора
     ui->tableDoctors->setColumnCount(4);
     QStringList doctorLabels;
     doctorLabels.append("ФИО");
     doctorLabels.append("Специальность");
     doctorLabels.append("Стаж");
     doctorLabels.append("Номер телефона");
-    for (int i = 0; i < doctorLabels.count(); i++)
-    {
-        ui->tableDoctors->setColumnWidth(i, ui->tableDoctors->width() / doctorLabels.count());
-    }
     ui->tableDoctors->horizontalHeader()->setStretchLastSection(true);
     ui->tableDoctors->setHorizontalHeaderLabels(doctorLabels);
     ui->tableDoctors->resizeColumnsToContents();
 
-    // Инициализация объектов таблицы Пациенты
+    // Инициализация таблицы Пациенты
     ui->tablePatients->setColumnCount(4);
     QStringList patientLabels;
     patientLabels.append("ФИО");
@@ -41,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tablePatients->setHorizontalHeaderLabels(patientLabels);
     ui->tablePatients->resizeColumnsToContents();
 
-    // Инициализация объектов таблицы Записи
+    // Инициализация таблицы Записи
     ui->tableAppointments->setColumnCount(4);
     QStringList appointmentLabels;
     appointmentLabels.append("Номер врача");
@@ -51,7 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableAppointments->horizontalHeader()->setStretchLastSection(true);
     ui->tableAppointments->setHorizontalHeaderLabels(appointmentLabels);
     ui->tableAppointments->resizeColumnsToContents();
-    ui->pushButtonAppointmentsClearSearch->setEnabled(false); // Выключаем кнопку Очистить поиск
+
+    // Делаем перезагрузку интерфейса и данных
+    this->resetViewAndData();
 }
 
 MainWindow::~MainWindow()
@@ -88,7 +87,6 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     ui->tableAppointments->setItem(rowIndex, 1, patientPhoneNumberItem);
     ui->tableAppointments->setItem(rowIndex, 2, appointmentDatetimeItem);
     ui->tableAppointments->setItem(rowIndex, 3, appointmentCost);
-    ui->tableAppointments->resizeColumnsToContents();
 }
 
 void MainWindow::on_menuFileFileExit_triggered()
@@ -120,6 +118,7 @@ void MainWindow::on_menuFileOpen_triggered()
     // Создаем объект класса QFile и открываем файл для чтения
     QFile file(fileName);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        this->resetViewAndData();
         // Создаем объект класса QTextStream и связываем его с файлом
         QTextStream stream(&file);
 
@@ -307,5 +306,51 @@ void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
         ui->tableAppointments->showRow(i);
     }
     ui->statusbar->showMessage("Записи - Поиск очищен.");
+}
+
+void MainWindow::resetViewAndData()
+{
+    // Очищаем визуальную часть
+    ui->tableDoctors->clearContents();
+    ui->tableDoctors->setRowCount(0);
+    ui->tablePatients->clearContents();
+    ui->tablePatients->setRowCount(0);
+    ui->tableAppointments->clearContents();
+    ui->tableAppointments->setRowCount(0);
+
+    // Отключаем кнопку Очистка поиска
+    ui->pushButtonDoctorsClearSearch->setEnabled(false);
+    ui->pushButtonPatientsClearSearch->setEnabled(false);
+    ui->pushButtonAppointmentsClearSearch->setEnabled(false);
+
+    // Очищаем векторы и структуры данных
+    appointments.records.clear();
+    appointments.doctorPhoneNumberTree.clear();
+    appointments.patientPhoneNumberTree.clear();
+    appointments.appointmentDatetimeTree.clear();
+    appointments.appointmentCostTree.clear();
+}
+
+void MainWindow::on_menuFileCreate_triggered()
+{
+    this->resetViewAndData();
+}
+
+
+void MainWindow::on_pushButtonAppointmentsDelete_clicked()
+{
+    int rowIndex = ui->tableAppointments->currentRow();
+    if(rowIndex != -1)
+    {
+        table3::Record record = appointments.records[rowIndex];
+        appointments.doctorPhoneNumberTree.deleteNode(record.doctorPhoneNumber, rowIndex);
+        appointments.patientPhoneNumberTree.deleteNode(record.patientPhoneNumber, rowIndex);
+        appointments.appointmentDatetimeTree.deleteNode(record.appointmentDatetime, rowIndex);
+        appointments.appointmentCostTree.deleteNode(record.appointmentCost, rowIndex);
+        appointments.records.remove(rowIndex);
+        ui->tableAppointments->removeRow(rowIndex);
+    }
+    else
+        QMessageBox::warning(this, "Внимание", "Сначала выберите строку!");
 }
 

@@ -20,6 +20,7 @@ namespace table3
     bool operator<(const Datetime& a, const Datetime& b);
     bool operator>(const Datetime& a, const Datetime& b);
     bool operator==(const Datetime& a, const Datetime& b);
+    bool operator!=(const Datetime& a, const Datetime& b);
 
     struct Record
     {
@@ -81,6 +82,7 @@ namespace table3
         void deleteNode(Key key, Value value);
         RBTreeNode<Key, Value>* findNode(Key key);
         QString getPrintableHtml(int l) const;
+        void clear();
 
     private:
         RBTreeNode<Key, Value> *root;
@@ -97,6 +99,7 @@ namespace table3
                              RBTreeNode<Key, Value>* grandparent, RBTree<Key,
                              Value>& tree);
         QString getPrintableHtml(RBTreeNode<Key, Value>* node, int h, int l) const;
+        void clear(RBTreeNode<Key, Value>* node);
     };
 
     struct Appointments
@@ -112,6 +115,7 @@ namespace table3
 template <typename Value>
 table3::DoublyLinkedRingList<Value>::~DoublyLinkedRingList()
 {
+    qDebug() << "List destroy";
     this->clear();
 }
 
@@ -237,6 +241,26 @@ void table3::DoublyLinkedRingList<Value>::insertNode(Value value)
                 curr = curr->next;
         } while (curr->prev->value < value);
     }
+}
+
+template <typename Key, typename Value>
+void table3::RBTree<Key, Value>::clear()
+{
+    this->clear(root);
+    root = nullptr;
+}
+
+template <typename Key, typename Value>
+void table3::RBTree<Key, Value>::clear(RBTreeNode<Key, Value>* node)
+{
+    if(node == nullptr)
+        return;
+
+    this->clear(node->left);
+    this->clear(node->right);
+
+    delete node->valueList;
+    delete node;
 }
 
 template <typename Key, typename Value>

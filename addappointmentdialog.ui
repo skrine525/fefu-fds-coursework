@@ -16,38 +16,45 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayoutAppointmentForm">
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="labelAppointmentTime">
        <property name="text">
         <string>Время приёма</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelAppointmentCost">
+       <property name="text">
+        <string>Стоимость</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
       <widget class="QLabel" name="labelPatientPhone">
        <property name="text">
         <string>Номер пациента</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelDoctorPhone">
-       <property name="text">
-        <string>Номер врача</string>
+     <item row="5" column="2">
+      <widget class="QSpinBox" name="spinBoxAppointmentCost">
+       <property name="minimum">
+        <number>1000</number>
+       </property>
+       <property name="maximum">
+        <number>5000</number>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="labelAppointmentDate">
        <property name="text">
         <string>Дата приёма</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEditDoctorPhone"/>
-     </item>
-     <item row="2" column="1">
+     <item row="3" column="2">
       <layout class="QHBoxLayout" name="horizontalAppointmentDate">
        <item>
         <widget class="QSpinBox" name="spinBoxAppointmentDateDay">
@@ -81,7 +88,7 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="2">
       <layout class="QHBoxLayout" name="horizontalLayoutAppointmentTime">
        <item>
         <widget class="QComboBox" name="comboBoxAppointmentTimeHour"/>
@@ -91,25 +98,18 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="2">
       <widget class="QLineEdit" name="lineEditPatientPhone"/>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="labelAppointmentCost">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelDoctorPhone">
        <property name="text">
-        <string>Стоимость</string>
+        <string>Номер врача</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="spinBoxAppointmentCost">
-       <property name="minimum">
-        <number>1000</number>
-       </property>
-       <property name="maximum">
-        <number>5000</number>
-       </property>
-      </widget>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="lineEditDoctorPhone"/>
      </item>
     </layout>
    </item>

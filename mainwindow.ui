@@ -166,6 +166,7 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <addaction name="menuFileCreate"/>
     <addaction name="menuFileOpen"/>
     <addaction name="menuFileSave"/>
     <addaction name="separator"/>
@@ -247,6 +248,11 @@
   <action name="menuDebugAppointmentsShowHash">
    <property name="text">
     <string>Показать Хеш-функцию</string>
+   </property>
+  </action>
+  <action name="menuFileCreate">
+   <property name="text">
+    <string>Создать</string>
    </property>
   </action>
  </widget>

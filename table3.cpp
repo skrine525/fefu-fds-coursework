@@ -57,3 +57,8 @@ bool table3::operator==(const table3::Datetime& a, const table3::Datetime& b)
     return a.year == b.year && a.month == b.month && a.day == b.day &&
             a.hour == b.hour && a.minute == b.minute;
 }
+
+bool table3::operator!=(const table3::Datetime& a, const table3::Datetime& b)
+{
+    return !(a == b);
+}
