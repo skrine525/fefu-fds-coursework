@@ -88,7 +88,7 @@ namespace table2
     struct Patients
     {
         QVector<Record> records;
-        AVLTree<Address> AddressTree;
+        AVLTree<Address> addressTree;
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> ageTree;
     };
@@ -274,7 +274,6 @@ namespace table2
             }
         }
     }
-
 
     template <typename Key>
     void table2::AVLTree<Key>::balanceL(AVLTreeNode<Key>*& currentNode, bool& h)

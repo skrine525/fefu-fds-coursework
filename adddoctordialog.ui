@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddPatientDialog</class>
- <widget class="QDialog" name="AddPatientDialog">
+ <class>AddDoctorDialog</class>
+ <widget class="QDialog" name="AddDoctorDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>175</height>
+    <height>149</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Пациенты - Добавление</string>
+   <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayoutDataForm">
-     <item row="4" column="0">
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelSpeciality">
+       <property name="text">
+        <string>Специальность</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="labelPhone">
        <property name="text">
         <string>Номер телефона</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="spinBoxAge">
-       <property name="minimum">
-        <number>18</number>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="labelFullname">
        <property name="text">
-        <string>ФИО Пациента</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="labelAge">
-       <property name="text">
-        <string>Возраст</string>
+        <string>ФИО Врача</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="labelDistrict">
+      <widget class="QLabel" name="labelExperience">
        <property name="text">
-        <string>Район</string>
+        <string>Стаж</string>
        </property>
       </widget>
      </item>
@@ -55,20 +48,17 @@
       <widget class="QLineEdit" name="lineEditFullname"/>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEditRegion"/>
+      <widget class="QLineEdit" name="lineEditSpeciality"/>
      </item>
-     <item row="4" column="1">
+     <item row="3" column="1">
       <widget class="QLineEdit" name="lineEditPhone"/>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelRegion">
-       <property name="text">
-        <string>Регион</string>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="spinBoxExperience">
+       <property name="maximum">
+        <number>40</number>
        </property>
       </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="comboBoxDistrict"/>
      </item>
     </layout>
    </item>
@@ -84,7 +74,7 @@
      <item>
       <widget class="QPushButton" name="pushButtonCancel">
        <property name="text">
-        <string>Отменить</string>
+        <string>Отмена</string>
        </property>
       </widget>
      </item>

@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "table1.h"
 #include "table3.h"
+#include "table2.h"
 #include "appointmentstreedebugwidget.h"
 
 #include <QMainWindow>
@@ -18,7 +20,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void addRecordToDoctors(table1::Record record);
     void addRecordToAppointments(table3::Record record);
+    void addRecordToPatients(table2::Record record);
+
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
 private slots:
@@ -42,8 +47,12 @@ private slots:
 
     void on_pushButtonPatientsAdd_clicked();
 
+    void on_pushButtonDoctorsAdd_clicked();
+
 private:
     Ui::MainWindow *ui;
+    table1::Doctor doctors;
+    table2::Patients patients;
     table3::Appointments appointments;
 
     AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;

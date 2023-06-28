@@ -71,7 +71,7 @@ namespace table1
         void balanceL(AVLTreeNode<Key>*& currentNode, bool& h);
     };
 
-    struct Patients
+    struct Doctor
     {
         QVector<Record> records;
         AVLTree<QString> specialityTree;

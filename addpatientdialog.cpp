@@ -1,6 +1,9 @@
 #include "addpatientdialog.h"
 #include "ui_addpatientdialog.h"
 #include "table2.h"
+#include "mainwindow.h"
+
+#include <QMessageBox>
 
 AddPatientDialog::AddPatientDialog(QWidget *parent) :
     QDialog(parent),
@@ -40,6 +43,33 @@ void AddPatientDialog::on_pushButtonCancel_clicked()
 
 void AddPatientDialog::on_pushButtonAdd_clicked()
 {
+    // Проверка наличия данных в lineEdit полях
+    if(ui->lineEditFullname->text().count(" ") != 2)
+    {
+        QMessageBox::warning(this, "Внимание", "Поле \"ФИО пациента\" должно содержать 3 слова.");
+        return;
+    }
+    else if(ui->lineEditRegion->text().length() == 0)
+    {
+        QMessageBox::warning(this, "Внимание", "Поле \"Регион\" не должно быть пустым.");
+        return;
+    }
+    else if(ui->lineEditPhone->text().length() != 11)
+    {
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер телефона\" должно содержать 11 цифр.");
+        return;
+    }
 
+
+    table2::Record newRecord;
+    newRecord.fullName = ui->lineEditFullname->text();
+    newRecord.region = ui->lineEditRegion->text();
+    newRecord.phoneNumber = ui->lineEditPhone->text().toLongLong();
+    newRecord.district = ui->comboBoxDistrict->currentData().toString();
+    newRecord.age = ui->spinBoxAge->value();
+
+    MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
+    mainWindow->addRecordToPatients(newRecord);
+    this->close();
 }
 

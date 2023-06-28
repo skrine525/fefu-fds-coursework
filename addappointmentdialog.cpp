@@ -45,17 +45,15 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     }
     else if(ui->lineEditPatientPhone->text().length() == 0)
     {
-        //QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
         return;
     }
 
 
     table3::Record newRecord;
-
     newRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
     newRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
     newRecord.appointmentCost = ui->spinBoxCost->value();
-
     table3::Datetime appointmentDatetime;
     appointmentDatetime.day = ui->spinBoxDateDay->value();
     appointmentDatetime.month = ui->spinBoxDateMonth->value();

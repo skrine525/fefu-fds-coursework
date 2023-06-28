@@ -3,6 +3,7 @@
 #include "addappointmentdialog.h"
 #include "searchappointmentdialog.h"
 #include "addpatientdialog.h"
+#include "adddoctordialog.h"
 
 #include <QFileDialog>
 #include <QDir>
@@ -29,10 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableDoctors->resizeColumnsToContents();
 
     // Инициализация таблицы Пациенты
-    ui->tablePatients->setColumnCount(4);
+    ui->tablePatients->setColumnCount(5);
     QStringList patientLabels;
     patientLabels.append("ФИО");
-    patientLabels.append("Регион, район");
+    patientLabels.append("Регион");
+    patientLabels.append("Район");
     patientLabels.append("Возраст");
     patientLabels.append("Номер телефона");
     ui->tablePatients->horizontalHeader()->setStretchLastSection(true);
@@ -75,6 +77,14 @@ void MainWindow::resetViewAndData()
     ui->pushButtonAppointmentsClearSearch->setEnabled(false);
 
     // Очищаем векторы и структуры данных
+    doctors.records.clear();
+    doctors.experienceTree.clear();
+    doctors.fullNameTree.clear();
+    doctors.specialityTree.clear();
+    patients.records.clear();
+    patients.addressTree.clear();
+    patients.ageTree.clear();
+    patients.fullNameTree.clear();
     appointments.records.clear();
     appointments.doctorPhoneNumberTree.clear();
     appointments.patientPhoneNumberTree.clear();
@@ -96,13 +106,13 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     QTableWidgetItem* doctorPhoneNumberItem = new QTableWidgetItem(QString::number(record.doctorPhoneNumber));
     QTableWidgetItem* patientPhoneNumberItem = new QTableWidgetItem(QString::number(record.patientPhoneNumber));
     QTableWidgetItem* appointmentDatetimeItem = new QTableWidgetItem(QString(record.appointmentDatetime));
-    QTableWidgetItem* appointmentCost = new QTableWidgetItem(QString::number(record.appointmentCost));
+    QTableWidgetItem* appointmentCostItem = new QTableWidgetItem(QString::number(record.appointmentCost));
 
     // Устанавливаем флаг запрета редактирования для каждого элемента
     doctorPhoneNumberItem->setFlags(doctorPhoneNumberItem->flags() & ~Qt::ItemIsEditable);
     patientPhoneNumberItem->setFlags(patientPhoneNumberItem->flags() & ~Qt::ItemIsEditable);
     appointmentDatetimeItem->setFlags(appointmentDatetimeItem->flags() & ~Qt::ItemIsEditable);
-    appointmentCost->setFlags(appointmentCost->flags() & ~Qt::ItemIsEditable);
+    appointmentCostItem->setFlags(appointmentCostItem->flags() & ~Qt::ItemIsEditable);
 
     // Заносим строку в таблицу
     int rowIndex = ui->tableAppointments->rowCount();
@@ -110,7 +120,91 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     ui->tableAppointments->setItem(rowIndex, 0, doctorPhoneNumberItem);
     ui->tableAppointments->setItem(rowIndex, 1, patientPhoneNumberItem);
     ui->tableAppointments->setItem(rowIndex, 2, appointmentDatetimeItem);
-    ui->tableAppointments->setItem(rowIndex, 3, appointmentCost);
+    ui->tableAppointments->setItem(rowIndex, 3, appointmentCostItem);
+    ui->tablePatients->resizeColumnsToContents();
+}
+
+void MainWindow::addRecordToPatients(table2::Record record)
+{
+    // Форматирование строковых данных
+    QStringList fullnameList = record.fullName.split(" ");
+    QString lastName = fullnameList[0][0].toUpper() + fullnameList[0].mid(1).toLower();
+    QString firstName = fullnameList[1][0].toUpper() + fullnameList[1].mid(1).toLower();
+    QString middleName = fullnameList[2][0].toUpper() + fullnameList[2].mid(1).toLower();
+    record.fullName = QString("%1 %2 %3").arg(lastName, firstName, middleName);
+    record.region = record.region[0].toUpper() + record.region.mid(1).toLower();
+    record.district = record.district[0].toUpper() + record.district.mid(1).toLower();
+
+
+    // Заносим запись в вектор и добавляем в структуры данных
+    patients.records.append(record);
+    int appendedIndex = patients.records.count() - 1;
+    patients.addressTree.insertNode(table2::Address(record.region, record.district), appendedIndex);
+    patients.ageTree.insertNode(record.age, appendedIndex);
+    patients.fullNameTree.insertNode(record.fullName, appendedIndex);
+
+    // Элементы строки
+    QTableWidgetItem* fullNameItem = new QTableWidgetItem(record.fullName);
+    QTableWidgetItem* regionItem = new QTableWidgetItem(record.region);
+    QTableWidgetItem* districtItem = new QTableWidgetItem(record.district);
+    QTableWidgetItem* ageItem = new QTableWidgetItem(QString::number(record.age));
+    QTableWidgetItem* phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
+
+    // Устанавливаем флаг запрета редактирования для каждого элемента
+    fullNameItem->setFlags(fullNameItem->flags() & ~Qt::ItemIsEditable);
+    regionItem->setFlags(regionItem->flags() & ~Qt::ItemIsEditable);
+    districtItem->setFlags(districtItem->flags() & ~Qt::ItemIsEditable);
+    ageItem->setFlags(ageItem->flags() & ~Qt::ItemIsEditable);
+    phoneNumberItem->setFlags(phoneNumberItem->flags() & ~Qt::ItemIsEditable);
+
+    // Заносим строку в таблицу
+    int rowIndex = ui->tablePatients->rowCount();
+    ui->tablePatients->insertRow(rowIndex);
+    ui->tablePatients->setItem(rowIndex, 0, fullNameItem);
+    ui->tablePatients->setItem(rowIndex, 1, regionItem);
+    ui->tablePatients->setItem(rowIndex, 2, districtItem);
+    ui->tablePatients->setItem(rowIndex, 3, ageItem);
+    ui->tablePatients->setItem(rowIndex, 4, phoneNumberItem);
+    ui->tablePatients->resizeColumnsToContents();
+}
+
+void MainWindow::addRecordToDoctors(table1::Record record)
+{
+    // Форматирование строковых данных
+    QStringList fullnameList = record.fullName.split(" ");
+    QString lastName = fullnameList[0][0].toUpper() + fullnameList[0].mid(1).toLower();
+    QString firstName = fullnameList[1][0].toUpper() + fullnameList[1].mid(1).toLower();
+    QString middleName = fullnameList[2][0].toUpper() + fullnameList[2].mid(1).toLower();
+    record.fullName = QString("%1 %2 %3").arg(lastName, firstName, middleName);
+    record.speciality = record.speciality[0].toUpper() + record.speciality.mid(1).toLower();
+
+    // Заносим запись в вектор и добавляем в структуры данных
+    doctors.records.append(record);
+    int appendedIndex = patients.records.count() - 1;
+    doctors.specialityTree.insertNode(record.speciality, appendedIndex);
+    doctors.experienceTree.insertNode(record.experience, appendedIndex);
+    doctors.fullNameTree.insertNode(record.fullName, appendedIndex);
+
+    // Элементы строки
+    QTableWidgetItem* fullNameItem = new QTableWidgetItem(record.fullName);
+    QTableWidgetItem* specialityItem = new QTableWidgetItem(record.speciality);
+    QTableWidgetItem* experienceItem = new QTableWidgetItem(QString::number(record.experience));
+    QTableWidgetItem* phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
+
+    // Устанавливаем флаг запрета редактирования для каждого элемента
+    fullNameItem->setFlags(fullNameItem->flags() & ~Qt::ItemIsEditable);
+    specialityItem->setFlags(specialityItem->flags() & ~Qt::ItemIsEditable);
+    experienceItem->setFlags(experienceItem->flags() & ~Qt::ItemIsEditable);
+    phoneNumberItem->setFlags(phoneNumberItem->flags() & ~Qt::ItemIsEditable);
+
+    // Заносим строку в таблицу
+    int rowIndex = ui->tableDoctors->rowCount();
+    ui->tableDoctors->insertRow(rowIndex);
+    ui->tableDoctors->setItem(rowIndex, 0, fullNameItem);
+    ui->tableDoctors->setItem(rowIndex, 1, specialityItem);
+    ui->tableDoctors->setItem(rowIndex, 2, experienceItem);
+    ui->tableDoctors->setItem(rowIndex, 3, phoneNumberItem);
+    ui->tableDoctors->resizeColumnsToContents();
 }
 
 void MainWindow::on_menuFileFileExit_triggered()
@@ -163,33 +257,48 @@ void MainWindow::on_menuFileOpen_triggered()
                     tableNumber = 3;
                 lineCountToRead = splittedLine[1].toUInt();
             }
-            else
+            else if(lineCountToRead > 0)
             {
-                if(tableNumber == 1)
+                lineCountToRead--;
+
+                if(tableNumber == 1 && splittedLine.count() == 6)
                 {
+                    table1::Record record;
+                    record.fullName = QString("%1 %2 %3").arg(
+                                splittedLine[0], splittedLine[1], splittedLine[2]);
+                    record.speciality = splittedLine[3];
+                    record.experience = splittedLine[4].toUInt();
+                    record.phoneNumber = splittedLine[5].toLongLong();
+
+                    this->addRecordToDoctors(record);
 
                 }
-                else if(tableNumber == 2)
+                else if(tableNumber == 2 && splittedLine.count() == 7)
                 {
+                    table2::Record record;
+                    record.fullName = QString("%1 %2 %3").arg(
+                                splittedLine[0], splittedLine[1], splittedLine[2]);
+                    record.region = splittedLine[3];
+                    record.district = splittedLine[4];
+                    record.age = splittedLine[5].toUInt();
+                    record.phoneNumber = splittedLine[6].toLongLong();
 
+                    this->addRecordToPatients(record);
                 }
                 else if(tableNumber == 3 && splittedLine.count() == 8)
                 {
-                    if(lineCountToRead > 0)
-                    {
-                        lineCountToRead--;
-                        table3::Record record;
-                        record.doctorPhoneNumber = splittedLine[0].toLongLong();
-                        record.patientPhoneNumber = splittedLine[1].toLongLong();
-                        record.appointmentDatetime.year = splittedLine[2].toUInt();
-                        record.appointmentDatetime.month = splittedLine[3].toUInt();
-                        record.appointmentDatetime.day = splittedLine[4].toUInt();
-                        record.appointmentDatetime.hour = splittedLine[5].toUInt();
-                        record.appointmentDatetime.minute = splittedLine[6].toUInt();
-                        record.appointmentCost = splittedLine[7].toUInt();
+                    lineCountToRead--;
+                    table3::Record record;
+                    record.doctorPhoneNumber = splittedLine[0].toLongLong();
+                    record.patientPhoneNumber = splittedLine[1].toLongLong();
+                    record.appointmentDatetime.year = splittedLine[2].toUInt();
+                    record.appointmentDatetime.month = splittedLine[3].toUInt();
+                    record.appointmentDatetime.day = splittedLine[4].toUInt();
+                    record.appointmentDatetime.hour = splittedLine[5].toUInt();
+                    record.appointmentDatetime.minute = splittedLine[6].toUInt();
+                    record.appointmentCost = splittedLine[7].toUInt();
 
-                        this->addRecordToAppointments(record);
-                    }
+                    this->addRecordToAppointments(record);
                 }
             }
         }
@@ -213,13 +322,34 @@ void MainWindow::on_menuFileSave_triggered()
         // Создаем объект класса QTextStream и связываем его с файлом
         QTextStream stream(&file);
 
-        // Временно, пока нет первых двух таблиц
-        stream << "__TABLE1__ 0\n";
-        stream << "__TABLE2__ 0\n";
+        // Записываем данные в поток из таблицы Доктора
+        int doctorsCount = doctors.records.count();
+        stream << "__TABLE1__ " << doctorsCount;
+        for(int i = 0; i < doctorsCount; i++)
+        {
+            stream << "\n";
+            stream << doctors.records[i].fullName << " ";
+            stream << doctors.records[i].speciality << " ";
+            stream << doctors.records[i].experience << " ";
+            stream << doctors.records[i].phoneNumber;
+        }
 
-        // Записываем данные в поток
+        // Записываем данные в поток из таблицы Пациенты
+        int patinentsCount = patients.records.count();
+        stream << "\n__TABLE2__ " << patinentsCount;
+        for(int i = 0; i < patinentsCount; i++)
+        {
+            stream << "\n";
+            stream << patients.records[i].fullName << " ";
+            stream << patients.records[i].region << " ";
+            stream << patients.records[i].district << " ";
+            stream << patients.records[i].age << " ";
+            stream << patients.records[i].phoneNumber;
+        }
+
+        // Записываем данные в поток из таблицы Записи
         int appointmentsCount = appointments.records.count();
-        stream << "__TABLE3__ " << appointmentsCount;
+        stream << "\n__TABLE3__ " << appointmentsCount;
         for(int i = 0; i < appointmentsCount; i++)
         {
             stream << "\n";
@@ -360,5 +490,12 @@ void MainWindow::on_pushButtonPatientsAdd_clicked()
 {
     AddPatientDialog addPatientDialog(this);
     addPatientDialog.exec();
+}
+
+
+void MainWindow::on_pushButtonDoctorsAdd_clicked()
+{
+    AddDoctorDialog addDoctorDialog(this);
+    addDoctorDialog.exec();
 }
 

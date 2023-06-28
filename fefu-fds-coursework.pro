@@ -10,25 +10,30 @@ CONFIG += c++11
 
 SOURCES += \
     addappointmentdialog.cpp \
+    adddoctordialog.cpp \
     addpatientdialog.cpp \
     appointmentstreedebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
     searchappointmentdialog.cpp \
+    table1.cpp \
     table2.cpp \
     table3.cpp
 
 HEADERS += \
     addappointmentdialog.h \
+    adddoctordialog.h \
     addpatientdialog.h \
     appointmentstreedebugwidget.h \
     mainwindow.h \
     searchappointmentdialog.h \
+    table1.h \
     table2.h \
     table3.h
 
 FORMS += \
     addappointmentdialog.ui \
+    adddoctordialog.ui \
     addpatientdialog.ui \
     appointmentstreedebugwidget.ui \
     mainwindow.ui \
