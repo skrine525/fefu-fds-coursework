@@ -15,6 +15,7 @@ SOURCES += \
     appointmentstreedebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
+    patientstreedebugwidget.cpp \
     searchappointmentdialog.cpp \
     table1.cpp \
     table2.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     addpatientdialog.h \
     appointmentstreedebugwidget.h \
     mainwindow.h \
+    patientstreedebugwidget.h \
     searchappointmentdialog.h \
     table1.h \
     table2.h \
@@ -37,6 +39,7 @@ FORMS += \
     addpatientdialog.ui \
     appointmentstreedebugwidget.ui \
     mainwindow.ui \
+    patientstreedebugwidget.ui \
     searchappointmentdialog.ui
 
 # Default rules for deployment.

@@ -22,28 +22,28 @@
      <item>
       <widget class="QPushButton" name="pushButtonShowDoctorPhoneNumberTree">
        <property name="text">
-        <string>Поле - Номер доктора</string>
+        <string>Дерево - Номер доктора</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonShowPatientPhoneNumberTree">
        <property name="text">
-        <string>Поле - Номер пациента</string>
+        <string>Дерево - Номер пациента</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonShowAppointmentDatetimeTree">
        <property name="text">
-        <string>Поле - Дата и Время приёма</string>
+        <string>Дерево - Дата и Время приёма</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonShowAppointmentCostTree">
        <property name="text">
-        <string>Поле - Стоимость</string>
+        <string>Дерево - Стоимость</string>
        </property>
       </widget>
      </item>

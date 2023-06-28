@@ -37,12 +37,12 @@ namespace table2
         Key* Keys;
         int firstHash(long long phoneNumber, int N);
         int secondHash(int firstHash, int k1, int k2, int j);
+        bool solveInsertCollision(Key key);
+        bool solveDeleteCollision(Key key);
 
     public:
         HashTable(int maxN);
-        bool solveInsertCollision(Key key);
         bool insert(Key key);
-        bool solveDeleteCollision(Key key);
         bool remove(Key key);
         int search(long long phoneNumber);
         void print();
