@@ -6,6 +6,7 @@
 
 namespace table2
 {
+    
     struct Record
     {
         long long phoneNumber;
@@ -13,6 +14,39 @@ namespace table2
         QString region;
         QString district;
         unsigned age;
+    };
+
+    struct Key
+    {
+        int status = 0;
+        long long phoneNumber = 0;
+        int firstHash = 0;
+
+        Key() { }
+
+        Key(long long phoneNumber);
+    };
+
+    bool operator==(Key& a, Key& b);
+    bool operator!=(Key& a, Key& b);
+
+    class HashTable
+    {
+    private:
+        int N;
+        Key* Keys;
+        int FirstHash(long long phoneNumber, int N);
+        int SecondHash(int firstHash, int k1, int k2, int j);
+
+    public:
+        HashTable(int maxN);
+        void SolveInsertCollision(Key key);
+        void Insert(Key key);
+        void SolveDeleteCollision(Key key);
+        void Delete(Key key);
+        int Search(long long phoneNumber);
+        void Print();
+        ~HashTable();
     };
 
     bool operator<(QString& a, QString& b);
