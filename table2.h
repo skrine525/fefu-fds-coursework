@@ -40,10 +40,10 @@ namespace table2
 
     public:
         HashTable(int maxN);
-        void solveInsertCollision(Key key);
-        void insert(Key key);
-        void solveDeleteCollision(Key key);
-        void remove(Key key);
+        bool solveInsertCollision(Key key);
+        bool insert(Key key);
+        bool solveDeleteCollision(Key key);
+        bool remove(Key key);
         int search(long long phoneNumber);
         void print();
         ~HashTable();

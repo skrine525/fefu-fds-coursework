@@ -69,7 +69,7 @@ table2::HashTable::HashTable(int maxN)
     }
 }
 
-void table2::HashTable::solveInsertCollision(Key key)
+bool table2::HashTable::solveInsertCollision(Key key)
 {
     int insertIndex = 0;
     if (Keys[key.firstHash].status == 2)
@@ -96,28 +96,28 @@ void table2::HashTable::solveInsertCollision(Key key)
     {
         key.status = 1;
         Keys[insertIndex] = key;
+        return true;
     }
-    else if (j == N)
-        return;//std::cout << "Insert place wasn't found\n";
-    else return;
+    else return false;
 }
 
-void table2::HashTable::insert(Key key)
+bool table2::HashTable::insert(Key key)
 {
     int insertIndex = firstHash(key.phoneNumber, N);
     key.firstHash = insertIndex;
     if (Keys[insertIndex].status != 0)
     {
-        solveInsertCollision(key);
+        return solveInsertCollision(key);
     }
     else
     {
         key.status = 1;
         Keys[insertIndex] = key;
+        return true;
     }
 }
 
-void table2::HashTable::solveDeleteCollision(Key key)
+bool table2::HashTable::solveDeleteCollision(Key key)
 {
     int i;
     int j = 0;
@@ -127,18 +127,25 @@ void table2::HashTable::solveDeleteCollision(Key key)
         i = secondHash(key.firstHash, 1, 1, j);
 
         if (Keys[i] == key && Keys[i].status == 1)
+        {
             Keys[i].status = 2;
+            return true;
+        }
 
     } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
+    return false;
 }
 
-void table2::HashTable::remove(Key key)
+bool table2::HashTable::remove(Key key)
 {
     int i = firstHash(key.phoneNumber, N);
     if (Keys[i].status == 1)
+    {
         Keys[i].status = 2;
-    else if (Keys[i].status == 2)
-        solveDeleteCollision(key);
+        return true;
+    }
+    else if (Keys[i].status != 1)
+        return solveDeleteCollision(key);
 }
 
 int table2::HashTable::search(long long phoneNumber)

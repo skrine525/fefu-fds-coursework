@@ -1,5 +1,4 @@
 ﻿#include "table1.h"
-
 #include <QString>
 
 void table1::DoubleLinkedList::clear()
