@@ -14,12 +14,6 @@ namespace table1
         QString speciality;
     };
 
-    bool operator<(QString& a, QString& b);
-    bool operator>(QString& a, QString& b);
-    bool operator==(QString& a, QString& b);
-    bool operator!=(QString& a, QString& b);
-
-
     struct DoubleLinkedListNode
     {
         DoubleLinkedListNode* next;

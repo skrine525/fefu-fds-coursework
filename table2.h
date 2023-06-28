@@ -35,24 +35,19 @@ namespace table2
     private:
         int N;
         Key* Keys;
-        int FirstHash(long long phoneNumber, int N);
-        int SecondHash(int firstHash, int k1, int k2, int j);
+        int firstHash(long long phoneNumber, int N);
+        int secondHash(int firstHash, int k1, int k2, int j);
 
     public:
         HashTable(int maxN);
-        void SolveInsertCollision(Key key);
-        void Insert(Key key);
-        void SolveDeleteCollision(Key key);
-        void Delete(Key key);
-        int Search(long long phoneNumber);
-        void Print();
+        void solveInsertCollision(Key key);
+        void insert(Key key);
+        void solveDeleteCollision(Key key);
+        void remove(Key key);
+        int search(long long phoneNumber);
+        void print();
         ~HashTable();
     };
-
-    bool operator<(QString& a, QString& b);
-    bool operator>(QString& a, QString& b);
-    bool operator==(QString& a, QString& b);
-    bool operator!=(QString& a, QString& b);
 
     struct Address
     {

@@ -2,30 +2,6 @@
 
 #include <QString>
 
-bool table1::operator<(QString& a, QString& b)
-{
-    if (a.compare(b) < 0) return 1;
-    else return 0;
-}
-
-bool table1::operator>(QString& a, QString& b)
-{
-    if (a.compare(b) > 0) return 1;
-    else return 0;
-}
-
-bool table1::operator==(QString& a, QString& b)
-{
-    if (a.compare(b) == 0) return 1;
-    else return 0;
-}
-
-bool table1::operator!=(QString& a, QString& b)
-{
-    return !(a == b);
-}
-
-
 void table1::DoubleLinkedList::clear()
 {
     DoubleLinkedListNode* currentNode = head;
