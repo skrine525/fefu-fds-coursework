@@ -352,7 +352,7 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
         ui->tableAppointments->removeRow(rowIndex);
     }
     else
-        QMessageBox::warning(this, "Внимание", "Сначала выберите строку!");
+        QMessageBox::warning(this, "Внимание", "Для удаления записи необходимо выбрать строку.");
 }
 
 

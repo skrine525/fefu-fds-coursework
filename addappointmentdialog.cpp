@@ -1,10 +1,9 @@
 #include "addappointmentdialog.h"
 #include "ui_addappointmentdialog.h"
 #include "table3.h"
-#include "mainwindow.h"
 
 #include <QString>
-#include <QtDebug>
+#include <QDebug>
 #include <QMessageBox>
 
 AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
@@ -36,7 +35,6 @@ AddAppointmentDialog::~AddAppointmentDialog()
     delete ui;
 }
 
-
 void AddAppointmentDialog::on_pushButtonAdd_clicked()
 {
     // Проверка наличия данных в lineEdit полях
@@ -47,7 +45,7 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     }
     else if(ui->lineEditPatientPhone->text().length() == 0)
     {
-        QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
+        //QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
         return;
     }
 
@@ -76,4 +74,3 @@ void AddAppointmentDialog::on_pushButtonCancel_clicked()
 {
     this->close();
 }
-

@@ -1,5 +1,6 @@
 #include "addpatientdialog.h"
 #include "ui_addpatientdialog.h"
+#include "table2.h"
 
 AddPatientDialog::AddPatientDialog(QWidget *parent) :
     QDialog(parent),

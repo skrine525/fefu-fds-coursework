@@ -15,6 +15,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     searchappointmentdialog.cpp \
+    table2.cpp \
     table3.cpp
 
 HEADERS += \
@@ -23,6 +24,7 @@ HEADERS += \
     appointmentstreedebugwidget.h \
     mainwindow.h \
     searchappointmentdialog.h \
+    table2.h \
     table3.h
 
 FORMS += \
