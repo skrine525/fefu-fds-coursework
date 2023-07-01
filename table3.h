@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QVector>
-#include <QDebug>
+#include <QVariant>
 
 namespace table3
 {
@@ -115,7 +115,6 @@ namespace table3
 template <typename Value>
 table3::DoublyLinkedRingList<Value>::~DoublyLinkedRingList()
 {
-    qDebug() << "List destroy";
     this->clear();
 }
 
@@ -645,23 +644,23 @@ template <typename Key, typename Value>
 QString table3::RBTree<Key, Value>::getPrintableHtml(RBTreeNode<Key, Value> *node,
                                                      int h, int l) const
 {
-    if (node != nullptr) {
+    if (node != nullptr)
+    {
         QString outputStr = getPrintableHtml(node->right, h + l, l);
         QString spaceSymbol(" ");
         QString listPrintableString = node->valueList->getPrintableString();
         if(node->color == Color::RED)
             outputStr+= "<p style=\"color:red; white-space:pre\">" +
                     spaceSymbol.repeated(h) + QVariant(node->key).toString() +
-                    " [" + listPrintableString + "]" "</p>";
+                    " [" + listPrintableString + "]</p>";
         else
             outputStr+= "<p style=\"color:black; white-space:pre\">" +
                     spaceSymbol.repeated(h) + QVariant(node->key).toString() +
-                    " [" + listPrintableString + "]" "</p>";
+                    " [" + listPrintableString + "]</p>";
         outputStr += getPrintableHtml(node->left, h + l, l);
         return outputStr;
     }
     return "";
 }
-
 
 #endif // TABLE3_H

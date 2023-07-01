@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QVector>
+#include <QVariant>
+#include <QDebug>
 
 namespace table2
 {
@@ -59,6 +61,8 @@ namespace table2
             this->region = region;
             this->district = district;
         }
+
+        operator QString() const;
     };
     bool operator<(Address& a, Address& b);
     bool operator>(Address& a, Address& b);
@@ -79,6 +83,7 @@ namespace table2
         void deleteNode(int value);
         int countNodes();
         void clear();
+        QString getPrintableString();
         SingleLinkedListNode *head;
     };
 
@@ -100,7 +105,7 @@ namespace table2
         AVLTree() : root(nullptr) {}
         void insertNode(Key key, int value);
         void deleteNode(Key key, int value);
-        void print();
+        QString getPrintableHtml(int l) const;
         void clear();
 
     private:
@@ -112,6 +117,7 @@ namespace table2
         void deleteExchange(AVLTreeNode<Key>*& currentNode, AVLTreeNode<Key>*& nq, bool& h);
         void balanceR(AVLTreeNode<Key>*& currentNode, bool& h);
         void balanceL(AVLTreeNode<Key>*& currentNode, bool& h);
+        QString getPrintableHtml(AVLTreeNode<Key> *node, int h, int l) const;
     };
 
     struct Patients
@@ -423,15 +429,29 @@ namespace table2
     }
 
     template <typename Key>
-    void table2::AVLTree<Key>::print(AVLTreeNode<Key>*& node, unsigned h)
+    QString table2::AVLTree<Key>::getPrintableHtml(int l) const
     {
-
+        qDebug() << root;
+        QString outputStr = getPrintableHtml(root, 0, l);
+        return outputStr + "\n";
     }
 
     template <typename Key>
-    void table2::AVLTree<Key>::print()
+    QString table2::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
+                                                         int h, int l) const
     {
-        print(root, 0);
+        if (node != nullptr)
+        {
+            QString outputStr = getPrintableHtml(node->childR, h + l, l);
+            QString spaceSymbol(" ");
+            QString listPrintableString = node->valueList->getPrintableString();
+            outputStr+= "<p style=\"white-space:pre\">" +
+                    spaceSymbol.repeated(h) + QVariant(node->key).toString() +
+                    " [" + listPrintableString + "]</p>";
+            outputStr += getPrintableHtml(node->childL, h + l, l);
+            return outputStr;
+        }
+        return "";
     }
 }
 

@@ -2,6 +2,11 @@
 
 #include <QString>
 
+table2::Address::operator QString() const
+{
+    return QString("%1, %2").arg(region, district);
+}
+
 bool table2::operator==(Key& a, Key& b)
 {
     return a.phoneNumber == b.phoneNumber;
@@ -233,4 +238,17 @@ void table2::SingleLinkedList::deleteNode(int value)
             currentNode->next = temp;
         }
     }
+}
+
+QString table2::SingleLinkedList::getPrintableString()
+{
+    QString str;
+    auto *curr = head;
+    while (curr != nullptr) {
+        str += QString::number(curr->value + 1);
+        curr = curr->next;
+        if (curr != nullptr)
+            str += " ";
+    }
+    return str;
 }

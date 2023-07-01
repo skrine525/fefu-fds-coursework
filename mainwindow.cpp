@@ -508,6 +508,7 @@ void MainWindow::on_pushButtonDoctorsAdd_clicked()
 
 void MainWindow::on_menuDebugPatientsShowTree_triggered()
 {
+    patientsTreeDebugWidget->setPatients(&patients);
     patientsTreeDebugWidget->show();
 }
 
