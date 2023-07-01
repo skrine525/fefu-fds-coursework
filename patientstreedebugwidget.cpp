@@ -12,3 +12,26 @@ PatientsTreeDebugWidget::~PatientsTreeDebugWidget()
 {
     delete ui;
 }
+
+void PatientsTreeDebugWidget::setPatients(table2::Patients *patients)
+{
+    patientsPointer = patients;
+}
+
+void PatientsTreeDebugWidget::on_pushButtonShowFullnameTree_clicked()
+{
+
+}
+
+
+void PatientsTreeDebugWidget::on_pushButtonShowAddressTree_clicked()
+{
+
+}
+
+
+void PatientsTreeDebugWidget::on_pushButtonShowAgeTree_clicked()
+{
+
+}
+

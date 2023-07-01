@@ -109,10 +109,10 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     appointments.appointmentCostTree.insertNode(record.appointmentCost, appendedIndex);
 
     // Элементы строки
-    QTableWidgetItem* doctorPhoneNumberItem = new QTableWidgetItem(QString::number(record.doctorPhoneNumber));
-    QTableWidgetItem* patientPhoneNumberItem = new QTableWidgetItem(QString::number(record.patientPhoneNumber));
-    QTableWidgetItem* appointmentDatetimeItem = new QTableWidgetItem(QString(record.appointmentDatetime));
-    QTableWidgetItem* appointmentCostItem = new QTableWidgetItem(QString::number(record.appointmentCost));
+    QTableWidgetItem *doctorPhoneNumberItem = new QTableWidgetItem(QString::number(record.doctorPhoneNumber));
+    QTableWidgetItem *patientPhoneNumberItem = new QTableWidgetItem(QString::number(record.patientPhoneNumber));
+    QTableWidgetItem *appointmentDatetimeItem = new QTableWidgetItem(QString(record.appointmentDatetime));
+    QTableWidgetItem *appointmentCostItem = new QTableWidgetItem(QString::number(record.appointmentCost));
 
     // Устанавливаем флаг запрета редактирования для каждого элемента
     doctorPhoneNumberItem->setFlags(doctorPhoneNumberItem->flags() & ~Qt::ItemIsEditable);
@@ -150,11 +150,11 @@ void MainWindow::addRecordToPatients(table2::Record record)
     patients.fullNameTree.insertNode(record.fullName, appendedIndex);
 
     // Элементы строки
-    QTableWidgetItem* fullNameItem = new QTableWidgetItem(record.fullName);
-    QTableWidgetItem* regionItem = new QTableWidgetItem(record.region);
-    QTableWidgetItem* districtItem = new QTableWidgetItem(record.district);
-    QTableWidgetItem* ageItem = new QTableWidgetItem(QString::number(record.age));
-    QTableWidgetItem* phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
+    QTableWidgetItem *fullNameItem = new QTableWidgetItem(record.fullName);
+    QTableWidgetItem *regionItem = new QTableWidgetItem(record.region);
+    QTableWidgetItem *districtItem = new QTableWidgetItem(record.district);
+    QTableWidgetItem *ageItem = new QTableWidgetItem(QString::number(record.age));
+    QTableWidgetItem *phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
 
     // Устанавливаем флаг запрета редактирования для каждого элемента
     fullNameItem->setFlags(fullNameItem->flags() & ~Qt::ItemIsEditable);
@@ -192,10 +192,10 @@ void MainWindow::addRecordToDoctors(table1::Record record)
     doctors.fullNameTree.insertNode(record.fullName, appendedIndex);
 
     // Элементы строки
-    QTableWidgetItem* fullNameItem = new QTableWidgetItem(record.fullName);
-    QTableWidgetItem* specialityItem = new QTableWidgetItem(record.speciality);
-    QTableWidgetItem* experienceItem = new QTableWidgetItem(QString::number(record.experience));
-    QTableWidgetItem* phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
+    QTableWidgetItem *fullNameItem = new QTableWidgetItem(record.fullName);
+    QTableWidgetItem *specialityItem = new QTableWidgetItem(record.speciality);
+    QTableWidgetItem *experienceItem = new QTableWidgetItem(QString::number(record.experience));
+    QTableWidgetItem *phoneNumberItem = new QTableWidgetItem(QString::number(record.phoneNumber));
 
     // Устанавливаем флаг запрета редактирования для каждого элемента
     fullNameItem->setFlags(fullNameItem->flags() & ~Qt::ItemIsEditable);
@@ -228,7 +228,7 @@ void MainWindow::on_pushButtonAppointmentsAdd_clicked()
 
 void MainWindow::on_menuDebugAppointmentsShowTree_triggered()
 {
-    appointmentsTreeDebugWidget->setAppointments(appointments);
+    appointmentsTreeDebugWidget->setAppointments(&appointments);
     appointmentsTreeDebugWidget->show();
 }
 
@@ -386,33 +386,33 @@ void MainWindow::on_pushButtonAppointmentsSearch_clicked()
 
 void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldIndex)
 {
-    table3::DoublyLinkedRingList<int>* valueList = nullptr;
+    table3::DoublyLinkedRingList<int> *valueList = nullptr;
 
     if(fieldIndex == 0)
     {
         // Номер врача
-        auto* node = appointments.doctorPhoneNumberTree.findNode(record.doctorPhoneNumber);
+        auto *node = appointments.doctorPhoneNumberTree.findNode(record.doctorPhoneNumber);
         if(node != nullptr)
             valueList = node->valueList;
     }
     else if(fieldIndex == 1)
     {
         // Номер пациента
-        auto* node = appointments.patientPhoneNumberTree.findNode(record.patientPhoneNumber);
+        auto *node = appointments.patientPhoneNumberTree.findNode(record.patientPhoneNumber);
         if(node != nullptr)
             valueList = node->valueList;
     }
     else if(fieldIndex == 2)
     {
         // Дата и Время приёма
-        auto* node = appointments.appointmentDatetimeTree.findNode(record.appointmentDatetime);
+        auto *node = appointments.appointmentDatetimeTree.findNode(record.appointmentDatetime);
         if(node != nullptr)
             valueList = node->valueList;
     }
     else if(fieldIndex == 3)
     {
         // Стоимость
-        auto* node = appointments.appointmentCostTree.findNode(record.appointmentCost);
+        auto *node = appointments.appointmentCostTree.findNode(record.appointmentCost);
         if(node != nullptr)
             valueList = node->valueList;
     }
@@ -433,8 +433,8 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
         // Включаем кнопку Очистить поиск
         ui->pushButtonAppointmentsClearSearch->setEnabled(true);
 
-        auto* head = valueList->getHead();
-        auto* curr = head;
+        auto *head = valueList->getHead();
+        auto *curr = head;
 
         if (curr != nullptr)
         {

@@ -58,8 +58,8 @@ private:
     table2::Patients patients;
     table3::Appointments appointments;
 
-    AppointmentsTreeDebugWidget* appointmentsTreeDebugWidget;
-    PatientsTreeDebugWidget* patientsTreeDebugWidget;
+    AppointmentsTreeDebugWidget *appointmentsTreeDebugWidget;
+    PatientsTreeDebugWidget *patientsTreeDebugWidget;
 
     void resetViewAndData();
 };

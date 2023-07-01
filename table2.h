@@ -34,7 +34,7 @@ namespace table2
     {
     private:
         int N;
-        Key* Keys;
+        Key *Keys;
         int firstHash(long long phoneNumber, int N);
         int secondHash(int firstHash, int k1, int k2, int j);
         bool solveInsertCollision(Key key);
@@ -67,7 +67,7 @@ namespace table2
 
     struct SingleLinkedListNode
     {
-        SingleLinkedListNode* next;
+        SingleLinkedListNode *next;
         int value;
     };
 
@@ -79,18 +79,18 @@ namespace table2
         void deleteNode(int value);
         int countNodes();
         void clear();
-        SingleLinkedListNode* head;
+        SingleLinkedListNode *head;
     };
 
     template <typename Key>
     struct AVLTreeNode
     {
-        AVLTreeNode* childR;
-        AVLTreeNode* childL;
+        AVLTreeNode *childR;
+        AVLTreeNode *childL;
         Key key;
-        SingleLinkedList* valueList;
+        SingleLinkedList *valueList;
         int balance;
-        AVLTreeNode(Key k, SingleLinkedList* v) : key(k), valueList(v), childL(nullptr), childR(nullptr), balance(0) {}
+        AVLTreeNode(Key k, SingleLinkedList *v) : key(k), valueList(v), childL(nullptr), childR(nullptr), balance(0) {}
     };
 
     template <typename Key>
@@ -104,7 +104,7 @@ namespace table2
         void clear();
 
     private:
-        AVLTreeNode<Key>* root;
+        AVLTreeNode<Key> *root;
         void print(AVLTreeNode<Key>*& node, unsigned h);
         void insertNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode);
         void clear(AVLTreeNode<Key>*& node);
@@ -152,7 +152,7 @@ namespace table2
     {
         if (currentNode == nullptr)
         {
-            SingleLinkedList* valueList = new SingleLinkedList;
+            SingleLinkedList *valueList = new SingleLinkedList;
             valueList->insertNode(value);
             currentNode = new AVLTreeNode<Key>(key, valueList);
             h = true;
@@ -172,7 +172,7 @@ namespace table2
                     currentNode->balance = -1;
                 else
                 {
-                    AVLTreeNode<Key>* node1 = currentNode->childL;
+                    AVLTreeNode<Key> *node1 = currentNode->childL;
                     if (node1->balance == -1)
                     {
                         currentNode->childL = node1->childR;
@@ -182,7 +182,7 @@ namespace table2
                     }
                     else
                     {
-                        AVLTreeNode<Key>* node2 = node1->childR;
+                        AVLTreeNode<Key> *node2 = node1->childR;
                         node1->childR = node2->childL;
                         node2->childL = node1;
                         currentNode->childL = node2->childR;
@@ -214,7 +214,7 @@ namespace table2
                     currentNode->balance = 1;
                 else
                 {
-                    AVLTreeNode<Key>* node1 = currentNode->childR;
+                    AVLTreeNode<Key> *node1 = currentNode->childR;
                     if (node1->balance == 1)
                     {
                         currentNode->childR = node1->childL;
@@ -224,7 +224,7 @@ namespace table2
                     }
                     else
                     {
-                        AVLTreeNode<Key>* node2 = node1->childL;
+                        AVLTreeNode<Key> *node2 = node1->childL;
                         node1->childL = node2->childR;
                         node2->childR = node1;
                         currentNode->childR = node2->childL;
@@ -267,7 +267,7 @@ namespace table2
         }
         else
         {
-            AVLTreeNode<Key>* node1 = currentNode->childL;
+            AVLTreeNode<Key> *node1 = currentNode->childL;
             if (node1->balance <= 0)
             {
                 currentNode->childL = node1->childR;
@@ -287,7 +287,7 @@ namespace table2
             }
             else
             {
-                AVLTreeNode<Key>* node2 = node1->childR;
+                AVLTreeNode<Key> *node2 = node1->childR;
                 node1->childR = node2->childL;
                 node2->childL = node1;
                 currentNode->childL = node2->childR;
@@ -316,7 +316,7 @@ namespace table2
         }
         else
         {
-            AVLTreeNode<Key>* node1 = currentNode->childR;
+            AVLTreeNode<Key> *node1 = currentNode->childR;
             if (node1->balance >= 0)
             {
                 currentNode->childR = node1->childL;
@@ -336,7 +336,7 @@ namespace table2
             }
             else
             {
-                AVLTreeNode<Key>* node2 = node1->childL;
+                AVLTreeNode<Key> *node2 = node1->childL;
                 node1->childL = node2->childR;
                 node2->childR = node1;
                 currentNode->childR = node2->childL;
@@ -393,7 +393,7 @@ namespace table2
                 }
                 else
                 {
-                    AVLTreeNode<Key>* nq = currentNode;
+                    AVLTreeNode<Key> *nq = currentNode;
                     if (nq->childR == nullptr)
                     {
                         currentNode = nq->childL;
@@ -425,13 +425,7 @@ namespace table2
     template <typename Key>
     void table2::AVLTree<Key>::print(AVLTreeNode<Key>*& node, unsigned h)
     {
-       /* if (node != nullptr) {
-            print(node->childR, h + 10);
-            for (int i = 0; i < h; i++)
-                std::cout << " ";
-            std::cout << node->key << " (" << node->valueList->countNodes() << ")\n";
-            print(node->childL, h + 10);
-        }*/
+
     }
 
     template <typename Key>

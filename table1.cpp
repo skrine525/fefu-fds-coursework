@@ -3,11 +3,11 @@
 
 void table1::DoubleLinkedList::clear()
 {
-    DoubleLinkedListNode* currentNode = head;
+    DoubleLinkedListNode *currentNode = head;
 
     if (currentNode != nullptr) {
         do {
-            DoubleLinkedListNode* d = currentNode;
+            DoubleLinkedListNode *d = currentNode;
             currentNode = currentNode->next;
             delete d;
         } while (currentNode != nullptr);
@@ -28,13 +28,13 @@ void table1::DoubleLinkedList::insertNode(int value)
     }
     else
     {
-        DoubleLinkedListNode* currentNode = head;
+        DoubleLinkedListNode *currentNode = head;
 
         do {
             if (currentNode->value != value && value < currentNode->value)
             {
 
-                DoubleLinkedListNode* n = new DoubleLinkedListNode;
+                DoubleLinkedListNode *n = new DoubleLinkedListNode;
                 n->value = value;
                 n->prev = currentNode->prev;
                 n->next = currentNode;
@@ -46,7 +46,7 @@ void table1::DoubleLinkedList::insertNode(int value)
             }
             else if (currentNode->value != value && currentNode == tail)
             {
-                DoubleLinkedListNode* n = new DoubleLinkedListNode;
+                DoubleLinkedListNode *n = new DoubleLinkedListNode;
                 n->value = value;
                 n->prev = currentNode;
                 n->next = nullptr;
@@ -62,7 +62,7 @@ void table1::DoubleLinkedList::insertNode(int value)
 int table1::DoubleLinkedList::countNodes()
 {
     int count = 0;
-    DoubleLinkedListNode* currentNode = head;
+    DoubleLinkedListNode *currentNode = head;
     while (currentNode != nullptr)
     {
         count++;
@@ -73,7 +73,7 @@ int table1::DoubleLinkedList::countNodes()
 
 void table1::DoubleLinkedList::deleteNode(int value)
 {
-    DoubleLinkedListNode* currentNode = head;
+    DoubleLinkedListNode *currentNode = head;
 
     if (currentNode != nullptr) {
         do {
