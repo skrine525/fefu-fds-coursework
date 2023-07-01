@@ -17,10 +17,10 @@ namespace table3
 
         operator QString() const;
     };
-    bool operator<(const Datetime& a, const Datetime& b);
-    bool operator>(const Datetime& a, const Datetime& b);
-    bool operator==(const Datetime& a, const Datetime& b);
-    bool operator!=(const Datetime& a, const Datetime& b);
+    bool operator<(const Datetime &a, const Datetime &b);
+    bool operator>(const Datetime &a, const Datetime &b);
+    bool operator==(const Datetime &a, const Datetime &b);
+    bool operator!=(const Datetime &a, const Datetime &b);
 
     struct Record
     {
@@ -91,10 +91,10 @@ namespace table3
         RBTreeNode<Key> *minimumNode(RBTreeNode<Key> *node);
         void deleteNode(RBTreeNode<Key> *node,
                         RBTreeNode<Key> *parent,
-                        RBTreeNode<Key> *grandparent, RBTree<Key>& tree);
+                        RBTreeNode<Key> *grandparent, RBTree<Key> &tree);
         void deleteNodeFixup(RBTreeNode<Key> *node,
                              RBTreeNode<Key> *parent,
-                             RBTreeNode<Key> *grandparent, RBTree<Key>& tree);
+                             RBTreeNode<Key> *grandparent, RBTree<Key> &tree);
         QString getPrintableHtml(RBTreeNode<Key> *node, int h, int l) const;
         void clear(RBTreeNode<Key> *node);
     };
@@ -365,7 +365,7 @@ template <typename Key>
 void table3::RBTree<Key>::deleteNode(RBTreeNode<Key> *node,
                                             RBTreeNode<Key> *parent,
                                             RBTreeNode<Key> *grandparent,
-                                            RBTree<Key>& tree)
+                                            RBTree<Key> &tree)
 {
     // Case 1: Node is a leaf or has only one child
     if (node->left == nullptr || node->right == nullptr)
@@ -413,7 +413,7 @@ template <typename Key>
 void table3::RBTree<Key>::deleteNodeFixup(RBTreeNode<Key> *node,
                                                  RBTreeNode<Key> *parent,
                                                  RBTreeNode<Key> *grandparent,
-                                                 RBTree<Key>& tree)
+                                                 RBTree<Key> &tree)
 {
     while ((node == nullptr || node->color == Color::BLACK) && node != tree.root)
     {

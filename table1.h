@@ -26,8 +26,8 @@ namespace table1
         Key(long long phoneNumber);
     };
 
-    bool operator==(Key& a, Key& b);
-    bool operator!=(Key& a, Key& b);
+    bool operator==(Key &a, Key &b);
+    bool operator!=(Key &a, Key &b);
 
     class HashTable
     {
@@ -93,13 +93,13 @@ namespace table1
 
     private:
         AVLTreeNode<Key> *root;
-        void print(AVLTreeNode<Key>*& node, unsigned h);
-        void insertNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode);
-        void clear(AVLTreeNode<Key>*& node);
-        void deleteNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode);
-        void deleteMinR(AVLTreeNode<Key>*& currentNode, AVLTreeNode<Key>*& nq, bool& h);
-        void balanceR(AVLTreeNode<Key>*& currentNode, bool& h);
-        void balanceL(AVLTreeNode<Key>*& currentNode, bool& h);
+        void print(AVLTreeNode<Key> *&node, unsigned h);
+        void insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
+        void clear(AVLTreeNode<Key> *&node);
+        void deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
+        void deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h);
+        void balanceR(AVLTreeNode<Key> *&currentNode, bool &h);
+        void balanceL(AVLTreeNode<Key> *&currentNode, bool &h);
         QString getPrintableHtml(AVLTreeNode<Key> *node, int h, int l) const;
     };
 
@@ -113,7 +113,7 @@ namespace table1
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::clear(AVLTreeNode<Key>*& node)
+void table1::AVLTree<Key>::clear(AVLTreeNode<Key> *&node)
 {
     if (node != nullptr)
     {
@@ -138,7 +138,7 @@ void table1::AVLTree<Key>::clear()
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::insertNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
+void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
 {
     if (currentNode == nullptr)
     {
@@ -246,7 +246,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value)
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key>*& currentNode, bool& h)
+void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
 {
     if (currentNode->balance == 1)
         currentNode->balance = 0;
@@ -296,7 +296,7 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key>*& currentNode, bool& h)
 
 
 template <typename Key>
-void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key>*& currentNode, bool& h)
+void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
 {
     if (currentNode->balance == -1)
         currentNode->balance = 0;
@@ -345,7 +345,7 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key>*& currentNode, bool& h)
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key>*& currentNode, AVLTreeNode<Key>*& nq, bool& h)
+void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h)
 {
     if (nq->childL == nullptr)
     {
@@ -363,7 +363,7 @@ void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key>*& currentNode, AVLTreeNod
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::deleteNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
+void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
 {
     if (currentNode != nullptr)
     {

@@ -7,12 +7,12 @@ table2::Address::operator QString() const
     return QString("%1, %2").arg(region, district);
 }
 
-bool table2::operator==(Key& a, Key& b)
+bool table2::operator==(Key &a, Key &b)
 {
     return a.phoneNumber == b.phoneNumber;
 }
 
-bool table2::operator!=(Key& a, Key& b)
+bool table2::operator!=(Key &a, Key &b)
 {
     return !(a == b);
 }

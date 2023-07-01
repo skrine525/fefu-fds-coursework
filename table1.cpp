@@ -1,12 +1,12 @@
 ﻿#include "table1.h"
 #include <QString>
 
-bool table1::operator==(Key& a, Key& b)
+bool table1::operator==(Key &a, Key &b)
 {
     return a.phoneNumber == b.phoneNumber;
 }
 
-bool table1::operator!=(Key& a, Key& b)
+bool table1::operator!=(Key &a, Key &b)
 {
     return !(a == b);
 }
