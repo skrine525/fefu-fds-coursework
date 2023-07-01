@@ -13,6 +13,7 @@ SOURCES += \
     adddoctordialog.cpp \
     addpatientdialog.cpp \
     appointmentstreedebugwidget.cpp \
+    doctorsdebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
     patientstreedebugwidget.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     adddoctordialog.h \
     addpatientdialog.h \
     appointmentstreedebugwidget.h \
+    doctorsdebugwidget.h \
     mainwindow.h \
     patientstreedebugwidget.h \
     searchappointmentdialog.h \
@@ -38,6 +40,7 @@ FORMS += \
     adddoctordialog.ui \
     addpatientdialog.ui \
     appointmentstreedebugwidget.ui \
+    doctorsdebugwidget.ui \
     mainwindow.ui \
     patientstreedebugwidget.ui \
     searchappointmentdialog.ui

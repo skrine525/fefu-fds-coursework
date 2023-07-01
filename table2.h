@@ -4,7 +4,6 @@
 #include <QString>
 #include <QVector>
 #include <QVariant>
-#include <QDebug>
 
 namespace table2
 {
@@ -80,6 +79,7 @@ namespace table2
         int countNodes();
         void clear();
         QString getPrintableString();
+
         SingleLinkedListNode *head;
     };
 
@@ -124,352 +124,352 @@ namespace table2
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> ageTree;
     };
+}
 
-    template <typename Key>
-    void table2::AVLTree<Key>::clear(AVLTreeNode<Key>*& node)
+template <typename Key>
+void table2::AVLTree<Key>::clear(AVLTreeNode<Key>*& node)
+{
+    if (node != nullptr)
     {
-        if (node != nullptr)
-        {
-            clear(node->childL);
-            clear(node->childR);
-            node->valueList->clear();
-            delete node;
-        }
+        clear(node->childL);
+        clear(node->childR);
+        node->valueList->clear();
+        delete node;
     }
+}
 
-    template <typename Key>
-    void table2::AVLTree<Key>::clear()
+template <typename Key>
+void table2::AVLTree<Key>::clear()
+{
+    if (root != nullptr)
     {
-        if (root != nullptr)
-        {
-            clear(root->childL);
-            clear(root->childR);
-            root->valueList->clear();
-            delete root;
-            root = nullptr;
-        }
+        clear(root->childL);
+        clear(root->childR);
+        root->valueList->clear();
+        delete root;
+        root = nullptr;
     }
+}
 
-    template <typename Key>
-    void table2::AVLTree<Key>::insertNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
+template <typename Key>
+void table2::AVLTree<Key>::insertNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
+{
+    if (currentNode == nullptr)
     {
-        if (currentNode == nullptr)
+        SingleLinkedList *valueList = new SingleLinkedList;
+        valueList->insertNode(value);
+        currentNode = new AVLTreeNode<Key>(key, valueList);
+        h = true;
+        currentNode->balance = 0;
+    }
+    else if (currentNode->key > key)
+    {
+        insertNode(key, value, h, currentNode->childL);
+        if (h)
         {
-            SingleLinkedList *valueList = new SingleLinkedList;
-            valueList->insertNode(value);
-            currentNode = new AVLTreeNode<Key>(key, valueList);
-            h = true;
-            currentNode->balance = 0;
-        }
-        else if (currentNode->key > key)
-        {
-            insertNode(key, value, h, currentNode->childL);
-            if (h)
+            if (currentNode->balance == 1)
             {
-                if (currentNode->balance == 1)
+                currentNode->balance = 0;
+                h = false;
+            }
+            else if (currentNode->balance == 0)
+                currentNode->balance = -1;
+            else
+            {
+                AVLTreeNode<Key> *node1 = currentNode->childL;
+                if (node1->balance == -1)
                 {
+                    currentNode->childL = node1->childR;
+                    node1->childR = currentNode;
                     currentNode->balance = 0;
-                    h = false;
+                    currentNode = node1;
                 }
-                else if (currentNode->balance == 0)
-                    currentNode->balance = -1;
                 else
                 {
-                    AVLTreeNode<Key> *node1 = currentNode->childL;
-                    if (node1->balance == -1)
-                    {
-                        currentNode->childL = node1->childR;
-                        node1->childR = currentNode;
-                        currentNode->balance = 0;
-                        currentNode = node1;
-                    }
-                    else
-                    {
-                        AVLTreeNode<Key> *node2 = node1->childR;
-                        node1->childR = node2->childL;
-                        node2->childL = node1;
-                        currentNode->childL = node2->childR;
-                        node2->childR = currentNode;
-                        if (node2->balance == -1)
-                            currentNode->balance = 1;
-                        else currentNode->balance = 0;
-                        if (node2->balance == 1)
-                            node1->balance = -1;
-                        else node1->balance = 0;
-                        currentNode = node2;
-                    }
-                    currentNode->balance = 0;
-                    h = false;
+                    AVLTreeNode<Key> *node2 = node1->childR;
+                    node1->childR = node2->childL;
+                    node2->childL = node1;
+                    currentNode->childL = node2->childR;
+                    node2->childR = currentNode;
+                    if (node2->balance == -1)
+                        currentNode->balance = 1;
+                    else currentNode->balance = 0;
+                    if (node2->balance == 1)
+                        node1->balance = -1;
+                    else node1->balance = 0;
+                    currentNode = node2;
                 }
+                currentNode->balance = 0;
+                h = false;
             }
+        }
+    }
+    else if (currentNode->key < key)
+    {
+        insertNode(key, value, h, currentNode->childR);
+        if (h)
+        {
+            if (currentNode->balance == -1)
+            {
+                currentNode->balance = 0;
+                h = false;
+            }
+            else if (currentNode->balance == 0)
+                currentNode->balance = 1;
+            else
+            {
+                AVLTreeNode<Key> *node1 = currentNode->childR;
+                if (node1->balance == 1)
+                {
+                    currentNode->childR = node1->childL;
+                    node1->childL = currentNode;
+                    currentNode->balance = 0;
+                    currentNode = node1;
+                }
+                else
+                {
+                    AVLTreeNode<Key> *node2 = node1->childL;
+                    node1->childL = node2->childR;
+                    node2->childR = node1;
+                    currentNode->childR = node2->childL;
+                    node2->childL = currentNode;
+                    if (node2->balance == 1)
+                        currentNode->balance = -1;
+                    else currentNode->balance = 0;
+                    if (node2->balance == -1)
+                        node1->balance = 1;
+                    else node1->balance = 0;
+                    currentNode = node2;
+                }
+                currentNode->balance = 0;
+                h = false;
+            }
+        }
+    }
+    else
+    {
+        currentNode->valueList->insertNode(value);
+    }
+}
+
+template <typename Key>
+void table2::AVLTree<Key>::insertNode(Key key, int value)
+{
+    bool height = false;
+    insertNode(key, value, height, root);
+}
+
+template <typename Key>
+void table2::AVLTree<Key>::balanceR(AVLTreeNode<Key>*& currentNode, bool& h)
+{
+    if (currentNode->balance == 1)
+        currentNode->balance = 0;
+    else if (currentNode->balance == 0)
+    {
+        currentNode->balance = -1;
+        h = false;
+    }
+    else
+    {
+        AVLTreeNode<Key> *node1 = currentNode->childL;
+        if (node1->balance <= 0)
+        {
+            currentNode->childL = node1->childR;
+            node1->childR = currentNode;
+            if (node1->balance == 0)
+            {
+                currentNode->balance = -1;
+                node1->balance = 1;
+                h = false;
+            }
+            else
+            {
+                currentNode->balance = 0;
+                node1->balance = 0;
+            }
+            currentNode = node1;
+        }
+        else
+        {
+            AVLTreeNode<Key> *node2 = node1->childR;
+            node1->childR = node2->childL;
+            node2->childL = node1;
+            currentNode->childL = node2->childR;
+            node2->childR = currentNode;
+            if (node2->balance == -1)
+                currentNode->balance = 1;
+            else currentNode->balance = 0;
+            if (node2->balance == 1)
+                node1->balance = -1;
+            else node1->balance = 0;
+            node2->balance = 0;
+            currentNode = node2;
+        }
+    }
+}
+
+template <typename Key>
+void table2::AVLTree<Key>::balanceL(AVLTreeNode<Key>*& currentNode, bool& h)
+{
+    if (currentNode->balance == -1)
+        currentNode->balance = 0;
+    else if (currentNode->balance == 0)
+    {
+        currentNode->balance = 1;
+        h = false;
+    }
+    else
+    {
+        AVLTreeNode<Key> *node1 = currentNode->childR;
+        if (node1->balance >= 0)
+        {
+            currentNode->childR = node1->childL;
+            node1->childL = currentNode;
+            if (node1->balance == 0)
+            {
+                currentNode->balance = 1;
+                node1->balance = -1;
+                h = false;
+            }
+            else
+            {
+                currentNode->balance = 0;
+                node1->balance = 0;
+            }
+            currentNode = node1;
+        }
+        else
+        {
+            AVLTreeNode<Key> *node2 = node1->childL;
+            node1->childL = node2->childR;
+            node2->childR = node1;
+            currentNode->childR = node2->childL;
+            node2->childL = currentNode;
+            if (node2->balance == 1)
+                currentNode->balance = -1;
+            else currentNode->balance = 0;
+            if (node2->balance == -1)
+                node1->balance = 1;
+            else node1->balance = 0;
+            currentNode = node2;
+            node2->balance = 0;
+        }
+    }
+}
+
+template <typename Key>
+void table2::AVLTree<Key>::deleteExchange(AVLTreeNode<Key>*& currentNode, AVLTreeNode<Key>*& nq, bool& h)
+{
+    if (currentNode->childR != nullptr)
+    {
+        deleteExchange(currentNode->childR, nq, h);
+        if (h) balanceR(currentNode, h);
+    }
+    else
+    {
+        nq->key = currentNode->key;
+        nq = currentNode;
+        currentNode = currentNode->childL;
+        h = true;
+    }
+}
+
+template <typename Key>
+void table2::AVLTree<Key>::deleteNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
+{
+    if (currentNode != nullptr)
+    {
+        if (currentNode->key > key)
+        {
+            deleteNode(key, value, h, currentNode->childL);
+            if (h) balanceL(currentNode, h);
         }
         else if (currentNode->key < key)
         {
-            insertNode(key, value, h, currentNode->childR);
-            if (h)
-            {
-                if (currentNode->balance == -1)
-                {
-                    currentNode->balance = 0;
-                    h = false;
-                }
-                else if (currentNode->balance == 0)
-                    currentNode->balance = 1;
-                else
-                {
-                    AVLTreeNode<Key> *node1 = currentNode->childR;
-                    if (node1->balance == 1)
-                    {
-                        currentNode->childR = node1->childL;
-                        node1->childL = currentNode;
-                        currentNode->balance = 0;
-                        currentNode = node1;
-                    }
-                    else
-                    {
-                        AVLTreeNode<Key> *node2 = node1->childL;
-                        node1->childL = node2->childR;
-                        node2->childR = node1;
-                        currentNode->childR = node2->childL;
-                        node2->childL = currentNode;
-                        if (node2->balance == 1)
-                            currentNode->balance = -1;
-                        else currentNode->balance = 0;
-                        if (node2->balance == -1)
-                            node1->balance = 1;
-                        else node1->balance = 0;
-                        currentNode = node2;
-                    }
-                    currentNode->balance = 0;
-                    h = false;
-                }
-            }
-        }
-        else
-        {
-            currentNode->valueList->insertNode(value);
-        }
-    }
-
-    template <typename Key>
-    void table2::AVLTree<Key>::insertNode(Key key, int value)
-    {
-        bool height = false;
-        insertNode(key, value, height, root);
-    }
-
-    template <typename Key>
-    void table2::AVLTree<Key>::balanceR(AVLTreeNode<Key>*& currentNode, bool& h)
-    {
-        if (currentNode->balance == 1)
-            currentNode->balance = 0;
-        else if (currentNode->balance == 0)
-        {
-            currentNode->balance = -1;
-            h = false;
-        }
-        else
-        {
-            AVLTreeNode<Key> *node1 = currentNode->childL;
-            if (node1->balance <= 0)
-            {
-                currentNode->childL = node1->childR;
-                node1->childR = currentNode;
-                if (node1->balance == 0)
-                {
-                    currentNode->balance = -1;
-                    node1->balance = 1;
-                    h = false;
-                }
-                else
-                {
-                    currentNode->balance = 0;
-                    node1->balance = 0;
-                }
-                currentNode = node1;
-            }
-            else
-            {
-                AVLTreeNode<Key> *node2 = node1->childR;
-                node1->childR = node2->childL;
-                node2->childL = node1;
-                currentNode->childL = node2->childR;
-                node2->childR = currentNode;
-                if (node2->balance == -1)
-                    currentNode->balance = 1;
-                else currentNode->balance = 0;
-                if (node2->balance == 1)
-                    node1->balance = -1;
-                else node1->balance = 0;
-                node2->balance = 0;
-                currentNode = node2;
-            }
-        }
-    }
-
-    template <typename Key>
-    void table2::AVLTree<Key>::balanceL(AVLTreeNode<Key>*& currentNode, bool& h)
-    {
-        if (currentNode->balance == -1)
-            currentNode->balance = 0;
-        else if (currentNode->balance == 0)
-        {
-            currentNode->balance = 1;
-            h = false;
-        }
-        else
-        {
-            AVLTreeNode<Key> *node1 = currentNode->childR;
-            if (node1->balance >= 0)
-            {
-                currentNode->childR = node1->childL;
-                node1->childL = currentNode;
-                if (node1->balance == 0)
-                {
-                    currentNode->balance = 1;
-                    node1->balance = -1;
-                    h = false;
-                }
-                else
-                {
-                    currentNode->balance = 0;
-                    node1->balance = 0;
-                }
-                currentNode = node1;
-            }
-            else
-            {
-                AVLTreeNode<Key> *node2 = node1->childL;
-                node1->childL = node2->childR;
-                node2->childR = node1;
-                currentNode->childR = node2->childL;
-                node2->childL = currentNode;
-                if (node2->balance == 1)
-                    currentNode->balance = -1;
-                else currentNode->balance = 0;
-                if (node2->balance == -1)
-                    node1->balance = 1;
-                else node1->balance = 0;
-                currentNode = node2;
-                node2->balance = 0;
-            }
-        }
-    }
-
-    template <typename Key>
-    void table2::AVLTree<Key>::deleteExchange(AVLTreeNode<Key>*& currentNode, AVLTreeNode<Key>*& nq, bool& h)
-    {
-        if (currentNode->childR != nullptr)
-        {
-            deleteExchange(currentNode->childR, nq, h);
+            deleteNode(key, value, h, currentNode->childR);
             if (h) balanceR(currentNode, h);
         }
         else
         {
-            nq->key = currentNode->key;
-            nq = currentNode;
-            currentNode = currentNode->childL;
-            h = true;
-        }
-    }
-
-    template <typename Key>
-    void table2::AVLTree<Key>::deleteNode(Key key, int value, bool& h, AVLTreeNode<Key>*& currentNode)
-    {
-        if (currentNode != nullptr)
-        {
-            if (currentNode->key > key)
+            if (currentNode->valueList->head->next != nullptr)
             {
-                deleteNode(key, value, h, currentNode->childL);
-                if (h) balanceL(currentNode, h);
-            }
-            else if (currentNode->key < key)
-            {
-                deleteNode(key, value, h, currentNode->childR);
-                if (h) balanceR(currentNode, h);
+                currentNode->valueList->deleteNode(value);
             }
             else
             {
-                if (currentNode->valueList->head->next != nullptr)
+                AVLTreeNode<Key> *nq = currentNode;
+                if (nq->childR == nullptr)
                 {
-                    currentNode->valueList->deleteNode(value);
+                    currentNode = nq->childL;
+                    h = true;
+                }
+                else if (nq->childL == nullptr)
+                {
+                    currentNode = nq->childR;
+                    h = true;
                 }
                 else
                 {
-                    AVLTreeNode<Key> *nq = currentNode;
-                    if (nq->childR == nullptr)
-                    {
-                        currentNode = nq->childL;
-                        h = true;
-                    }
-                    else if (nq->childL == nullptr)
-                    {
-                        currentNode = nq->childR;
-                        h = true;
-                    }
-                    else
-                    {
-                        deleteExchange(nq->childL, nq, h);
-                        if (h) balanceL(currentNode, h);
-                    }
-                    delete nq;
+                    deleteExchange(nq->childL, nq, h);
+                    if (h) balanceL(currentNode, h);
                 }
+                delete nq;
             }
         }
     }
+}
 
-    template <typename Key>
-    void table2::AVLTree<Key>::deleteNode(Key key, int value)
-    {
-        bool height = false;
-        deleteNode(key, value, height, root);
-    }
+template <typename Key>
+void table2::AVLTree<Key>::deleteNode(Key key, int value)
+{
+    bool height = false;
+    deleteNode(key, value, height, root);
+}
 
-    template <typename Key>
-    table2::AVLTreeNode<Key> *table2::AVLTree<Key>::findNode(Key key)
+
+template <typename Key>
+table2::AVLTreeNode<Key> *table2::AVLTree<Key>::findNode(Key key)
+{
+    table2::AVLTreeNode<Key> *curr = root;
+    table2::AVLTreeNode<Key> *desired = nullptr;
+    if (curr != nullptr)
     {
-        table2::AVLTreeNode<Key> *curr = root;
-        table2::AVLTreeNode<Key> *desired = nullptr;
-        if (curr != nullptr)
+        do
         {
-            do
-            {
-                if (key < curr->key)
-                    curr = curr->left;
-                else if (key > curr->key)
-                    curr = curr->right;
-                else
-                    desired = curr;
-            } while (curr != nullptr && desired == nullptr);
-        }
-
-        return desired;
+            if (key < curr->key)
+                curr = curr->left;
+            else if (key > curr->key)
+                curr = curr->right;
+            else
+                desired = curr;
+        } while (curr != nullptr && desired == nullptr);
     }
 
-    template <typename Key>
-    QString table2::AVLTree<Key>::getPrintableHtml(int l) const
+    return desired;
+}
+
+template <typename Key>
+QString table2::AVLTree<Key>::getPrintableHtml(int l) const
+{
+    QString outputStr = getPrintableHtml(root, 0, l);
+    return outputStr + "\n";
+}
+
+template <typename Key>
+QString table2::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
+                                                     int h, int l) const
+{
+    if (node != nullptr)
     {
-        qDebug() << root;
-        QString outputStr = getPrintableHtml(root, 0, l);
-        return outputStr + "\n";
+        QString outputStr = getPrintableHtml(node->childR, h + l, l);
+        QString spaceSymbol(" ");
+        QString listPrintableString = node->valueList->getPrintableString();
+        outputStr+= "<p style=\"white-space:pre\">" +
+                spaceSymbol.repeated(h) + QVariant(node->key).toString() +
+                " [" + listPrintableString + "]</p>";
+        outputStr += getPrintableHtml(node->childL, h + l, l);
+        return outputStr;
     }
-
-    template <typename Key>
-    QString table2::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
-                                                         int h, int l) const
-    {
-        if (node != nullptr)
-        {
-            QString outputStr = getPrintableHtml(node->childR, h + l, l);
-            QString spaceSymbol(" ");
-            QString listPrintableString = node->valueList->getPrintableString();
-            outputStr+= "<p style=\"white-space:pre\">" +
-                    spaceSymbol.repeated(h) + QVariant(node->key).toString() +
-                    " [" + listPrintableString + "]</p>";
-            outputStr += getPrintableHtml(node->childL, h + l, l);
-            return outputStr;
-        }
-        return "";
-    }
+    return "";
 }
 #endif

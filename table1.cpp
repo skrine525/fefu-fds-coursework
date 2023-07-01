@@ -185,7 +185,8 @@ void table1::DoubleLinkedList::clear()
             DoubleLinkedListNode *d = currentNode;
             currentNode = currentNode->next;
             delete d;
-        } while (currentNode != nullptr);
+        }
+        while (currentNode != nullptr);
         head = nullptr;
         tail = nullptr;
     }
@@ -205,7 +206,8 @@ void table1::DoubleLinkedList::insertNode(int value)
     {
         DoubleLinkedListNode *currentNode = head;
 
-        do {
+        do
+        {
             if (currentNode->value != value && value < currentNode->value)
             {
 
@@ -230,7 +232,8 @@ void table1::DoubleLinkedList::insertNode(int value)
             }
             else
                 currentNode = currentNode->next;
-        } while (currentNode != nullptr && ((currentNode != head && value > currentNode->prev->value) || (currentNode == head && value > currentNode->value)));
+        }
+        while (currentNode != nullptr && ((currentNode != head && value > currentNode->prev->value) || (currentNode == head && value > currentNode->value)));
     }
 }
 
@@ -284,6 +287,25 @@ void table1::DoubleLinkedList::deleteNode(int value)
             }
             else
                 currentNode = currentNode->next;
-        } while (currentNode != nullptr && head != nullptr);
+        }
+        while (currentNode != nullptr && head != nullptr);
     }
+}
+
+QString table1::DoubleLinkedList::getPrintableString()
+{
+    QString str;
+    auto curr = head;
+    if (curr != nullptr)
+    {
+        do
+        {
+            str += QString::number(curr->value + 1);
+            curr = curr->next;
+            if (curr != nullptr)
+                str += " ";
+        }
+        while (curr != nullptr);
+    }
+    return str;
 }

@@ -6,6 +6,7 @@
 #include "table2.h"
 #include "appointmentstreedebugwidget.h"
 #include "patientstreedebugwidget.h"
+#include "doctorsdebugwidget.h"
 
 #include <QMainWindow>
 
@@ -52,14 +53,17 @@ private slots:
 
     void on_menuDebugPatientsShowTree_triggered();
 
+    void on_menuDebugDoctors_triggered();
+
 private:
     Ui::MainWindow *ui;
-    table1::Doctor doctors;
+    table1::Doctors doctors;
     table2::Patients patients;
     table3::Appointments appointments;
 
-    AppointmentsTreeDebugWidget *appointmentsTreeDebugWidget;
-    PatientsTreeDebugWidget *patientsTreeDebugWidget;
+    AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
+    PatientsTreeDebugWidget patientsTreeDebugWidget;
+    DoctorsDebugWidget doctorsDebugWidget;
 
     void resetViewAndData();
 };

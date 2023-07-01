@@ -165,8 +165,9 @@ bool table2::HashTable::solveDeleteCollision(Key key)
 
         if (Keys[i] == key && Keys[i].status == 1)
             Keys[i].status = 2;
+    }
+    while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
 
-    } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
     if (Keys[i].status == 2)
         return true;
     else return false;
@@ -223,7 +224,8 @@ table2::HashTable::~HashTable()
 void table2::SingleLinkedList::clear()
 {
     SingleLinkedListNode *currentNode = head;
-    while (head != nullptr) {
+    while (head != nullptr)
+    {
         head = currentNode->next;
         delete currentNode;
         currentNode = head;
@@ -233,12 +235,14 @@ void table2::SingleLinkedList::clear()
 void table2::SingleLinkedList::insertNode(int value)
 {
     SingleLinkedListNode *currentNode = head;
-    if (head == nullptr) {
+    if (head == nullptr)
+    {
         head = new SingleLinkedListNode;
         head->value = value;
         head->next = nullptr;
     }
-    else {
+    else
+    {
         while (currentNode->next != nullptr)
             currentNode = currentNode->next;
         currentNode->next = new SingleLinkedListNode;
@@ -280,7 +284,8 @@ QString table2::SingleLinkedList::getPrintableString()
 {
     QString str;
     auto *curr = head;
-    while (curr != nullptr) {
+    while (curr != nullptr)
+    {
         str += QString::number(curr->value + 1);
         curr = curr->next;
         if (curr != nullptr)

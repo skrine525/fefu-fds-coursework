@@ -176,13 +176,6 @@
     <property name="title">
      <string>Отладка</string>
     </property>
-    <widget class="QMenu" name="menuDebugDoctors">
-     <property name="title">
-      <string>Доктора</string>
-     </property>
-     <addaction name="menuDebugDoctorsShowTree"/>
-     <addaction name="menuDebugDoctorsShowHash"/>
-    </widget>
     <widget class="QMenu" name="menuDebugPatients">
      <property name="title">
       <string>Пациенты</string>
@@ -253,6 +246,11 @@
   <action name="menuFileCreate">
    <property name="text">
     <string>Создать</string>
+   </property>
+  </action>
+  <action name="menuDebugDoctors">
+   <property name="text">
+    <string>Доктора</string>
    </property>
   </action>
  </widget>

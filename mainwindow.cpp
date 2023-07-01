@@ -55,16 +55,15 @@ MainWindow::MainWindow(QWidget *parent)
     // Делаем перезагрузку интерфейса и данных
     this->resetViewAndData();
 
-    // Выделяем память под другие окна
-    this->appointmentsTreeDebugWidget = new AppointmentsTreeDebugWidget();
-    this->patientsTreeDebugWidget = new PatientsTreeDebugWidget();
+    // Передаем ссылки на таблицы в соответствующие меню отладки
+    doctorsDebugWidget.setDoctors(&doctors);
+    patientsTreeDebugWidget.setPatients(&patients);
+    appointmentsTreeDebugWidget.setAppointments(&appointments);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete appointmentsTreeDebugWidget;
-    delete patientsTreeDebugWidget;
 }
 
 void MainWindow::resetViewAndData()
@@ -228,8 +227,7 @@ void MainWindow::on_pushButtonAppointmentsAdd_clicked()
 
 void MainWindow::on_menuDebugAppointmentsShowTree_triggered()
 {
-    appointmentsTreeDebugWidget->setAppointments(&appointments);
-    appointmentsTreeDebugWidget->show();
+    appointmentsTreeDebugWidget.show();
 }
 
 void MainWindow::on_menuFileOpen_triggered()
@@ -508,7 +506,12 @@ void MainWindow::on_pushButtonDoctorsAdd_clicked()
 
 void MainWindow::on_menuDebugPatientsShowTree_triggered()
 {
-    patientsTreeDebugWidget->setPatients(&patients);
-    patientsTreeDebugWidget->show();
+    patientsTreeDebugWidget.show();
+}
+
+
+void MainWindow::on_menuDebugDoctors_triggered()
+{
+    doctorsDebugWidget.show();
 }
 
