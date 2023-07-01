@@ -4,6 +4,10 @@
 #include <QString>
 #include <QVector>
 #include <QVariant>
+#include <QTableWidget>
+
+// Константа размерности статической хеш-таблицы
+#define HASHTABLE_SIZE 100
 
 namespace table1
 {
@@ -15,36 +19,38 @@ namespace table1
         QString speciality;
     };
 
-    struct Key
+    struct HashTableEntry
     {
-        int status = 0;
-        long long phoneNumber = 0;
+        long long key = 0;
+        int value = 0;
         int firstHash = 0;
+        int secondHash = 0;
+        int status = 0;
 
-        Key() { }
+        HashTableEntry() { }
 
-        Key(long long phoneNumber);
+        HashTableEntry(long long key, int value);
     };
 
-    bool operator==(Key &a, Key &b);
-    bool operator!=(Key &a, Key &b);
+    bool operator==(HashTableEntry &a, HashTableEntry &b);
+    bool operator!=(HashTableEntry &a, HashTableEntry &b);
 
     class HashTable
     {
     private:
-        int N;
-        Key* Keys;
-        int firstHash(long long phoneNumber, int N);
+        int size;
+        HashTableEntry* table;
+        int firstHash(long long key, int size);
         int secondHash(int firstHash, int k, int j);
-        bool solveInsertCollision(Key key);
-        bool solveDeleteCollision(Key key);
+        bool solveInsertCollision(HashTableEntry key);
+        bool solveDeleteCollision(HashTableEntry key);
 
     public:
         HashTable(int maxN);
-        bool insert(Key key);
-        bool remove(Key key);
-        int search(long long phoneNumber);
-        void print();
+        bool insert(HashTableEntry key);
+        bool remove(HashTableEntry key);
+        int search(long long key);
+        void printToQTableWidget(QTableWidget *table);
         ~HashTable();
     };
 
@@ -69,38 +75,38 @@ namespace table1
         DoubleLinkedListNode *tail;
     };
 
-    template <typename Key>
+    template <typename HashTableEntry>
     struct AVLTreeNode
     {
         AVLTreeNode *childR;
         AVLTreeNode *childL;
-        Key key;
+        HashTableEntry key;
         DoubleLinkedList *valueList;
         int balance;
-        AVLTreeNode(Key k, DoubleLinkedList *v) : key(k), valueList(v), childL(nullptr), childR(nullptr), balance(0) {}
+        AVLTreeNode(HashTableEntry k, DoubleLinkedList *v) : key(k), valueList(v), childL(nullptr), childR(nullptr), balance(0) {}
     };
 
-    template <typename Key>
+    template <typename HashTableEntry>
     class AVLTree
     {
     public:
         AVLTree() : root(nullptr) {}
-        void insertNode(Key key, int value);
-        void deleteNode(Key key, int value);
-        AVLTreeNode<Key> *findNode(Key key);
+        void insertNode(HashTableEntry key, int value);
+        void deleteNode(HashTableEntry key, int value);
+        AVLTreeNode<HashTableEntry> *findNode(HashTableEntry key);
         QString getPrintableHtml(int l) const;
         void clear();
 
     private:
-        AVLTreeNode<Key> *root;
-        void print(AVLTreeNode<Key> *&node, unsigned h);
-        void insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
-        void clear(AVLTreeNode<Key> *&node);
-        void deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
-        void deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h);
-        void balanceR(AVLTreeNode<Key> *&currentNode, bool &h);
-        void balanceL(AVLTreeNode<Key> *&currentNode, bool &h);
-        QString getPrintableHtml(AVLTreeNode<Key> *node, int h, int l) const;
+        AVLTreeNode<HashTableEntry> *root;
+        void print(AVLTreeNode<HashTableEntry> *&node, unsigned h);
+        void insertNode(HashTableEntry key, int value, bool &h, AVLTreeNode<HashTableEntry> *&currentNode);
+        void clear(AVLTreeNode<HashTableEntry> *&node);
+        void deleteNode(HashTableEntry key, int value, bool &h, AVLTreeNode<HashTableEntry> *&currentNode);
+        void deleteMinR(AVLTreeNode<HashTableEntry> *&currentNode, AVLTreeNode<HashTableEntry> *&nq, bool &h);
+        void balanceR(AVLTreeNode<HashTableEntry> *&currentNode, bool &h);
+        void balanceL(AVLTreeNode<HashTableEntry> *&currentNode, bool &h);
+        QString getPrintableHtml(AVLTreeNode<HashTableEntry> *node, int h, int l) const;
     };
 
     struct Doctors
@@ -109,11 +115,14 @@ namespace table1
         AVLTree<QString> specialityTree;
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> experienceTree;
+        HashTable phoneNumberHashTable;
+
+        Doctors() : phoneNumberHashTable(HASHTABLE_SIZE) {}
     };
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::clear(AVLTreeNode<Key> *&node)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::clear(AVLTreeNode<HashTableEntry> *&node)
 {
     if (node != nullptr)
     {
@@ -124,8 +133,8 @@ void table1::AVLTree<Key>::clear(AVLTreeNode<Key> *&node)
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::clear()
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::clear()
 {
     if (root != nullptr)
     {
@@ -137,14 +146,14 @@ void table1::AVLTree<Key>::clear()
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::insertNode(HashTableEntry key, int value, bool &h, AVLTreeNode<HashTableEntry> *&currentNode)
 {
     if (currentNode == nullptr)
     {
         DoubleLinkedList *valueList = new DoubleLinkedList;
         valueList->insertNode(value);
-        currentNode = new AVLTreeNode<Key>(key, valueList);
+        currentNode = new AVLTreeNode<HashTableEntry>(key, valueList);
         h = true;
         currentNode->balance = 0;
     }
@@ -162,7 +171,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 currentNode->balance = -1;
             else
             {
-                AVLTreeNode<Key> *node1 = currentNode->childL;
+                AVLTreeNode<HashTableEntry> *node1 = currentNode->childL;
                 if (node1->balance == -1)
                 {
                     currentNode->childL = node1->childR;
@@ -172,7 +181,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 }
                 else
                 {
-                    AVLTreeNode<Key> *node2 = node1->childR;
+                    AVLTreeNode<HashTableEntry> *node2 = node1->childR;
                     node1->childR = node2->childL;
                     node2->childL = node1;
                     currentNode->childL = node2->childR;
@@ -204,7 +213,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 currentNode->balance = 1;
             else
             {
-                AVLTreeNode<Key> *node1 = currentNode->childR;
+                AVLTreeNode<HashTableEntry> *node1 = currentNode->childR;
                 if (node1->balance == 1)
                 {
                     currentNode->childR = node1->childL;
@@ -214,7 +223,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 }
                 else
                 {
-                    AVLTreeNode<Key> *node2 = node1->childL;
+                    AVLTreeNode<HashTableEntry> *node2 = node1->childL;
                     node1->childL = node2->childR;
                     node2->childR = node1;
                     currentNode->childR = node2->childL;
@@ -238,15 +247,15 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::insertNode(Key key, int value)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::insertNode(HashTableEntry key, int value)
 {
     bool height = false;
     insertNode(key, value, height, root);
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::balanceR(AVLTreeNode<HashTableEntry> *&currentNode, bool &h)
 {
     if (currentNode->balance == 1)
         currentNode->balance = 0;
@@ -257,7 +266,7 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
     }
     else
     {
-        AVLTreeNode<Key> *node1 = currentNode->childL;
+        AVLTreeNode<HashTableEntry> *node1 = currentNode->childL;
         if (node1->balance <= 0)
         {
             currentNode->childL = node1->childR;
@@ -277,7 +286,7 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
         }
         else
         {
-            AVLTreeNode<Key> *node2 = node1->childR;
+            AVLTreeNode<HashTableEntry> *node2 = node1->childR;
             node1->childR = node2->childL;
             node2->childL = node1;
             currentNode->childL = node2->childR;
@@ -295,8 +304,8 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
 }
 
 
-template <typename Key>
-void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::balanceL(AVLTreeNode<HashTableEntry> *&currentNode, bool &h)
 {
     if (currentNode->balance == -1)
         currentNode->balance = 0;
@@ -307,7 +316,7 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
     }
     else
     {
-        AVLTreeNode<Key> *node1 = currentNode->childR;
+        AVLTreeNode<HashTableEntry> *node1 = currentNode->childR;
         if (node1->balance >= 0)
         {
             currentNode->childR = node1->childL;
@@ -327,7 +336,7 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
         }
         else
         {
-            AVLTreeNode<Key> *node2 = node1->childL;
+            AVLTreeNode<HashTableEntry> *node2 = node1->childL;
             node1->childL = node2->childR;
             node2->childR = node1;
             currentNode->childR = node2->childL;
@@ -344,8 +353,8 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::deleteMinR(AVLTreeNode<HashTableEntry> *&currentNode, AVLTreeNode<HashTableEntry> *&nq, bool &h)
 {
     if (nq->childL == nullptr)
     {
@@ -362,8 +371,8 @@ void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNod
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::deleteNode(HashTableEntry key, int value, bool &h, AVLTreeNode<HashTableEntry> *&currentNode)
 {
     if (currentNode != nullptr)
     {
@@ -385,7 +394,7 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
             }
             else
             {
-                AVLTreeNode<Key> *nq = currentNode;
+                AVLTreeNode<HashTableEntry> *nq = currentNode;
                 if (nq->childR == nullptr)
                 {
                     currentNode = nq->childL;
@@ -407,22 +416,22 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
     }
 }
 
-template <typename Key>
-void table1::AVLTree<Key>::deleteNode(Key key, int value)
+template <typename HashTableEntry>
+void table1::AVLTree<HashTableEntry>::deleteNode(HashTableEntry key, int value)
 {
     bool height = false;
     deleteNode(key, value, height, root);
 }
 
-template <typename Key>
-QString table1::AVLTree<Key>::getPrintableHtml(int l) const
+template <typename HashTableEntry>
+QString table1::AVLTree<HashTableEntry>::getPrintableHtml(int l) const
 {
     QString outputStr = getPrintableHtml(root, 0, l);
     return outputStr + "\n";
 }
 
-template <typename Key>
-QString table1::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
+template <typename HashTableEntry>
+QString table1::AVLTree<HashTableEntry>::getPrintableHtml(AVLTreeNode<HashTableEntry> *node,
                                                      int h, int l) const
 {
     if (node != nullptr)

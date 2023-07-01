@@ -25,6 +25,8 @@ private slots:
 
     void on_pushButtonShowExperienceTree_clicked();
 
+    void on_pushButtonShowHashTable_clicked();
+
 private:
     Ui::DoctorsDebugWidget *ui;
     table1::Doctors *doctorsPointer;

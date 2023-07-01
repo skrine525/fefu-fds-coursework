@@ -54,7 +54,7 @@
         </layout>
        </item>
        <item row="0" column="0">
-        <widget class="QTableWidget" name="tableDoctors">
+        <widget class="QTableWidget" name="tableWidgetDoctors">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -70,7 +70,7 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
-        <widget class="QTableWidget" name="tablePatients"/>
+        <widget class="QTableWidget" name="tableWidgetPatients"/>
        </item>
        <item row="1" column="0">
         <layout class="QGridLayout" name="gridLayoutPatientsActions">
@@ -114,7 +114,7 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QTableWidget" name="tableAppointments"/>
+        <widget class="QTableWidget" name="tableWidgetAppointments"/>
        </item>
        <item row="1" column="0">
         <layout class="QGridLayout" name="gridLayoutAppointmentsActions">

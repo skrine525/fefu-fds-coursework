@@ -19,38 +19,38 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Инициализация таблицы Доктора
-    ui->tableDoctors->setColumnCount(4);
+    ui->tableWidgetDoctors->setColumnCount(4);
     QStringList doctorLabels;
     doctorLabels.append("ФИО");
     doctorLabels.append("Специальность");
     doctorLabels.append("Стаж");
     doctorLabels.append("Номер телефона");
-    ui->tableDoctors->horizontalHeader()->setStretchLastSection(true);
-    ui->tableDoctors->setHorizontalHeaderLabels(doctorLabels);
-    ui->tableDoctors->resizeColumnsToContents();
+    ui->tableWidgetDoctors->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetDoctors->setHorizontalHeaderLabels(doctorLabels);
+    ui->tableWidgetDoctors->resizeColumnsToContents();
 
     // Инициализация таблицы Пациенты
-    ui->tablePatients->setColumnCount(5);
+    ui->tableWidgetPatients->setColumnCount(5);
     QStringList patientLabels;
     patientLabels.append("ФИО");
     patientLabels.append("Регион");
     patientLabels.append("Район");
     patientLabels.append("Возраст");
     patientLabels.append("Номер телефона");
-    ui->tablePatients->horizontalHeader()->setStretchLastSection(true);
-    ui->tablePatients->setHorizontalHeaderLabels(patientLabels);
-    ui->tablePatients->resizeColumnsToContents();
+    ui->tableWidgetPatients->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetPatients->setHorizontalHeaderLabels(patientLabels);
+    ui->tableWidgetPatients->resizeColumnsToContents();
 
     // Инициализация таблицы Записи
-    ui->tableAppointments->setColumnCount(4);
+    ui->tableWidgetAppointments->setColumnCount(4);
     QStringList appointmentLabels;
     appointmentLabels.append("Номер врача");
     appointmentLabels.append("Номер пациента");
     appointmentLabels.append("Дата и Время приема");
     appointmentLabels.append("Стоимость");
-    ui->tableAppointments->horizontalHeader()->setStretchLastSection(true);
-    ui->tableAppointments->setHorizontalHeaderLabels(appointmentLabels);
-    ui->tableAppointments->resizeColumnsToContents();
+    ui->tableWidgetAppointments->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetAppointments->setHorizontalHeaderLabels(appointmentLabels);
+    ui->tableWidgetAppointments->resizeColumnsToContents();
 
     // Делаем перезагрузку интерфейса и данных
     this->resetViewAndData();
@@ -69,12 +69,12 @@ MainWindow::~MainWindow()
 void MainWindow::resetViewAndData()
 {
     // Очищаем визуальную часть
-    ui->tableDoctors->clearContents();
-    ui->tableDoctors->setRowCount(0);
-    ui->tablePatients->clearContents();
-    ui->tablePatients->setRowCount(0);
-    ui->tableAppointments->clearContents();
-    ui->tableAppointments->setRowCount(0);
+    ui->tableWidgetDoctors->clearContents();
+    ui->tableWidgetDoctors->setRowCount(0);
+    ui->tableWidgetPatients->clearContents();
+    ui->tableWidgetPatients->setRowCount(0);
+    ui->tableWidgetAppointments->clearContents();
+    ui->tableWidgetAppointments->setRowCount(0);
 
     // Отключаем кнопку Очистка поиска
     ui->pushButtonDoctorsClearSearch->setEnabled(false);
@@ -120,13 +120,13 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     appointmentCostItem->setFlags(appointmentCostItem->flags() & ~Qt::ItemIsEditable);
 
     // Заносим строку в таблицу
-    int rowIndex = ui->tableAppointments->rowCount();
-    ui->tableAppointments->insertRow(rowIndex);
-    ui->tableAppointments->setItem(rowIndex, 0, doctorPhoneNumberItem);
-    ui->tableAppointments->setItem(rowIndex, 1, patientPhoneNumberItem);
-    ui->tableAppointments->setItem(rowIndex, 2, appointmentDatetimeItem);
-    ui->tableAppointments->setItem(rowIndex, 3, appointmentCostItem);
-    ui->tablePatients->resizeColumnsToContents();
+    int rowIndex = ui->tableWidgetAppointments->rowCount();
+    ui->tableWidgetAppointments->insertRow(rowIndex);
+    ui->tableWidgetAppointments->setItem(rowIndex, 0, doctorPhoneNumberItem);
+    ui->tableWidgetAppointments->setItem(rowIndex, 1, patientPhoneNumberItem);
+    ui->tableWidgetAppointments->setItem(rowIndex, 2, appointmentDatetimeItem);
+    ui->tableWidgetAppointments->setItem(rowIndex, 3, appointmentCostItem);
+    ui->tableWidgetPatients->resizeColumnsToContents();
 }
 
 void MainWindow::addRecordToPatients(table2::Record record)
@@ -163,14 +163,14 @@ void MainWindow::addRecordToPatients(table2::Record record)
     phoneNumberItem->setFlags(phoneNumberItem->flags() & ~Qt::ItemIsEditable);
 
     // Заносим строку в таблицу
-    int rowIndex = ui->tablePatients->rowCount();
-    ui->tablePatients->insertRow(rowIndex);
-    ui->tablePatients->setItem(rowIndex, 0, fullNameItem);
-    ui->tablePatients->setItem(rowIndex, 1, regionItem);
-    ui->tablePatients->setItem(rowIndex, 2, districtItem);
-    ui->tablePatients->setItem(rowIndex, 3, ageItem);
-    ui->tablePatients->setItem(rowIndex, 4, phoneNumberItem);
-    ui->tablePatients->resizeColumnsToContents();
+    int rowIndex = ui->tableWidgetPatients->rowCount();
+    ui->tableWidgetPatients->insertRow(rowIndex);
+    ui->tableWidgetPatients->setItem(rowIndex, 0, fullNameItem);
+    ui->tableWidgetPatients->setItem(rowIndex, 1, regionItem);
+    ui->tableWidgetPatients->setItem(rowIndex, 2, districtItem);
+    ui->tableWidgetPatients->setItem(rowIndex, 3, ageItem);
+    ui->tableWidgetPatients->setItem(rowIndex, 4, phoneNumberItem);
+    ui->tableWidgetPatients->resizeColumnsToContents();
 }
 
 void MainWindow::addRecordToDoctors(table1::Record record)
@@ -189,6 +189,7 @@ void MainWindow::addRecordToDoctors(table1::Record record)
     doctors.specialityTree.insertNode(record.speciality, appendedIndex);
     doctors.experienceTree.insertNode(record.experience, appendedIndex);
     doctors.fullNameTree.insertNode(record.fullName, appendedIndex);
+    doctors.phoneNumberHashTable.insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
 
     // Элементы строки
     QTableWidgetItem *fullNameItem = new QTableWidgetItem(record.fullName);
@@ -203,13 +204,13 @@ void MainWindow::addRecordToDoctors(table1::Record record)
     phoneNumberItem->setFlags(phoneNumberItem->flags() & ~Qt::ItemIsEditable);
 
     // Заносим строку в таблицу
-    int rowIndex = ui->tableDoctors->rowCount();
-    ui->tableDoctors->insertRow(rowIndex);
-    ui->tableDoctors->setItem(rowIndex, 0, fullNameItem);
-    ui->tableDoctors->setItem(rowIndex, 1, specialityItem);
-    ui->tableDoctors->setItem(rowIndex, 2, experienceItem);
-    ui->tableDoctors->setItem(rowIndex, 3, phoneNumberItem);
-    ui->tableDoctors->resizeColumnsToContents();
+    int rowIndex = ui->tableWidgetDoctors->rowCount();
+    ui->tableWidgetDoctors->insertRow(rowIndex);
+    ui->tableWidgetDoctors->setItem(rowIndex, 0, fullNameItem);
+    ui->tableWidgetDoctors->setItem(rowIndex, 1, specialityItem);
+    ui->tableWidgetDoctors->setItem(rowIndex, 2, experienceItem);
+    ui->tableWidgetDoctors->setItem(rowIndex, 3, phoneNumberItem);
+    ui->tableWidgetDoctors->resizeColumnsToContents();
 }
 
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()
@@ -407,10 +408,10 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     if(valueList == nullptr)
     {
         ui->pushButtonAppointmentsClearSearch->setEnabled(true);
-        int rowCount = ui->tableAppointments->rowCount();
+        int rowCount = ui->tableWidgetAppointments->rowCount();
         for(int i = 0; i < rowCount; i++)
         {
-            ui->tableAppointments->hideRow(i);
+            ui->tableWidgetAppointments->hideRow(i);
         }
         ui->statusbar->showMessage("Записи - Найдено 0 элемент(ов).");
     }
@@ -424,17 +425,17 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
 
         if (curr != nullptr)
         {
-            int rowCount = ui->tableAppointments->rowCount();
+            int rowCount = ui->tableWidgetAppointments->rowCount();
             for(int i = 0; i < rowCount; i++)
             {
-                ui->tableAppointments->hideRow(i);
+                ui->tableWidgetAppointments->hideRow(i);
             }
 
             int indexCount = 0;
             do
             {
                 indexCount++;
-                ui->tableAppointments->showRow(curr->value);
+                ui->tableWidgetAppointments->showRow(curr->value);
                 curr = curr->next;
             } while (curr != head);
             ui->statusbar->showMessage(QString("Записи - Найдено %1 элемент(ов).").arg(indexCount));
@@ -446,10 +447,10 @@ void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
 {
     // Выключаем кнопку Очистить поиск
     ui->pushButtonAppointmentsClearSearch->setEnabled(false);
-    int rowCount = ui->tableAppointments->rowCount();
+    int rowCount = ui->tableWidgetAppointments->rowCount();
     for(int i = 0; i < rowCount; i++)
     {
-        ui->tableAppointments->showRow(i);
+        ui->tableWidgetAppointments->showRow(i);
     }
     ui->statusbar->showMessage("Записи - Поиск очищен.");
 }
@@ -462,7 +463,7 @@ void MainWindow::on_menuFileCreate_triggered()
 
 void MainWindow::on_pushButtonAppointmentsDelete_clicked()
 {
-    int rowIndex = ui->tableAppointments->currentRow();
+    int rowIndex = ui->tableWidgetAppointments->currentRow();
     if(rowIndex != -1)
     {
         table3::Record record = appointments.records[rowIndex];
@@ -471,7 +472,7 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
         appointments.appointmentDatetimeTree.deleteNode(record.appointmentDatetime, rowIndex);
         appointments.appointmentCostTree.deleteNode(record.appointmentCost, rowIndex);
         appointments.records.remove(rowIndex);
-        ui->tableAppointments->removeRow(rowIndex);
+        ui->tableWidgetAppointments->removeRow(rowIndex);
     }
     else
         QMessageBox::warning(this, "Внимание", "Для удаления записи необходимо выбрать строку.");
