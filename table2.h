@@ -54,11 +54,7 @@ namespace table2
         QString region;
         QString district;
 
-        Address(QString region, QString district)
-        {
-            this->region = region;
-            this->district = district;
-        }
+        Address(QString region, QString district);
     };
     bool operator<(Address& a, Address& b);
     bool operator>(Address& a, Address& b);

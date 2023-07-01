@@ -359,7 +359,7 @@ void table3::RBTree<Key, Value>::deleteNode(Key key, Value value)
     else
         return;
 
-    // Добавляю код от себя, в случае неправильного удаления - снести
+    // Добавляю код от себя, в случае неправильного удаления - снестиt% 2#2 `B z2^`V `N t`×8j$r = w5$ ziD`V 5`C z[T7Y7zR1 2j$1F`B5^ ¬ 2t$j^c%
     if(current->parent == nullptr)
     {
         if(current->left == nullptr && current->right == nullptr)

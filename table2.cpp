@@ -41,6 +41,12 @@ table2::Key::Key(long long phoneNumber)
     this->phoneNumber = phoneNumber;
 }
 
+table2::Address::Address(QString region, QString district)
+{
+    this->region = region;
+    this->district = district;
+}
+
 int table2::HashTable::firstHash(long long phoneNumber, int N)
 {
     QString str = QString::number(phoneNumber);
@@ -71,34 +77,60 @@ table2::HashTable::HashTable(int maxN)
 
 bool table2::HashTable::solveInsertCollision(Key key)
 {
-    int insertIndex = 0;
-    if (Keys[key.firstHash].status == 2)
-        insertIndex = key.firstHash;
-    else insertIndex = -1;
+    int insertIndex = firstHash(key.phoneNumber, N);
+          if (Keys[insertIndex].status == 2)
+          {
+              bool canInsert = true;
 
-    int i = key.firstHash;
-    int j = -1;
-    do
-    {
-        j++;
-        i = secondHash(key.firstHash, 1, 1, j);
+              int i;
+              int j = 0;
+              do
+              {
+                  j++;
+                  i = secondHash(key.firstHash, 1, 1, j);
 
-        if (insertIndex == -1 && Keys[i].status != 1)
-        {
-            insertIndex = i;
-        }
-        else if (Keys[i] == key && Keys[i].status == 1)
-            insertIndex = -1;
+                  if (Keys[i] == key && Keys[i].status == 1)
+                      canInsert = false;
 
-    } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
+              } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
 
-    if (insertIndex != -1)
-    {
-        key.status = 1;
-        Keys[insertIndex] = key;
-        return true;
-    }
-    else return false;
+              if (canInsert)
+              {
+                  key.status = 1;
+                  Keys[insertIndex] = key;
+              }
+          }
+          else if (Keys[insertIndex] != key)
+          {
+              insertIndex = -1;
+
+              int i;
+              int j = 0;
+              do
+              {
+                  j++;
+                  i = secondHash(key.firstHash, 1, 1, j);
+
+                  if (insertIndex == -1 && (Keys[i].status == 2 || Keys[i].status == 0))
+                  {
+                      insertIndex = i;
+                  }
+                  else if (Keys[i] == key && Keys[i].status == 1)
+                      insertIndex = -1;
+
+              } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
+
+              if (insertIndex != -1)
+              {
+                  key.status = 1;
+                  Keys[insertIndex] = key;
+                  return true;
+              }
+              else
+              {
+                    return false;
+              }
+          }
 }
 
 bool table2::HashTable::insert(Key key)
@@ -127,25 +159,29 @@ bool table2::HashTable::solveDeleteCollision(Key key)
         i = secondHash(key.firstHash, 1, 1, j);
 
         if (Keys[i] == key && Keys[i].status == 1)
-        {
             Keys[i].status = 2;
-            return true;
-        }
 
     } while (j < N && (Keys[i] != key || Keys[i].status != 1) && Keys[i].status != 0);
-    return false;
+    if (Keys[i].status == 2)
+        return true;
+    else return false;
 }
 
 bool table2::HashTable::remove(Key key)
 {
     int i = firstHash(key.phoneNumber, N);
-    if (Keys[i].status == 1)
-    {
-        Keys[i].status = 2;
-        return true;
-    }
-    else if (Keys[i].status != 1)
-        return solveDeleteCollision(key);
+            if (Keys[i].status == 1)
+            {
+                if (Keys[i] == key)
+                {
+                    Keys[i].status = 2;
+                    return true;
+                }
+                else
+                    return solveDeleteCollision(key);
+            }
+            else if (Keys[i].status == 2)
+                return solveDeleteCollision(key);
 }
 
 int table2::HashTable::search(long long phoneNumber)

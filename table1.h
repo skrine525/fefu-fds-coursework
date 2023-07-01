@@ -14,6 +14,39 @@ namespace table1
         QString speciality;
     };
 
+    struct Key
+    {
+        int status = 0;
+        long long phoneNumber = 0;
+        int firstHash = 0;
+
+        Key() { }
+
+        Key(long long phoneNumber);
+    };
+
+    bool operator==(Key& a, Key& b);
+    bool operator!=(Key& a, Key& b);
+
+    class HashTable
+    {
+    private:
+        int N;
+        Key* Keys;
+        int firstHash(long long phoneNumber, int N);
+        int secondHash(int firstHash, int k, int j);
+        bool solveInsertCollision(Key key);
+        bool solveDeleteCollision(Key key);
+
+    public:
+        HashTable(int maxN);
+        bool insert(Key key);
+        bool remove(Key key);
+        int search(long long phoneNumber);
+        void print();
+        ~HashTable();
+    };
+
     struct DoubleLinkedListNode
     {
         DoubleLinkedListNode* next;
@@ -72,6 +105,7 @@ namespace table1
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> experienceTree;
     };
+}
 
     template <typename Key>
     void table1::AVLTree<Key>::clear(AVLTreeNode<Key>*& node)
@@ -392,6 +426,5 @@ namespace table1
     {
         print(root, 0);
     }
-}
 
 #endif
