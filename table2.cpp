@@ -2,6 +2,11 @@
 
 #include <QString>
 
+table2::Address::operator QString() const
+{
+    return QString("%1, %2").arg(region, district);
+}
+
 bool table2::operator==(Key& a, Key& b)
 {
     return a.phoneNumber == b.phoneNumber;
@@ -62,7 +67,7 @@ int table2::HashTable::firstHash(long long phoneNumber, int N)
 
 int table2::HashTable::secondHash(int firstHash, int k1, int k2, int j)
 {
-    return (firstHash + j * k1 + j * j * k2) % N;
+    return (firstHash + j  *k1 + j  *j  *k2) % N;
 }
 
 table2::HashTable::HashTable(int maxN)
@@ -217,7 +222,7 @@ table2::HashTable::~HashTable()
 
 void table2::SingleLinkedList::clear()
 {
-    SingleLinkedListNode* currentNode = head;
+    SingleLinkedListNode *currentNode = head;
     while (head != nullptr) {
         head = currentNode->next;
         delete currentNode;
@@ -227,7 +232,7 @@ void table2::SingleLinkedList::clear()
 
 void table2::SingleLinkedList::insertNode(int value)
 {
-    SingleLinkedListNode* currentNode = head;
+    SingleLinkedListNode *currentNode = head;
     if (head == nullptr) {
         head = new SingleLinkedListNode;
         head->value = value;
@@ -246,7 +251,7 @@ void table2::SingleLinkedList::insertNode(int value)
 int table2::SingleLinkedList::countNodes()
 {
     int count = 0;
-    SingleLinkedListNode* currentNode = head;
+    SingleLinkedListNode *currentNode = head;
     while (currentNode != nullptr)
     {
         count++;
@@ -257,16 +262,29 @@ int table2::SingleLinkedList::countNodes()
 
 void table2::SingleLinkedList::deleteNode(int value)
 {
-    SingleLinkedListNode* currentNode = head;
+    SingleLinkedListNode *currentNode = head;
     if (head != nullptr)
     {
         while (currentNode->next != nullptr && currentNode->next->value != value)
             currentNode = currentNode->next;
         if (currentNode->next != nullptr)
         {
-            SingleLinkedListNode* temp = currentNode->next->next;
+            SingleLinkedListNode *temp = currentNode->next->next;
             delete currentNode->next;
             currentNode->next = temp;
         }
     }
+}
+
+QString table2::SingleLinkedList::getPrintableString()
+{
+    QString str;
+    auto *curr = head;
+    while (curr != nullptr) {
+        str += QString::number(curr->value + 1);
+        curr = curr->next;
+        if (curr != nullptr)
+            str += " ";
+    }
+    return str;
 }

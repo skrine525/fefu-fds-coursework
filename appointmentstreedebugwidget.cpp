@@ -13,9 +13,9 @@ AppointmentsTreeDebugWidget::~AppointmentsTreeDebugWidget()
     delete ui;
 }
 
-void AppointmentsTreeDebugWidget::setAppointments(table3::Appointments &appointments)
+void AppointmentsTreeDebugWidget::setAppointments(table3::Appointments *appointments)
 {
-    appointmentsPointer = &appointments;
+    appointmentsPointer = appointments;
 }
 
 

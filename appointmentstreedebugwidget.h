@@ -16,7 +16,7 @@ class AppointmentsTreeDebugWidget : public QWidget
 public:
     explicit AppointmentsTreeDebugWidget(QWidget *parent = nullptr);
     ~AppointmentsTreeDebugWidget();
-    void setAppointments(table3::Appointments &appointments);
+    void setAppointments(table3::Appointments *appointments);
 
 private slots:
     void on_pushButtonShowDoctorPhoneNumberTree_clicked();
