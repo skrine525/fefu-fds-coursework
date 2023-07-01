@@ -101,6 +101,7 @@ namespace table2
         AVLTree() : root(nullptr) {}
         void insertNode(Key key, int value);
         void deleteNode(Key key, int value);
+        AVLTreeNode<Key> *findNode(Key key);
         QString getPrintableHtml(int l) const;
         void clear();
 
@@ -422,6 +423,27 @@ namespace table2
     {
         bool height = false;
         deleteNode(key, value, height, root);
+    }
+
+    template <typename Key>
+    table2::AVLTreeNode<Key> *table2::AVLTree<Key>::findNode(Key key)
+    {
+        table2::AVLTreeNode<Key> *curr = root;
+        table2::AVLTreeNode<Key> *desired = nullptr;
+        if (curr != nullptr)
+        {
+            do
+            {
+                if (key < curr->key)
+                    curr = curr->left;
+                else if (key > curr->key)
+                    curr = curr->right;
+                else
+                    desired = curr;
+            } while (curr != nullptr && desired == nullptr);
+        }
+
+        return desired;
     }
 
     template <typename Key>
