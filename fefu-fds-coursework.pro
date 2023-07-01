@@ -12,11 +12,11 @@ SOURCES += \
     addappointmentdialog.cpp \
     adddoctordialog.cpp \
     addpatientdialog.cpp \
-    appointmentstreedebugwidget.cpp \
+    appointmentsdebugwidget.cpp \
     doctorsdebugwidget.cpp \
     main.cpp \
     mainwindow.cpp \
-    patientstreedebugwidget.cpp \
+    patientsdebugwidget.cpp \
     searchappointmentdialog.cpp \
     table1.cpp \
     table2.cpp \
@@ -26,10 +26,10 @@ HEADERS += \
     addappointmentdialog.h \
     adddoctordialog.h \
     addpatientdialog.h \
-    appointmentstreedebugwidget.h \
+    appointmentsdebugwidget.h \
     doctorsdebugwidget.h \
     mainwindow.h \
-    patientstreedebugwidget.h \
+    patientsdebugwidget.h \
     searchappointmentdialog.h \
     table1.h \
     table2.h \
@@ -39,10 +39,10 @@ FORMS += \
     addappointmentdialog.ui \
     adddoctordialog.ui \
     addpatientdialog.ui \
-    appointmentstreedebugwidget.ui \
+    appointmentsdebugwidget.ui \
     doctorsdebugwidget.ui \
     mainwindow.ui \
-    patientstreedebugwidget.ui \
+    patientsdebugwidget.ui \
     searchappointmentdialog.ui
 
 # Default rules for deployment.

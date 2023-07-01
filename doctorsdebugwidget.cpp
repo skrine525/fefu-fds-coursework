@@ -25,14 +25,12 @@ void DoctorsDebugWidget::on_pushButtonShowFullNameTree_clicked()
     ui->textBrowserTree->insertHtml(html);
 }
 
-
 void DoctorsDebugWidget::on_pushButtonShowSpecialityTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = doctorsPointer->specialityTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
-
 
 void DoctorsDebugWidget::on_pushButtonShowExperienceTree_clicked()
 {

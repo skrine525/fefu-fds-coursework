@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DoctorsDebugWidget</class>
- <widget class="QWidget" name="DoctorsDebugWidget">
+ <class>PatientsDebugWidget</class>
+ <widget class="QWidget" name="PatientsDebugWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Доктора - Отладка</string>
+   <string>Пациенты - Отладка</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -38,16 +38,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonShowSpecialityTree">
+           <widget class="QPushButton" name="pushButtonShowAddressTree">
             <property name="text">
-             <string>Специальность</string>
+             <string>Адрес</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonShowExperienceTree">
+           <widget class="QPushButton" name="pushButtonShowAgeTree">
             <property name="text">
-             <string>Стаж</string>
+             <string>Возраст</string>
             </property>
            </widget>
           </item>

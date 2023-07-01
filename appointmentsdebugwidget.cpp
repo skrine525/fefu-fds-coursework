@@ -1,49 +1,45 @@
-#include "appointmentstreedebugwidget.h"
-#include "ui_appointmentstreedebugwidget.h"
+#include "appointmentsdebugwidget.h"
+#include "ui_appointmentsdebugwidget.h"
 
-AppointmentsTreeDebugWidget::AppointmentsTreeDebugWidget(QWidget *parent) :
+AppointmentsDebugWidget::AppointmentsDebugWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::AppointmentsTreeDebugWidget)
+    ui(new Ui::AppointmentsDebugWidget)
 {
     ui->setupUi(this);
 }
 
-AppointmentsTreeDebugWidget::~AppointmentsTreeDebugWidget()
+AppointmentsDebugWidget::~AppointmentsDebugWidget()
 {
     delete ui;
 }
 
-void AppointmentsTreeDebugWidget::setAppointments(table3::Appointments *appointments)
+void AppointmentsDebugWidget::setAppointments(table3::Appointments *appointments)
 {
     appointmentsPointer = appointments;
 }
 
-
-void AppointmentsTreeDebugWidget::on_pushButtonShowDoctorPhoneNumberTree_clicked()
+void AppointmentsDebugWidget::on_pushButtonShowDoctorPhoneNumberTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = appointmentsPointer->doctorPhoneNumberTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
 
-
-void AppointmentsTreeDebugWidget::on_pushButtonShowPatientPhoneNumberTree_clicked()
+void AppointmentsDebugWidget::on_pushButtonShowPatientPhoneNumberTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = appointmentsPointer->patientPhoneNumberTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
 
-
-void AppointmentsTreeDebugWidget::on_pushButtonShowAppointmentDatetimeTree_clicked()
+void AppointmentsDebugWidget::on_pushButtonShowAppointmentDatetimeTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = appointmentsPointer->appointmentDatetimeTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
 
-
-void AppointmentsTreeDebugWidget::on_pushButtonShowAppointmentCostTree_clicked()
+void AppointmentsDebugWidget::on_pushButtonShowAppointmentCostTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = appointmentsPointer->appointmentCostTree.getPrintableHtml(10);

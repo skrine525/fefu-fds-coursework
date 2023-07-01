@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DoctorsDebugWidget</class>
- <widget class="QWidget" name="DoctorsDebugWidget">
+ <class>AppointmentsDebugWidget</class>
+ <widget class="QWidget" name="AppointmentsDebugWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Доктора - Отладка</string>
+   <string>Записи - Отладка</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -31,23 +31,30 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="pushButtonShowFullNameTree">
+           <widget class="QPushButton" name="pushButtonShowDoctorPhoneNumberTree">
             <property name="text">
-             <string>ФИО</string>
+             <string>Номер врача</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonShowSpecialityTree">
+           <widget class="QPushButton" name="pushButtonShowPatientPhoneNumberTree">
             <property name="text">
-             <string>Специальность</string>
+             <string>Номер пациента</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonShowExperienceTree">
+           <widget class="QPushButton" name="pushButtonShowAppointmentDatetimeTree">
             <property name="text">
-             <string>Стаж</string>
+             <string>Дата и Время приёма</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonShowAppointmentCostTree">
+            <property name="text">
+             <string>Стоимость</string>
             </property>
            </widget>
           </item>

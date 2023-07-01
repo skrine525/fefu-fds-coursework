@@ -170,26 +170,12 @@
     <addaction name="menuFileOpen"/>
     <addaction name="menuFileSave"/>
     <addaction name="separator"/>
-    <addaction name="menuFileFileExit"/>
+    <addaction name="menuFileExit"/>
    </widget>
    <widget class="QMenu" name="menuDebug">
     <property name="title">
      <string>Отладка</string>
     </property>
-    <widget class="QMenu" name="menuDebugPatients">
-     <property name="title">
-      <string>Пациенты</string>
-     </property>
-     <addaction name="menuDebugPatientsShowTree"/>
-     <addaction name="menuDebugPatientsShowHash"/>
-    </widget>
-    <widget class="QMenu" name="menuDebugAppointments">
-     <property name="title">
-      <string>Записи</string>
-     </property>
-     <addaction name="menuDebugAppointmentsShowTree"/>
-     <addaction name="menuDebugAppointmentsShowHash"/>
-    </widget>
     <addaction name="menuDebugDoctors"/>
     <addaction name="menuDebugPatients"/>
     <addaction name="menuDebugAppointments"/>
@@ -208,39 +194,9 @@
     <string>Сохранить</string>
    </property>
   </action>
-  <action name="menuFileFileExit">
+  <action name="menuFileExit">
    <property name="text">
     <string>Выход</string>
-   </property>
-  </action>
-  <action name="menuDebugDoctorsShowTree">
-   <property name="text">
-    <string>Показать дерево</string>
-   </property>
-  </action>
-  <action name="menuDebugDoctorsShowHash">
-   <property name="text">
-    <string>Показать Хеш-функцию</string>
-   </property>
-  </action>
-  <action name="menuDebugPatientsShowTree">
-   <property name="text">
-    <string>Показать дерево</string>
-   </property>
-  </action>
-  <action name="menuDebugPatientsShowHash">
-   <property name="text">
-    <string>Показать Хеш-функцию</string>
-   </property>
-  </action>
-  <action name="menuDebugAppointmentsShowTree">
-   <property name="text">
-    <string>Показать дерево</string>
-   </property>
-  </action>
-  <action name="menuDebugAppointmentsShowHash">
-   <property name="text">
-    <string>Показать Хеш-функцию</string>
    </property>
   </action>
   <action name="menuFileCreate">
@@ -251,6 +207,16 @@
   <action name="menuDebugDoctors">
    <property name="text">
     <string>Доктора</string>
+   </property>
+  </action>
+  <action name="menuDebugPatients">
+   <property name="text">
+    <string>Пациенты</string>
+   </property>
+  </action>
+  <action name="menuDebugAppointments">
+   <property name="text">
+    <string>Записи</string>
    </property>
   </action>
  </widget>

@@ -1,21 +1,21 @@
-#ifndef APPOINTMENTSTREEDEBUGWIDGET_H
-#define APPOINTMENTSTREEDEBUGWIDGET_H
+#ifndef APPOINTMENTSDEBUGWIDGET_H
+#define APPOINTMENTSDEBUGWIDGET_H
 
 #include "table3.h"
 
 #include <QWidget>
 
 namespace Ui {
-class AppointmentsTreeDebugWidget;
+class AppointmentsDebugWidget;
 }
 
-class AppointmentsTreeDebugWidget : public QWidget
+class AppointmentsDebugWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit AppointmentsTreeDebugWidget(QWidget *parent = nullptr);
-    ~AppointmentsTreeDebugWidget();
+    explicit AppointmentsDebugWidget(QWidget *parent = nullptr);
+    ~AppointmentsDebugWidget();
     void setAppointments(table3::Appointments *appointments);
 
 private slots:
@@ -28,8 +28,8 @@ private slots:
     void on_pushButtonShowAppointmentCostTree_clicked();
 
 private:
-    Ui::AppointmentsTreeDebugWidget *ui;
+    Ui::AppointmentsDebugWidget *ui;
     table3::Appointments *appointmentsPointer;
 };
 
-#endif // APPOINTMENTSTREEDEBUGWIDGET_H
+#endif // APPOINTMENTSDEBUGWIDGET_H

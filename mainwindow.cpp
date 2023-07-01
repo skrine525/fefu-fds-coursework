@@ -57,8 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Передаем ссылки на таблицы в соответствующие меню отладки
     doctorsDebugWidget.setDoctors(&doctors);
-    patientsTreeDebugWidget.setPatients(&patients);
-    appointmentsTreeDebugWidget.setAppointments(&appointments);
+    patientsDebugWidget.setPatients(&patients);
+    appointmentsDebugWidget.setAppointments(&appointments);
 }
 
 MainWindow::~MainWindow()
@@ -185,7 +185,7 @@ void MainWindow::addRecordToDoctors(table1::Record record)
 
     // Заносим запись в вектор и добавляем в структуры данных
     doctors.records.append(record);
-    int appendedIndex = patients.records.count() - 1;
+    int appendedIndex = doctors.records.count() - 1;
     doctors.specialityTree.insertNode(record.speciality, appendedIndex);
     doctors.experienceTree.insertNode(record.experience, appendedIndex);
     doctors.fullNameTree.insertNode(record.fullName, appendedIndex);
@@ -212,22 +212,10 @@ void MainWindow::addRecordToDoctors(table1::Record record)
     ui->tableDoctors->resizeColumnsToContents();
 }
 
-void MainWindow::on_menuFileFileExit_triggered()
-{
-    QApplication::quit();
-}
-
-
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()
 {
     AddAppointmentDialog addAppointmentDialog(this);
     addAppointmentDialog.exec();
-}
-
-
-void MainWindow::on_menuDebugAppointmentsShowTree_triggered()
-{
-    appointmentsTreeDebugWidget.show();
 }
 
 void MainWindow::on_menuFileOpen_triggered()
@@ -384,7 +372,7 @@ void MainWindow::on_pushButtonAppointmentsSearch_clicked()
 
 void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldIndex)
 {
-    table3::DoublyLinkedRingList<int> *valueList = nullptr;
+    table3::DoublyLinkedRingList *valueList = nullptr;
 
     if(fieldIndex == 0)
     {
@@ -503,15 +491,26 @@ void MainWindow::on_pushButtonDoctorsAdd_clicked()
     addDoctorDialog.exec();
 }
 
-
-void MainWindow::on_menuDebugPatientsShowTree_triggered()
-{
-    patientsTreeDebugWidget.show();
-}
-
-
 void MainWindow::on_menuDebugDoctors_triggered()
 {
     doctorsDebugWidget.show();
+}
+
+
+void MainWindow::on_menuDebugPatients_triggered()
+{
+    patientsDebugWidget.show();
+}
+
+
+void MainWindow::on_menuFileExit_triggered()
+{
+    QApplication::quit();
+}
+
+
+void MainWindow::on_menuDebugAppointments_triggered()
+{
+    appointmentsDebugWidget.show();
 }
 

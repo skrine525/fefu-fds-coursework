@@ -1,40 +1,38 @@
-#include "patientstreedebugwidget.h"
-#include "ui_patientstreedebugwidget.h"
+#include "patientsdebugwidget.h"
+#include "ui_patientsdebugwidget.h"
 
-PatientsTreeDebugWidget::PatientsTreeDebugWidget(QWidget *parent) :
+PatientsDebugWidget::PatientsDebugWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PatientsTreeDebugWidget)
+    ui(new Ui::PatientsDebugWidget)
 {
     ui->setupUi(this);
 }
 
-PatientsTreeDebugWidget::~PatientsTreeDebugWidget()
+PatientsDebugWidget::~PatientsDebugWidget()
 {
     delete ui;
 }
 
-void PatientsTreeDebugWidget::setPatients(table2::Patients *patients)
+void PatientsDebugWidget::setPatients(table2::Patients *patients)
 {
     patientsPointer = patients;
 }
 
-void PatientsTreeDebugWidget::on_pushButtonShowFullnameTree_clicked()
+void PatientsDebugWidget::on_pushButtonShowFullNameTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = patientsPointer->fullNameTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
 
-
-void PatientsTreeDebugWidget::on_pushButtonShowAddressTree_clicked()
+void PatientsDebugWidget::on_pushButtonShowAddressTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = patientsPointer->addressTree.getPrintableHtml(10);
     ui->textBrowserTree->insertHtml(html);
 }
 
-
-void PatientsTreeDebugWidget::on_pushButtonShowAgeTree_clicked()
+void PatientsDebugWidget::on_pushButtonShowAgeTree_clicked()
 {
     ui->textBrowserTree->clear();
     QString html = patientsPointer->ageTree.getPrintableHtml(10);

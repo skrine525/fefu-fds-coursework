@@ -4,9 +4,9 @@
 #include "table1.h"
 #include "table3.h"
 #include "table2.h"
-#include "appointmentstreedebugwidget.h"
-#include "patientstreedebugwidget.h"
 #include "doctorsdebugwidget.h"
+#include "patientsdebugwidget.h"
+#include "appointmentsdebugwidget.h"
 
 #include <QMainWindow>
 
@@ -29,13 +29,9 @@ public:
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
 private slots:
-    void on_menuFileFileExit_triggered();
-
     void on_menuFileOpen_triggered();
 
     void on_pushButtonAppointmentsAdd_clicked();
-
-    void on_menuDebugAppointmentsShowTree_triggered();
 
     void on_menuFileSave_triggered();
 
@@ -51,9 +47,13 @@ private slots:
 
     void on_pushButtonDoctorsAdd_clicked();
 
-    void on_menuDebugPatientsShowTree_triggered();
-
     void on_menuDebugDoctors_triggered();
+
+    void on_menuDebugPatients_triggered();
+
+    void on_menuFileExit_triggered();
+
+    void on_menuDebugAppointments_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -61,9 +61,9 @@ private:
     table2::Patients patients;
     table3::Appointments appointments;
 
-    AppointmentsTreeDebugWidget appointmentsTreeDebugWidget;
-    PatientsTreeDebugWidget patientsTreeDebugWidget;
     DoctorsDebugWidget doctorsDebugWidget;
+    PatientsDebugWidget patientsDebugWidget;
+    AppointmentsDebugWidget appointmentsDebugWidget;
 
     void resetViewAndData();
 };
