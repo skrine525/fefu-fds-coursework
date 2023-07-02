@@ -29,6 +29,8 @@ private slots:
 
     void on_radioButtonPhone_toggled(bool checked);
 
+    void on_pushButtonSearch_clicked();
+
 private:
     Ui::SearchDoctorDialog *ui;
     MainWindow *mainWindow;

@@ -55,48 +55,48 @@ namespace table3
 
     enum class Color { RED, BLACK };
 
-    template <typename HashTableEntry>
+    template <typename Key>
     struct RBTreeNode
     {
-        HashTableEntry key;
+        Key key;
         DoublyLinkedRingList *valueList;
         Color color;
         RBTreeNode *left;
         RBTreeNode *right;
         RBTreeNode *parent;
 
-        explicit RBTreeNode(HashTableEntry k, DoublyLinkedRingList *v, Color c = Color::RED)
+        explicit RBTreeNode(Key k, DoublyLinkedRingList *v, Color c = Color::RED)
             : key(k), valueList(v), color(c), left(nullptr),
               right(nullptr), parent(nullptr) {}
     };
 
-    template <typename HashTableEntry>
+    template <typename Key>
     class RBTree
     {
     public:
         RBTree() : root(nullptr) {}
 
-        void insertNode(HashTableEntry key, int value);
-        void deleteNode(HashTableEntry key, int value);
-        RBTreeNode<HashTableEntry> *findNode(HashTableEntry key);
+        void insertNode(Key key, int value);
+        void deleteNode(Key key, int value);
+        RBTreeNode<Key> *findNode(Key key);
         QString getPrintableHtml(int l) const;
         void clear();
 
     private:
-        RBTreeNode<HashTableEntry> *root;
+        RBTreeNode<Key> *root;
 
-        void insertNodeFixup(RBTreeNode<HashTableEntry> *node);
-        void rotateLeft(RBTreeNode<HashTableEntry> *node);
-        void rotateRight(RBTreeNode<HashTableEntry> *node);
-        RBTreeNode<HashTableEntry> *minimumNode(RBTreeNode<HashTableEntry> *node);
-        void deleteNode(RBTreeNode<HashTableEntry> *node,
-                        RBTreeNode<HashTableEntry> *parent,
-                        RBTreeNode<HashTableEntry> *grandparent, RBTree<HashTableEntry> &tree);
-        void deleteNodeFixup(RBTreeNode<HashTableEntry> *node,
-                             RBTreeNode<HashTableEntry> *parent,
-                             RBTreeNode<HashTableEntry> *grandparent, RBTree<HashTableEntry> &tree);
-        QString getPrintableHtml(RBTreeNode<HashTableEntry> *node, int h, int l) const;
-        void clear(RBTreeNode<HashTableEntry> *node);
+        void insertNodeFixup(RBTreeNode<Key> *node);
+        void rotateLeft(RBTreeNode<Key> *node);
+        void rotateRight(RBTreeNode<Key> *node);
+        RBTreeNode<Key> *minimumNode(RBTreeNode<Key> *node);
+        void deleteNode(RBTreeNode<Key> *node,
+                        RBTreeNode<Key> *parent,
+                        RBTreeNode<Key> *grandparent, RBTree<Key> &tree);
+        void deleteNodeFixup(RBTreeNode<Key> *node,
+                             RBTreeNode<Key> *parent,
+                             RBTreeNode<Key> *grandparent, RBTree<Key> &tree);
+        QString getPrintableHtml(RBTreeNode<Key> *node, int h, int l) const;
+        void clear(RBTreeNode<Key> *node);
     };
 
     struct Appointments
@@ -109,15 +109,15 @@ namespace table3
     };
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::clear()
+template <typename Key>
+void table3::RBTree<Key>::clear()
 {
     this->clear(root);
     root = nullptr;
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::clear(RBTreeNode<HashTableEntry> *node)
+template <typename Key>
+void table3::RBTree<Key>::clear(RBTreeNode<Key> *node)
 {
     if(node == nullptr)
         return;
@@ -129,11 +129,11 @@ void table3::RBTree<HashTableEntry>::clear(RBTreeNode<HashTableEntry> *node)
     delete node;
 }
 
-template <typename HashTableEntry>
-table3::RBTreeNode<HashTableEntry> *table3::RBTree<HashTableEntry>::findNode(HashTableEntry key)
+template <typename Key>
+table3::RBTreeNode<Key> *table3::RBTree<Key>::findNode(Key key)
 {
-    table3::RBTreeNode<HashTableEntry> *curr = root;
-    table3::RBTreeNode<HashTableEntry> *desired = nullptr;
+    table3::RBTreeNode<Key> *curr = root;
+    table3::RBTreeNode<Key> *desired = nullptr;
     if (curr != nullptr)
     {
         do
@@ -150,21 +150,21 @@ table3::RBTreeNode<HashTableEntry> *table3::RBTree<HashTableEntry>::findNode(Has
     return desired;
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::insertNode(HashTableEntry key, int value)
+template <typename Key>
+void table3::RBTree<Key>::insertNode(Key key, int value)
 {
     if (root == nullptr)
     {
         table3::DoublyLinkedRingList *valueList =
                 new table3::DoublyLinkedRingList;
         valueList->insertNode(value);
-        root = new RBTreeNode<HashTableEntry>(key, valueList);
+        root = new RBTreeNode<Key>(key, valueList);
         insertNodeFixup(root);
     }
     else
     {
-        RBTreeNode<HashTableEntry> *current = root;
-        RBTreeNode<HashTableEntry> *parent = nullptr;
+        RBTreeNode<Key> *current = root;
+        RBTreeNode<Key> *parent = nullptr;
         bool appendList = false;
         while (current != nullptr && !appendList)
         {
@@ -184,7 +184,7 @@ void table3::RBTree<HashTableEntry>::insertNode(HashTableEntry key, int value)
             table3::DoublyLinkedRingList *valueList =
                     new table3::DoublyLinkedRingList;
             valueList->insertNode(value);
-            RBTreeNode<HashTableEntry> *newNode = new RBTreeNode<HashTableEntry>(key, valueList);
+            RBTreeNode<Key> *newNode = new RBTreeNode<Key>(key, valueList);
             newNode->parent = parent;
             if (key < parent->key)
                 parent->left = newNode;
@@ -195,12 +195,12 @@ void table3::RBTree<HashTableEntry>::insertNode(HashTableEntry key, int value)
     }
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::deleteNode(HashTableEntry key, int value)
+template <typename Key>
+void table3::RBTree<Key>::deleteNode(Key key, int value)
 {
-    RBTreeNode<HashTableEntry> *current = root;
-    RBTreeNode<HashTableEntry> *parent = nullptr;
-    RBTreeNode<HashTableEntry> *grandparent = nullptr;
+    RBTreeNode<Key> *current = root;
+    RBTreeNode<Key> *parent = nullptr;
+    RBTreeNode<Key> *grandparent = nullptr;
 
     // Find the node to deleteNode
     while (current != nullptr && current->key != key)
@@ -255,21 +255,21 @@ void table3::RBTree<HashTableEntry>::deleteNode(HashTableEntry key, int value)
     deleteNode(current, parent, grandparent, *this);
 }
 
-template <typename HashTableEntry>
-QString table3::RBTree<HashTableEntry>::getPrintableHtml(int l) const
+template <typename Key>
+QString table3::RBTree<Key>::getPrintableHtml(int l) const
 {
     QString outputStr = getPrintableHtml(root, 0, l);
     return outputStr + "\n";
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::insertNodeFixup(RBTreeNode<HashTableEntry> *node)
+template <typename Key>
+void table3::RBTree<Key>::insertNodeFixup(RBTreeNode<Key> *node)
 {
     while (node->parent != nullptr && node->parent->color == Color::RED)
     {
         if (node->parent == node->parent->parent->left)
         {
-            RBTreeNode<HashTableEntry> *uncle = node->parent->parent->right;
+            RBTreeNode<Key> *uncle = node->parent->parent->right;
             if (uncle != nullptr && uncle->color == Color::RED)
             {
                 node->parent->color = Color::BLACK;
@@ -291,7 +291,7 @@ void table3::RBTree<HashTableEntry>::insertNodeFixup(RBTreeNode<HashTableEntry> 
         }
         else
         {
-            RBTreeNode<HashTableEntry> *uncle = node->parent->parent->left;
+            RBTreeNode<Key> *uncle = node->parent->parent->left;
             if (uncle != nullptr && uncle->color == Color::RED)
             {
                 node->parent->color = Color::BLACK;
@@ -315,10 +315,10 @@ void table3::RBTree<HashTableEntry>::insertNodeFixup(RBTreeNode<HashTableEntry> 
     root->color = Color::BLACK;
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::rotateLeft(RBTreeNode<HashTableEntry> *node)
+template <typename Key>
+void table3::RBTree<Key>::rotateLeft(RBTreeNode<Key> *node)
 {
-    RBTreeNode<HashTableEntry> *rightChild = node->right;
+    RBTreeNode<Key> *rightChild = node->right;
     node->right = rightChild->left;
     if (rightChild->left != nullptr)
         rightChild->left->parent = node;
@@ -333,10 +333,10 @@ void table3::RBTree<HashTableEntry>::rotateLeft(RBTreeNode<HashTableEntry> *node
     node->parent = rightChild;
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::rotateRight(RBTreeNode<HashTableEntry> *node)
+template <typename Key>
+void table3::RBTree<Key>::rotateRight(RBTreeNode<Key> *node)
 {
-    RBTreeNode<HashTableEntry> *leftChild = node->left;
+    RBTreeNode<Key> *leftChild = node->left;
     node->left = leftChild->right;
     if (leftChild->right != nullptr)
         leftChild->right->parent = node;
@@ -351,9 +351,9 @@ void table3::RBTree<HashTableEntry>::rotateRight(RBTreeNode<HashTableEntry> *nod
     node->parent = leftChild;
 }
 
-template <typename HashTableEntry>
-table3::RBTreeNode<HashTableEntry> *table3::RBTree<HashTableEntry>::minimumNode(
-        RBTreeNode<HashTableEntry> *node)
+template <typename Key>
+table3::RBTreeNode<Key> *table3::RBTree<Key>::minimumNode(
+        RBTreeNode<Key> *node)
 {
     while (node->left != nullptr)
         node = node->left;
@@ -361,16 +361,16 @@ table3::RBTreeNode<HashTableEntry> *table3::RBTree<HashTableEntry>::minimumNode(
     return node;
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::deleteNode(RBTreeNode<HashTableEntry> *node,
-                                            RBTreeNode<HashTableEntry> *parent,
-                                            RBTreeNode<HashTableEntry> *grandparent,
-                                            RBTree<HashTableEntry> &tree)
+template <typename Key>
+void table3::RBTree<Key>::deleteNode(RBTreeNode<Key> *node,
+                                            RBTreeNode<Key> *parent,
+                                            RBTreeNode<Key> *grandparent,
+                                            RBTree<Key> &tree)
 {
     // Case 1: Node is a leaf or has only one child
     if (node->left == nullptr || node->right == nullptr)
     {
-        RBTreeNode<HashTableEntry> *child =
+        RBTreeNode<Key> *child =
                 (node->left != nullptr) ? node->left : node->right;
 
         // Replace the node with its child
@@ -398,8 +398,8 @@ void table3::RBTree<HashTableEntry>::deleteNode(RBTreeNode<HashTableEntry> *node
 
     // Case 2: Node has two children
     // Find the successor (minimum value in the right subtree)
-    RBTreeNode<HashTableEntry> *successor = minimumNode(node->right);
-//            Node<HashTableEntry, Value> *successor = minimumNode(node->left);
+    RBTreeNode<Key> *successor = minimumNode(node->right);
+//            Node<Key, Value> *successor = minimumNode(node->left);
 
     // Copy the successor's key and value to the node
     node->key = successor->key;
@@ -409,17 +409,17 @@ void table3::RBTree<HashTableEntry>::deleteNode(RBTreeNode<HashTableEntry> *node
     deleteNode(successor, successor->parent, grandparent, tree);
 }
 
-template <typename HashTableEntry>
-void table3::RBTree<HashTableEntry>::deleteNodeFixup(RBTreeNode<HashTableEntry> *node,
-                                                 RBTreeNode<HashTableEntry> *parent,
-                                                 RBTreeNode<HashTableEntry> *grandparent,
-                                                 RBTree<HashTableEntry> &tree)
+template <typename Key>
+void table3::RBTree<Key>::deleteNodeFixup(RBTreeNode<Key> *node,
+                                                 RBTreeNode<Key> *parent,
+                                                 RBTreeNode<Key> *grandparent,
+                                                 RBTree<Key> &tree)
 {
     while ((node == nullptr || node->color == Color::BLACK) && node != tree.root)
     {
         if (node == parent->left)
         {
-            RBTreeNode<HashTableEntry> *sibling = parent->right;
+            RBTreeNode<Key> *sibling = parent->right;
 
             // Case 1: Sibling is red
             if (sibling->color == Color::RED)
@@ -461,7 +461,7 @@ void table3::RBTree<HashTableEntry>::deleteNodeFixup(RBTreeNode<HashTableEntry> 
         }
         else
         {
-            RBTreeNode<HashTableEntry> *sibling = parent->left;
+            RBTreeNode<Key> *sibling = parent->left;
 
             // Case 1: Sibling is red
             if (sibling->color == Color::RED)
@@ -507,8 +507,8 @@ void table3::RBTree<HashTableEntry>::deleteNodeFixup(RBTreeNode<HashTableEntry> 
         node->color = Color::BLACK;
 }
 
-template <typename HashTableEntry>
-QString table3::RBTree<HashTableEntry>::getPrintableHtml(RBTreeNode<HashTableEntry> *node,
+template <typename Key>
+QString table3::RBTree<Key>::getPrintableHtml(RBTreeNode<Key> *node,
                                                      int h, int l) const
 {
     if (node != nullptr)

@@ -95,7 +95,6 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
         {
             searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
 
-            MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
             mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
             this->close();
         }
@@ -110,7 +109,6 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
         {
             searchRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
 
-            MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
             mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
             this->close();
         }
@@ -127,7 +125,6 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
         searchRecord.appointmentDatetime.hour = ui->comboBoxTimeHour->currentData().toUInt();
         searchRecord.appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
 
-        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
         mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
         this->close();
     }

@@ -62,3 +62,9 @@ void SearchDoctorDialog::setMainWindow(MainWindow *mainWindow)
 {
     this->mainWindow = mainWindow;
 }
+
+void SearchDoctorDialog::on_pushButtonSearch_clicked()
+{
+
+}
+
