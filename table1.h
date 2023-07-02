@@ -42,12 +42,12 @@ namespace table1
         HashTableEntry* table;
         int firstHash(long long key, int size);
         int secondHash(int firstHash, int k, int j);
-        bool solveInsertCollision(HashTableEntry key);
+        int solveInsertCollision(HashTableEntry key);
         bool solveDeleteCollision(HashTableEntry key);
 
     public:
         HashTable(int maxN);
-        bool insert(HashTableEntry key);
+        int insert(HashTableEntry key);
         bool remove(HashTableEntry key);
         int search(long long key);
         void printToQTableWidget(QTableWidget *table);
