@@ -55,6 +55,8 @@ private slots:
 
     void on_menuDebugAppointments_triggered();
 
+    void on_pushButtonDoctorsSearch_clicked();
+
 private:
     Ui::MainWindow *ui;
     table1::Doctors doctors;

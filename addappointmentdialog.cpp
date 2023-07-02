@@ -62,7 +62,6 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
     newRecord.appointmentDatetime = appointmentDatetime;
 
-    MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
     mainWindow->addRecordToAppointments(newRecord);
     this->close();
 }
@@ -71,4 +70,9 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
 void AddAppointmentDialog::on_pushButtonCancel_clicked()
 {
     this->close();
+}
+
+void AddAppointmentDialog::setMainWindow(MainWindow *mainWindow)
+{
+    this->mainWindow = mainWindow;
 }

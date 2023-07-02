@@ -16,6 +16,7 @@ class AddAppointmentDialog : public QDialog
 public:
     explicit AddAppointmentDialog(QWidget *parent = nullptr);
     ~AddAppointmentDialog();
+    void setMainWindow(MainWindow *mainWindow);
 
 private slots:
     void on_pushButtonAdd_clicked();

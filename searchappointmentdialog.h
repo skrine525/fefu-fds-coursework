@@ -1,6 +1,8 @@
 #ifndef SEARCHAPPOINTMENTDIALOG_H
 #define SEARCHAPPOINTMENTDIALOG_H
 
+#include "mainwindow.h"
+
 #include <QDialog>
 #include <QRegExpValidator>
 
@@ -15,6 +17,7 @@ class SearchAppointmentDialog : public QDialog
 public:
     explicit SearchAppointmentDialog(QWidget *parent = nullptr);
     ~SearchAppointmentDialog();
+    void setMainWindow(MainWindow *mainWindow);
 
 private slots:
     void on_pushButtonCancel_clicked();
@@ -31,6 +34,7 @@ private slots:
 
 private:
     Ui::SearchAppointmentDialog *ui;
+    MainWindow *mainWindow;
     unsigned fieldIndex;
 };
 

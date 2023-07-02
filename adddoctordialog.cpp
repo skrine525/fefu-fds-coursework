@@ -56,8 +56,12 @@ void AddDoctorDialog::on_pushButtonAdd_clicked()
     newRecord.experience = ui->spinBoxExperience->value();
     newRecord.phoneNumber = ui->lineEditPhone->text().toLongLong();
 
-    MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
     mainWindow->addRecordToDoctors(newRecord);
     this->close();
+}
+
+void AddDoctorDialog::setMainWindow(MainWindow *mainWindow)
+{
+    this->mainWindow = mainWindow;
 }
 

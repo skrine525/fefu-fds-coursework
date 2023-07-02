@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "addappointmentdialog.h"
-#include "searchappointmentdialog.h"
 #include "addpatientdialog.h"
 #include "adddoctordialog.h"
+#include "searchappointmentdialog.h"
+#include "searchdoctordialog.h"
 
 #include <QFileDialog>
 #include <QDir>
@@ -216,6 +217,7 @@ void MainWindow::addRecordToDoctors(table1::Record record)
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()
 {
     AddAppointmentDialog addAppointmentDialog(this);
+    addAppointmentDialog.setMainWindow(this);
     addAppointmentDialog.exec();
 }
 
@@ -368,6 +370,7 @@ void MainWindow::on_menuFileSave_triggered()
 void MainWindow::on_pushButtonAppointmentsSearch_clicked()
 {
     SearchAppointmentDialog searchAppointmentDialog(this);
+    searchAppointmentDialog.setMainWindow(this);
     searchAppointmentDialog.exec();
 }
 
@@ -482,6 +485,7 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
 void MainWindow::on_pushButtonPatientsAdd_clicked()
 {
     AddPatientDialog addPatientDialog(this);
+    addPatientDialog.setMainWindow(this);
     addPatientDialog.exec();
 }
 
@@ -489,6 +493,7 @@ void MainWindow::on_pushButtonPatientsAdd_clicked()
 void MainWindow::on_pushButtonDoctorsAdd_clicked()
 {
     AddDoctorDialog addDoctorDialog(this);
+    addDoctorDialog.setMainWindow(this);
     addDoctorDialog.exec();
 }
 
@@ -513,5 +518,12 @@ void MainWindow::on_menuFileExit_triggered()
 void MainWindow::on_menuDebugAppointments_triggered()
 {
     appointmentsDebugWidget.show();
+}
+
+void MainWindow::on_pushButtonDoctorsSearch_clicked()
+{
+    SearchDoctorDialog searchDoctorDialog(this);
+    searchDoctorDialog.setMainWindow(this);
+    searchDoctorDialog.exec();
 }
 

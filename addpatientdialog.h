@@ -1,6 +1,8 @@
 #ifndef ADDPATIENTDIALOG_H
 #define ADDPATIENTDIALOG_H
 
+#include "mainwindow.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -14,6 +16,7 @@ class AddPatientDialog : public QDialog
 public:
     explicit AddPatientDialog(QWidget *parent = nullptr);
     ~AddPatientDialog();
+    void setMainWindow(MainWindow *mainWindow);
 
 private slots:
     void on_pushButtonCancel_clicked();
@@ -22,6 +25,7 @@ private slots:
 
 private:
     Ui::AddPatientDialog *ui;
+    MainWindow *mainWindow;
 };
 
 #endif // ADDPATIENTDIALOG_H

@@ -27,17 +27,6 @@ SearchAppointmentDialog::SearchAppointmentDialog(QWidget *parent) :
     }
     ui->comboBoxTimeMinute->addItem("00", QVariant(0));
     ui->comboBoxTimeMinute->addItem("30", QVariant(30));
-
-    // Отключаем все элементы ввода
-    ui->pushButtonSearch->setEnabled(false);
-    ui->lineEditDoctorPhone->setEnabled(false);
-    ui->lineEditPatientPhone->setEnabled(false);
-    ui->spinBoxDateDay->setEnabled(false);
-    ui->spinBoxDateMonth->setEnabled(false);
-    ui->spinBoxDateYear->setEnabled(false);
-    ui->comboBoxTimeHour->setEnabled(false);
-    ui->comboBoxTimeMinute->setEnabled(false);
-    ui->spinBoxCost->setEnabled(false);
 }
 
 SearchAppointmentDialog::~SearchAppointmentDialog()
@@ -55,7 +44,6 @@ void SearchAppointmentDialog::on_radioButtonDoctorPhone_toggled(bool checked)
     }
 }
 
-
 void SearchAppointmentDialog::on_radioButtonPatientPhone_toggled(bool checked)
 {
     ui->lineEditPatientPhone->setEnabled(checked);
@@ -65,7 +53,6 @@ void SearchAppointmentDialog::on_radioButtonPatientPhone_toggled(bool checked)
         fieldIndex = 1;
     }
 }
-
 
 void SearchAppointmentDialog::on_radioButtonDatetime_toggled(bool checked)
 {
@@ -81,7 +68,6 @@ void SearchAppointmentDialog::on_radioButtonDatetime_toggled(bool checked)
     }
 }
 
-
 void SearchAppointmentDialog::on_radioButtonCost_toggled(bool checked)
 {
     ui->spinBoxCost->setEnabled(checked);
@@ -92,12 +78,10 @@ void SearchAppointmentDialog::on_radioButtonCost_toggled(bool checked)
     }
 }
 
-
 void SearchAppointmentDialog::on_pushButtonCancel_clicked()
 {
     this->close();
 }
-
 
 void SearchAppointmentDialog::on_pushButtonSearch_clicked()
 {
@@ -153,9 +137,12 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
 
         searchRecord.appointmentCost = ui->spinBoxCost->value();
 
-        MainWindow *mainWindow = qobject_cast<MainWindow*>(this->parent());
         mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
         this->close();
     }
 }
 
+void SearchAppointmentDialog::setMainWindow(MainWindow *mainWindow)
+{
+    this->mainWindow = mainWindow;
+}

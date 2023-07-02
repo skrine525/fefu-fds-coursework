@@ -18,6 +18,7 @@ SOURCES += \
     mainwindow.cpp \
     patientsdebugwidget.cpp \
     searchappointmentdialog.cpp \
+    searchdoctordialog.cpp \
     table1.cpp \
     table2.cpp \
     table3.cpp
@@ -31,6 +32,7 @@ HEADERS += \
     mainwindow.h \
     patientsdebugwidget.h \
     searchappointmentdialog.h \
+    searchdoctordialog.h \
     table1.h \
     table2.h \
     table3.h
@@ -43,7 +45,8 @@ FORMS += \
     doctorsdebugwidget.ui \
     mainwindow.ui \
     patientsdebugwidget.ui \
-    searchappointmentdialog.ui
+    searchappointmentdialog.ui \
+    searchdoctordialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
