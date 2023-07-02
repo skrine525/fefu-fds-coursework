@@ -46,6 +46,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QPushButton" name="pushButtonDoctorsClearSearch">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Очистить поиск</string>
            </property>
@@ -97,6 +100,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QPushButton" name="pushButtonPatientsClearSearch">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Очистить поиск</string>
            </property>
@@ -141,6 +147,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QPushButton" name="pushButtonAppointmentsClearSearch">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Очистить поиск</string>
            </property>
@@ -159,7 +168,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

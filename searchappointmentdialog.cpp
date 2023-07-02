@@ -92,28 +92,24 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
         // Номер врача
 
         if(ui->lineEditDoctorPhone->text().length() == 11)
-        {
             searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
-
-            mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
-            this->close();
-        }
         else
+        {
             QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
+            return;
+        }
     }
     else if(fieldIndex == 1)
     {
         // Номер пациента
 
         if(ui->lineEditPatientPhone->text().length() == 11)
-        {
             searchRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
-
-            mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
-            this->close();
-        }
         else
+        {
             QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
+            return;
+        }
     }
     else if(fieldIndex == 2)
     {
@@ -124,19 +120,16 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
         searchRecord.appointmentDatetime.year = ui->spinBoxDateYear->value();
         searchRecord.appointmentDatetime.hour = ui->comboBoxTimeHour->currentData().toUInt();
         searchRecord.appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
-
-        mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
-        this->close();
     }
     else if(fieldIndex == 3)
-    {
         // Стоимость
-
         searchRecord.appointmentCost = ui->spinBoxCost->value();
+    else
+        return;
 
-        mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
-        this->close();
-    }
+    // Отображаем результат поиск и закрываем диалоговое окно
+    mainWindow->showAppointmentSearchResult(searchRecord, fieldIndex);
+    this->close();
 }
 
 void SearchAppointmentDialog::setMainWindow(MainWindow *mainWindow)

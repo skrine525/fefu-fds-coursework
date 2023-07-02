@@ -446,6 +446,97 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     }
 }
 
+void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
+{
+    table1::DoubleLinkedList *valueList = nullptr;
+
+    if(fieldIndex == 0)
+    {
+        // ФИО
+        auto *node = doctors.fullNameTree.findNode(record.fullName);
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 1)
+    {
+        // Специальность
+
+        auto *node = doctors.specialityTree.findNode(record.speciality);
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 2)
+    {
+        // Стаж
+
+        auto *node = doctors.experienceTree.findNode(record.experience);
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 3)
+    {
+        // Номер телефона
+
+        int tableIndex = doctors.phoneNumberHashTable.find(record.phoneNumber);
+
+        // Скрываем все строки таблицы
+        int rowCount = ui->tableWidgetDoctors->rowCount();
+        for(int i = 0; i < rowCount; i++)
+            ui->tableWidgetDoctors->hideRow(i);
+
+        int indexCount = 0;
+        if(tableIndex != -1)
+        {
+            auto entry = doctors.phoneNumberHashTable.getEntry(tableIndex);
+            ui->tableWidgetDoctors->showRow(entry.value);
+            indexCount++;
+        }
+
+        ui->statusbar->showMessage(QString("Доктора - Найдено %1 элемент(ов).").arg(indexCount));
+        ui->pushButtonDoctorsClearSearch->setEnabled(true);
+        return;
+    }
+
+    // Отображение поиска
+    if(valueList == nullptr)
+    {
+        ui->pushButtonDoctorsClearSearch->setEnabled(true);
+        int rowCount = ui->tableWidgetDoctors->rowCount();
+        for(int i = 0; i < rowCount; i++)
+        {
+            ui->tableWidgetDoctors->hideRow(i);
+        }
+        ui->statusbar->showMessage("Доктора - Найдено 0 элемент(ов).");
+    }
+    else
+    {
+        // Включаем кнопку Очистить поиск
+        ui->pushButtonDoctorsClearSearch->setEnabled(true);
+
+        auto *head = valueList->getHead();
+        auto *curr = head;
+
+        if (curr != nullptr)
+        {
+            int rowCount = ui->tableWidgetDoctors->rowCount();
+            for(int i = 0; i < rowCount; i++)
+            {
+                ui->tableWidgetDoctors->hideRow(i);
+            }
+
+            int indexCount = 0;
+            do
+            {
+                indexCount++;
+                ui->tableWidgetDoctors->showRow(curr->value);
+                curr = curr->next;
+            }
+            while (curr != nullptr);
+            ui->statusbar->showMessage(QString("Доктора - Найдено %1 элемент(ов).").arg(indexCount));
+        }
+    }
+}
+
 void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
 {
     // Выключаем кнопку Очистить поиск
@@ -525,5 +616,18 @@ void MainWindow::on_pushButtonDoctorsSearch_clicked()
     SearchDoctorDialog searchDoctorDialog(this);
     searchDoctorDialog.setMainWindow(this);
     searchDoctorDialog.exec();
+}
+
+
+void MainWindow::on_pushButtonDoctorsClearSearch_clicked()
+{
+    // Выключаем кнопку Очистить поиск
+    ui->pushButtonDoctorsClearSearch->setEnabled(false);
+    int rowCount = ui->tableWidgetDoctors->rowCount();
+    for(int i = 0; i < rowCount; i++)
+    {
+        ui->tableWidgetDoctors->showRow(i);
+    }
+    ui->statusbar->showMessage("Доктора - Поиск очищен.");
 }
 

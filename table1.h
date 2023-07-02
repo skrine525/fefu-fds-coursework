@@ -49,7 +49,8 @@ namespace table1
         HashTable(int maxN);
         bool insert(HashTableEntry key);
         bool remove(HashTableEntry key);
-        int search(long long key);
+        int find(long long key);
+        HashTableEntry getEntry(int index);
         void printToQTableWidget(QTableWidget *table);
         ~HashTable();
     };
@@ -70,6 +71,7 @@ namespace table1
         int countNodes();
         void clear();
         QString getPrintableString();
+        DoubleLinkedListNode *getHead();
 
         DoubleLinkedListNode *head;
         DoubleLinkedListNode *tail;
@@ -446,6 +448,27 @@ QString table1::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
         return outputStr;
     }
     return "";
+}
+
+template <typename Key>
+table1::AVLTreeNode<Key> *table1::AVLTree<Key>::findNode(Key key)
+{
+    table1::AVLTreeNode<Key> *curr = root;
+    table1::AVLTreeNode<Key> *desired = nullptr;
+    if (curr != nullptr)
+    {
+        do
+        {
+            if (key < curr->key)
+                curr = curr->childL;
+            else if (key > curr->key)
+                curr = curr->childR;
+            else
+                desired = curr;
+        } while (curr != nullptr && desired == nullptr);
+    }
+
+    return desired;
 }
 
 #endif

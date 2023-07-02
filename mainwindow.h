@@ -26,6 +26,7 @@ public:
     void addRecordToAppointments(table3::Record record);
     void addRecordToPatients(table2::Record record);
 
+    void showDoctorSearchResult(table1::Record record, int fieldIndex);
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
 private slots:
@@ -56,6 +57,8 @@ private slots:
     void on_menuDebugAppointments_triggered();
 
     void on_pushButtonDoctorsSearch_clicked();
+
+    void on_pushButtonDoctorsClearSearch_clicked();
 
 private:
     Ui::MainWindow *ui;

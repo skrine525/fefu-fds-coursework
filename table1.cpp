@@ -37,6 +37,11 @@ table1::HashTable::HashTable(int maxN)
     }
 }
 
+table1::HashTableEntry table1::HashTable::getEntry(int index)
+{
+    return table[index];
+}
+
 bool table1::HashTable::solveInsertCollision(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
@@ -146,7 +151,7 @@ bool table1::HashTable::remove(HashTableEntry key)
                 return solveDeleteCollision(key);
 }
 
-int table1::HashTable::search(long long key)
+int table1::HashTable::find(long long key)
 {
     int i = firstHash(key, size);
     int firstHash = i;
@@ -336,4 +341,9 @@ QString table1::DoubleLinkedList::getPrintableString()
         while (curr != nullptr);
     }
     return str;
+}
+
+table1::DoubleLinkedListNode *table1::DoubleLinkedList::getHead()
+{
+    return head;
 }
