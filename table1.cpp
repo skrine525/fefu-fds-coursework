@@ -65,7 +65,9 @@ bool table1::HashTable::solveInsertCollision(HashTableEntry key)
               {
                   key.status = 1;
                   table[insertIndex] = key;
+                  return 0; // Ключ вставлен
               }
+              else return 1; // Ключ уже существует
           }
           else if (table[insertIndex] != key)
           {
@@ -91,16 +93,16 @@ bool table1::HashTable::solveInsertCollision(HashTableEntry key)
               {
                   key.status = 1;
                   table[insertIndex] = key;
-                  return true;
+                  return 0; // Ключ вставлен
               }
-              else
-              {
-                    return false;
-              }
+              else if (j == size)
+                    return 2; // Таблица переполнена
+              else if (table[i] == key)
+                    return 1; // Ключ уже существует
           }
 }
 
-bool table1::HashTable::insert(HashTableEntry key)
+int table1::HashTable::insert(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
     key.firstHash = insertIndex;
@@ -112,7 +114,7 @@ bool table1::HashTable::insert(HashTableEntry key)
     {
         key.status = 1;
         table[insertIndex] = key;
-        return true;
+        return 0; // Ключ вставлен "0"
     }
 }
 
