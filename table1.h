@@ -24,7 +24,7 @@ namespace table1
         long long key = 0;
         int value = 0;
         int firstHash = 0;
-        int secondHash = 0;
+        int secondHash = -1; // Изменено на -1 так как 0 всё-таки является индексом
         int status = 0;
 
         HashTableEntry() { }

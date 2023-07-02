@@ -94,7 +94,6 @@ int table2::HashTable::solveInsertCollision(HashTableEntry key)
               {
                   j++;
                   i = secondHash(key.firstHash, 1, 1, j);
-
                   if (table[i] == key && table[i].status == 1)
                       canInsert = false;
 
@@ -102,6 +101,7 @@ int table2::HashTable::solveInsertCollision(HashTableEntry key)
 
               if (canInsert)
               {
+                  key.secondHash = i;
                   key.status = 1;
                   table[insertIndex] = key;
                   return 0; // Ключ вставлен
@@ -131,14 +131,17 @@ int table2::HashTable::solveInsertCollision(HashTableEntry key)
               if (insertIndex != -1)
               {
                   key.status = 1;
+                  key.secondHash = i;
                   table[insertIndex] = key;
                   return 0; // Ключ вставлен
               }
-              else if (j == size)
-                    return 2; // Таблица переполнена
               else if (table[i] == key)
                     return 1; // Ключ уже существует
+              else if (j == size)
+                    return 2; // Таблица переполнена
           }
+          else if (table[insertIndex] == key)
+                return 1;
 }
 
 int table2::HashTable::insert(HashTableEntry key)

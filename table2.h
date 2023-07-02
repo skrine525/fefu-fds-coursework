@@ -22,6 +22,7 @@ namespace table2
         long long key = 0;
         int value = 0;
         int firstHash = 0;
+        int secondHash = -1;
         int status = 0;
 
         HashTableEntry() { }

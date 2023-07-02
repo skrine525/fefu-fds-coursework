@@ -95,13 +95,13 @@ int table1::HashTable::solveInsertCollision(HashTableEntry key)
               table[insertIndex] = key;
               return 0; // Ключ вставлен
           }
-          else if (j == size)
-                return 2; // Таблица переполнена
           else if (table[i] == key)
                 return 1; // Ключ уже существует
+          else if (j == size)
+                return 2; // Таблица переполнена
       }
-
-      return 1;
+      else if (table[insertIndex] == key)
+            return 1;
 }
 
 int table1::HashTable::insert(HashTableEntry key)
