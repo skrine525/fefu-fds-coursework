@@ -42,7 +42,7 @@ table1::HashTableEntry table1::HashTable::getEntry(int index)
     return table[index];
 }
 
-bool table1::HashTable::solveInsertCollision(HashTableEntry key)
+int table1::HashTable::solveInsertCollision(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
           if (table[insertIndex].status == 2)
