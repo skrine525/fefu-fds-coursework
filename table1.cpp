@@ -45,61 +45,63 @@ table1::HashTableEntry table1::HashTable::getEntry(int index)
 int table1::HashTable::solveInsertCollision(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
-          if (table[insertIndex].status == 2)
+      if (table[insertIndex].status == 2)
+      {
+          bool canInsert = true;
+
+          int i;
+          int j = 0;
+          do
           {
-              bool canInsert = true;
+              j++;
+              i = secondHash(key.firstHash, 1, j);
 
-              int i;
-              int j = 0;
-              do
-              {
-                  j++;
-                  i = secondHash(key.firstHash, 1, j);
+              if (table[i] == key && table[i].status == 1)
+                  canInsert = false;
 
-                  if (table[i] == key && table[i].status == 1)
-                      canInsert = false;
+          } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
 
-              } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
-
-              if (canInsert)
-              {
-                  key.status = 1;
-                  table[insertIndex] = key;
-                  return 0; // Ключ вставлен
-              }
-              else return 1; // Ключ уже существует
-          }
-          else if (table[insertIndex] != key)
+          if (canInsert)
           {
-              insertIndex = -1;
-
-              int i;
-              int j = 0;
-              do
-              {
-                  j++;
-                  i = secondHash(key.firstHash, 1, j);
-
-                  if (insertIndex == -1 && (table[i].status == 2 || table[i].status == 0))
-                  {
-                      insertIndex = i;
-                  }
-                  else if (table[i] == key && table[i].status == 1)
-                      insertIndex = -1;
-
-              } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
-
-              if (insertIndex != -1)
-              {
-                  key.status = 1;
-                  table[insertIndex] = key;
-                  return 0; // Ключ вставлен
-              }
-              else if (j == size)
-                    return 2; // Таблица переполнена
-              else if (table[i] == key)
-                    return 1; // Ключ уже существует
+              key.status = 1;
+              table[insertIndex] = key;
+              return 0; // Ключ вставлен
           }
+          else return 1; // Ключ уже существует
+      }
+      else if (table[insertIndex] != key)
+      {
+          insertIndex = -1;
+
+          int i;
+          int j = 0;
+          do
+          {
+              j++;
+              i = secondHash(key.firstHash, 1, j);
+
+              if (insertIndex == -1 && (table[i].status == 2 || table[i].status == 0))
+              {
+                  insertIndex = i;
+              }
+              else if (table[i] == key && table[i].status == 1)
+                  insertIndex = -1;
+
+          } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
+
+          if (insertIndex != -1)
+          {
+              key.status = 1;
+              table[insertIndex] = key;
+              return 0; // Ключ вставлен
+          }
+          else if (j == size)
+                return 2; // Таблица переполнена
+          else if (table[i] == key)
+                return 1; // Ключ уже существует
+      }
+
+      return 1;
 }
 
 int table1::HashTable::insert(HashTableEntry key)

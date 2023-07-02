@@ -174,8 +174,23 @@ void MainWindow::addRecordToPatients(table2::Record record)
     ui->tableWidgetPatients->resizeColumnsToContents();
 }
 
-void MainWindow::addRecordToDoctors(table1::Record record)
+bool MainWindow::addRecordToDoctors(table1::Record record)
 {
+    // Вставляем в хеш-таблицу
+    int appendedIndex = doctors.records.count();
+    int hashTableResult = doctors.phoneNumberHashTable.insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
+    qDebug() << record.phoneNumber << " " << hashTableResult;
+    if(hashTableResult == 1)
+    {
+        QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
+        return false;
+    }
+    else if(hashTableResult == 2)
+    {
+        QMessageBox::warning(this, "Внимание", "Таблица переполнена.");
+        return false;
+    }
+
     // Форматирование строковых данных
     QStringList fullnameList = record.fullName.split(" ");
     QString lastName = fullnameList[0][0].toUpper() + fullnameList[0].mid(1).toLower();
@@ -186,11 +201,9 @@ void MainWindow::addRecordToDoctors(table1::Record record)
 
     // Заносим запись в вектор и добавляем в структуры данных
     doctors.records.append(record);
-    int appendedIndex = doctors.records.count() - 1;
     doctors.specialityTree.insertNode(record.speciality, appendedIndex);
     doctors.experienceTree.insertNode(record.experience, appendedIndex);
     doctors.fullNameTree.insertNode(record.fullName, appendedIndex);
-    doctors.phoneNumberHashTable.insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
 
     // Элементы строки
     QTableWidgetItem *fullNameItem = new QTableWidgetItem(record.fullName);
@@ -212,6 +225,8 @@ void MainWindow::addRecordToDoctors(table1::Record record)
     ui->tableWidgetDoctors->setItem(rowIndex, 2, experienceItem);
     ui->tableWidgetDoctors->setItem(rowIndex, 3, phoneNumberItem);
     ui->tableWidgetDoctors->resizeColumnsToContents();
+
+    return true;
 }
 
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()

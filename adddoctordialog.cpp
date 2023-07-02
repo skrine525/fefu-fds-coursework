@@ -56,8 +56,8 @@ void AddDoctorDialog::on_pushButtonAdd_clicked()
     newRecord.experience = ui->spinBoxExperience->value();
     newRecord.phoneNumber = ui->lineEditPhone->text().toLongLong();
 
-    mainWindow->addRecordToDoctors(newRecord);
-    this->close();
+    if(mainWindow->addRecordToDoctors(newRecord))
+        this->close();
 }
 
 void AddDoctorDialog::setMainWindow(MainWindow *mainWindow)

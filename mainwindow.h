@@ -22,7 +22,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void addRecordToDoctors(table1::Record record);
+    bool addRecordToDoctors(table1::Record record);
     void addRecordToAppointments(table3::Record record);
     void addRecordToPatients(table2::Record record);
 
