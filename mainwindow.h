@@ -24,7 +24,7 @@ public:
 
     bool addRecordToDoctors(table1::Record record);
     bool addRecordToPatients(table2::Record record);
-    void addRecordToAppointments(table3::Record record);
+    int addRecordToAppointments(table3::Record record);
 
     void showDoctorSearchResult(table1::Record record, int fieldIndex);
     void showPatientSearchResult(table2::Record record, int fieldIndex);

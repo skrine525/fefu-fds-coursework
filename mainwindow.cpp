@@ -101,8 +101,19 @@ void MainWindow::resetViewAndData()
     appointments.appointmentCostTree.clear();
 }
 
-void MainWindow::addRecordToAppointments(table3::Record record)
+int MainWindow::addRecordToAppointments(table3::Record record)
 {
+    // Возвращает 0, если вставка прошла успешно
+    // Возвращает 1, если не удалось вставить ключ в ХТ
+    // Возвращает 2, если не найден доктор в ХТ
+    // Возвращает 3, если не найден пациент в ХТ
+
+    // Проверка целостности
+    if(doctors.phoneNumberHashTable.find(record.doctorPhoneNumber) == -1)
+        return 2;
+    if(patients.phoneNumberHashTable.find(record.patientPhoneNumber) == -1)
+        return 3;
+
     // Заносим запись в вектор и добавляем в структуры данных
     appointments.records.append(record);
     int appendedIndex = appointments.records.count() - 1;
@@ -131,6 +142,8 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     ui->tableWidgetAppointments->setItem(rowIndex, 2, appointmentDatetimeItem);
     ui->tableWidgetAppointments->setItem(rowIndex, 3, appointmentCostItem);
     ui->tableWidgetPatients->resizeColumnsToContents();
+
+    return 0;
 }
 
 bool MainWindow::addRecordToPatients(table2::Record record)
@@ -188,6 +201,8 @@ bool MainWindow::addRecordToPatients(table2::Record record)
     ui->tableWidgetPatients->setItem(rowIndex, 3, ageItem);
     ui->tableWidgetPatients->setItem(rowIndex, 4, phoneNumberItem);
     ui->tableWidgetPatients->resizeColumnsToContents();
+
+    return true;
 }
 
 bool MainWindow::addRecordToDoctors(table1::Record record)
@@ -657,24 +672,22 @@ void MainWindow::on_menuFileCreate_triggered()
     this->resetViewAndData();
 }
 
-
 void MainWindow::on_pushButtonAppointmentsDelete_clicked()
 {
-    int rowIndex = ui->tableWidgetAppointments->currentRow();
-    if(rowIndex != -1)
-    {
-        table3::Record record = appointments.records[rowIndex];
-        appointments.doctorPhoneNumberTree.deleteNode(record.doctorPhoneNumber, rowIndex);
-        appointments.patientPhoneNumberTree.deleteNode(record.patientPhoneNumber, rowIndex);
-        appointments.appointmentDatetimeTree.deleteNode(record.appointmentDatetime, rowIndex);
-        appointments.appointmentCostTree.deleteNode(record.appointmentCost, rowIndex);
-        appointments.records.remove(rowIndex);
-        ui->tableWidgetAppointments->removeRow(rowIndex);
-    }
-    else
-        QMessageBox::warning(this, "Внимание", "Для удаления записи необходимо выбрать строку.");
+//    int rowIndex = ui->tableWidgetAppointments->currentRow();
+//    if(rowIndex != -1)
+//    {
+//        table3::Record record = appointments.records[rowIndex];
+//        appointments.doctorPhoneNumberTree.deleteNode(record.doctorPhoneNumber, rowIndex);
+//        appointments.patientPhoneNumberTree.deleteNode(record.patientPhoneNumber, rowIndex);
+//        appointments.appointmentDatetimeTree.deleteNode(record.appointmentDatetime, rowIndex);
+//        appointments.appointmentCostTree.deleteNode(record.appointmentCost, rowIndex);
+//        appointments.records.remove(rowIndex);
+//        ui->tableWidgetAppointments->removeRow(rowIndex);
+//    }
+//    else
+//        QMessageBox::warning(this, "Внимание", "Для удаления записи необходимо выбрать строку.");
 }
-
 
 void MainWindow::on_pushButtonPatientsAdd_clicked()
 {
@@ -682,7 +695,6 @@ void MainWindow::on_pushButtonPatientsAdd_clicked()
     addPatientDialog.setMainWindow(this);
     addPatientDialog.exec();
 }
-
 
 void MainWindow::on_pushButtonDoctorsAdd_clicked()
 {
@@ -696,18 +708,15 @@ void MainWindow::on_menuDebugDoctors_triggered()
     doctorsDebugWidget.show();
 }
 
-
 void MainWindow::on_menuDebugPatients_triggered()
 {
     patientsDebugWidget.show();
 }
 
-
 void MainWindow::on_menuFileExit_triggered()
 {
     QApplication::quit();
 }
-
 
 void MainWindow::on_menuDebugAppointments_triggered()
 {
@@ -721,7 +730,6 @@ void MainWindow::on_pushButtonDoctorsSearch_clicked()
     searchDoctorDialog.exec();
 }
 
-
 void MainWindow::on_pushButtonDoctorsClearSearch_clicked()
 {
     // Выключаем кнопку Очистить поиск
@@ -732,14 +740,12 @@ void MainWindow::on_pushButtonDoctorsClearSearch_clicked()
     ui->statusbar->showMessage("Доктора - Поиск очищен.");
 }
 
-
 void MainWindow::on_pushButtonPatientsSeatch_clicked()
 {
     SearchPatientDialog searchPatientDialog(this);
     searchPatientDialog.setMainWindow(this);
     searchPatientDialog.exec();
 }
-
 
 void MainWindow::on_pushButtonPatientsClearSearch_clicked()
 {
@@ -750,4 +756,3 @@ void MainWindow::on_pushButtonPatientsClearSearch_clicked()
         ui->tableWidgetPatients->showRow(i);
     ui->statusbar->showMessage("Доктора - Поиск очищен.");
 }
-

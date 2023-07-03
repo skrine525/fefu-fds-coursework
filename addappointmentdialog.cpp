@@ -62,8 +62,15 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
     newRecord.appointmentDatetime = appointmentDatetime;
 
-    mainWindow->addRecordToAppointments(newRecord);
-    this->close();
+    int result = mainWindow->addRecordToAppointments(newRecord);
+    if(result == 1)
+        QMessageBox::warning(this, "Внимание", "У врача или пациента уже существует запись на это время.");
+    else if(result == 2)
+        QMessageBox::warning(this, "Внимание", "Доктора с указанным номером телефона не существует.");
+    else if(result == 3)
+        QMessageBox::warning(this, "Внимание", "Пациента с указанным номером телефона не существует.");
+    else
+        this->close();
 }
 
 
