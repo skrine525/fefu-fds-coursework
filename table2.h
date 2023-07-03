@@ -4,6 +4,10 @@
 #include <QString>
 #include <QVector>
 #include <QVariant>
+#include <QTableWidget>
+
+// Константа размерности статической хеш-таблицы
+#define HASHTABLE_SIZE 100
 
 namespace table2
 {
@@ -19,9 +23,9 @@ namespace table2
 
     struct HashTableEntry
     {
-        long long key = 0;
-        int value = 0;
-        int firstHash = 0;
+        long long key = -1;
+        int value = -1;
+        int firstHash = -1;
         int secondHash = -1;
         int status = 0;
 
@@ -47,8 +51,10 @@ namespace table2
         HashTable(int maxN);
         int insert(HashTableEntry key);
         bool remove(HashTableEntry key);
-        int search(long long key);
-        void print();
+        int find(long long key);
+        HashTableEntry &getEntry(int index);
+        void printToQTableWidget(QTableWidget *tableWidget);
+        void clear();
         ~HashTable();
     };
 
@@ -81,6 +87,7 @@ namespace table2
         int countNodes();
         void clear();
         QString getPrintableString();
+        SingleLinkedListNode *getHead();
 
         SingleLinkedListNode *head;
     };
@@ -125,6 +132,9 @@ namespace table2
         AVLTree<Address> addressTree;
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> ageTree;
+        HashTable phoneNumberHashTable;
+
+        Patients() : phoneNumberHashTable(HASHTABLE_SIZE) {}
     };
 }
 
@@ -439,9 +449,9 @@ table2::AVLTreeNode<Key> *table2::AVLTree<Key>::findNode(Key key)
         do
         {
             if (key < curr->key)
-                curr = curr->left;
+                curr = curr->childL;
             else if (key > curr->key)
-                curr = curr->right;
+                curr = curr->childR;
             else
                 desired = curr;
         } while (curr != nullptr && desired == nullptr);

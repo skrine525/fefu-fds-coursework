@@ -21,9 +21,9 @@ namespace table1
 
     struct HashTableEntry
     {
-        long long key = 0;
-        int value = 0;
-        int firstHash = 0;
+        long long key = -1;
+        int value = -1;
+        int firstHash = -1;
         int secondHash = -1; // Изменено на -1 так как 0 всё-таки является индексом
         int status = 0;
 
@@ -50,8 +50,9 @@ namespace table1
         int insert(HashTableEntry key);
         bool remove(HashTableEntry key);
         int find(long long key);
-        HashTableEntry getEntry(int index);
-        void printToQTableWidget(QTableWidget *table);
+        HashTableEntry &getEntry(int index);
+        void printToQTableWidget(QTableWidget *tableWidget);
+        void clear();
         ~HashTable();
     };
 

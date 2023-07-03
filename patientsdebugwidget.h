@@ -25,6 +25,8 @@ private slots:
 
     void on_pushButtonShowAgeTree_clicked();
 
+    void on_pushButtonShowHashTable_clicked();
+
 private:
     Ui::PatientsDebugWidget *ui;
     table2::Patients *patientsPointer;

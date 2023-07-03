@@ -37,7 +37,7 @@ table1::HashTable::HashTable(int maxN)
     }
 }
 
-table1::HashTableEntry table1::HashTable::getEntry(int index)
+table1::HashTableEntry &table1::HashTable::getEntry(int index)
 {
     return table[index];
 }
@@ -45,64 +45,73 @@ table1::HashTableEntry table1::HashTable::getEntry(int index)
 int table1::HashTable::solveInsertCollision(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
-      if (table[insertIndex].status == 2)
-      {
-          bool canInsert = true;
+    if (table[insertIndex].status == 2)
+    {
+        bool canInsert = true;
 
-          int i;
-          int j = 0;
-          do
-          {
-              j++;
-              i = secondHash(key.firstHash, 1, j);
+        int i;
+        int j = 0;
+        do
+        {
+            j++;
+            i = secondHash(key.firstHash, 1, j);
 
-              if (table[i] == key && table[i].status == 1)
-                  canInsert = false;
+            if (table[i] == key && table[i].status == 1)
+                canInsert = false;
 
-          } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
+        } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
 
-          if (canInsert)
-          {
-              key.status = 1;
-              table[insertIndex] = key;
-              return 0; // Ключ вставлен
-          }
-          else return 1; // Ключ уже существует
-      }
-      else if (table[insertIndex] != key)
-      {
-          insertIndex = -1;
+        if (canInsert)
+        {
+            key.status = 1;
+            table[insertIndex] = key;
+            return 0; // Ключ вставлен
+        }
+        else
+        {
+            return 1; // Ключ уже существует
+        }
+    }
+    else if (table[insertIndex] != key)
+    {
+        insertIndex = -1;
 
-          int i;
-          int j = 0;
-          do
-          {
-              j++;
-              i = secondHash(key.firstHash, 1, j);
+        int i;
+        int j = 0;
+        do
+        {
+            j++;
+            i = secondHash(key.firstHash, 1, j);
 
-              if (insertIndex == -1 && (table[i].status == 2 || table[i].status == 0))
-              {
-                  insertIndex = i;
-              }
-              else if (table[i] == key && table[i].status == 1)
-                  insertIndex = -1;
+            if (insertIndex == -1 && (table[i].status == 2 || table[i].status == 0))
+            {
+                insertIndex = i;
+            }
+            else if (table[i] == key && table[i].status == 1)
+            {
+                insertIndex = -1;
+            }
 
-          } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
+        } while (j < size && (table[i] != key || table[i].status != 1) && table[i].status != 0);
 
-          if (insertIndex != -1)
-          {
-              key.status = 1;
-              table[insertIndex] = key;
-              return 0; // Ключ вставлен
-          }
-          else if (table[i] == key)
-                return 1; // Ключ уже существует
-          else if (j == size)
-                return 2; // Таблица переполнена
-      }
-      else if (table[insertIndex] == key)
-            return 1;
+        if (insertIndex != -1)
+        {
+            key.status = 1;
+            table[insertIndex] = key;
+            return 0; // Ключ вставлен
+        }
+        else if (table[i] == key)
+        {
+            return 1; // Ключ уже существует
+        }
+        else if (j == size)
+        {
+            return 2; // Таблица переполнена
+        }
+    }
+    return 1;
 }
+
 
 int table1::HashTable::insert(HashTableEntry key)
 {
@@ -180,13 +189,21 @@ void table1::HashTable::printToQTableWidget(QTableWidget *tableWidget)
 {
     for(int i = 0; i < size; i++)
     {
+        // Строки элементов таблицы
+        QString indexString = QString::number(i);
+        QString firstHashString = ((table[i].firstHash != -1) ? QString::number(table[i].firstHash) : "");
+        QString secondHashString = ((table[i].secondHash != -1) ? QString::number(table[i].secondHash) : "");
+        QString keyString = ((table[i].key != -1) ? QString::number(table[i].key) : "");
+        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value) : "");
+        QString statusString = QString::number(table[i].status);
+
         // Элементы строки
-        QTableWidgetItem *indexItem = new QTableWidgetItem(QString::number(i));
-        QTableWidgetItem *firstHashItem = new QTableWidgetItem(QString::number(table[i].firstHash));
-        QTableWidgetItem *secondHashItem = new QTableWidgetItem(QString::number(table[i].secondHash));
-        QTableWidgetItem *keyItem = new QTableWidgetItem(QString::number(table[i].key));
-        QTableWidgetItem *valueItem = new QTableWidgetItem(QString::number(table[i].value));
-        QTableWidgetItem *statusItem = new QTableWidgetItem(QString::number(table[i].status));
+        QTableWidgetItem *indexItem = new QTableWidgetItem(indexString);
+        QTableWidgetItem *firstHashItem = new QTableWidgetItem(firstHashString);
+        QTableWidgetItem *secondHashItem = new QTableWidgetItem(secondHashString);
+        QTableWidgetItem *keyItem = new QTableWidgetItem(keyString);
+        QTableWidgetItem *valueItem = new QTableWidgetItem(valueString);
+        QTableWidgetItem *statusItem = new QTableWidgetItem(statusString);
 
         // Устанавливаем флаг запрета редактирования для каждого элемента
         indexItem->setFlags(indexItem->flags() & ~Qt::ItemIsEditable);
@@ -211,6 +228,12 @@ void table1::HashTable::printToQTableWidget(QTableWidget *tableWidget)
 table1::HashTable::~HashTable()
 {
     delete[] table;
+}
+
+void table1::HashTable::clear()
+{
+    for(int i = 0; i < size; i++)
+        table[i] = HashTableEntry();
 }
 
 void table1::DoubleLinkedList::clear()

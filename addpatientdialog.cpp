@@ -68,8 +68,8 @@ void AddPatientDialog::on_pushButtonAdd_clicked()
     newRecord.district = ui->comboBoxDistrict->currentData().toString();
     newRecord.age = ui->spinBoxAge->value();
 
-    mainWindow->addRecordToPatients(newRecord);
-    this->close();
+    if(mainWindow->addRecordToPatients(newRecord))
+        this->close();
 }
 
 void AddPatientDialog::setMainWindow(MainWindow *mainWindow)

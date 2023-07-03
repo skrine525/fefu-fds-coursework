@@ -7,7 +7,7 @@ DoctorsDebugWidget::DoctorsDebugWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Инициализация таблицы Доктора
+    // Инициализация таблицы
     ui->tableWidgetHashTable->setColumnCount(6);
     QStringList doctorLabels;
     doctorLabels.append("Index");

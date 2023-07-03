@@ -1,10 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "addappointmentdialog.h"
-#include "addpatientdialog.h"
 #include "adddoctordialog.h"
-#include "searchappointmentdialog.h"
+#include "addpatientdialog.h"
+#include "addappointmentdialog.h"
 #include "searchdoctordialog.h"
+#include "searchpatientdialog.h"
+#include "searchappointmentdialog.h"
 
 #include <QFileDialog>
 #include <QDir>
@@ -87,10 +88,12 @@ void MainWindow::resetViewAndData()
     doctors.experienceTree.clear();
     doctors.fullNameTree.clear();
     doctors.specialityTree.clear();
+    doctors.phoneNumberHashTable.clear();
     patients.records.clear();
     patients.addressTree.clear();
     patients.ageTree.clear();
     patients.fullNameTree.clear();
+    patients.phoneNumberHashTable.clear();
     appointments.records.clear();
     appointments.doctorPhoneNumberTree.clear();
     appointments.patientPhoneNumberTree.clear();
@@ -130,8 +133,22 @@ void MainWindow::addRecordToAppointments(table3::Record record)
     ui->tableWidgetPatients->resizeColumnsToContents();
 }
 
-void MainWindow::addRecordToPatients(table2::Record record)
+bool MainWindow::addRecordToPatients(table2::Record record)
 {
+    // Вставляем в хеш-таблицу
+    int appendedIndex = patients.records.count();
+    int hashTableResult = patients.phoneNumberHashTable.insert(table2::HashTableEntry(record.phoneNumber, appendedIndex));
+    if(hashTableResult == 1)
+    {
+        QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
+        return false;
+    }
+    else if(hashTableResult == 2)
+    {
+        QMessageBox::warning(this, "Внимание", "Таблица переполнена.");
+        return false;
+    }
+
     // Форматирование строковых данных
     QStringList fullnameList = record.fullName.split(" ");
     QString lastName = fullnameList[0][0].toUpper() + fullnameList[0].mid(1).toLower();
@@ -144,7 +161,6 @@ void MainWindow::addRecordToPatients(table2::Record record)
 
     // Заносим запись в вектор и добавляем в структуры данных
     patients.records.append(record);
-    int appendedIndex = patients.records.count() - 1;
     patients.addressTree.insertNode(table2::Address(record.region, record.district), appendedIndex);
     patients.ageTree.insertNode(record.age, appendedIndex);
     patients.fullNameTree.insertNode(record.fullName, appendedIndex);
@@ -179,7 +195,6 @@ bool MainWindow::addRecordToDoctors(table1::Record record)
     // Вставляем в хеш-таблицу
     int appendedIndex = doctors.records.count();
     int hashTableResult = doctors.phoneNumberHashTable.insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
-    qDebug() << record.phoneNumber << " " << hashTableResult;
     if(hashTableResult == 1)
     {
         QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
@@ -428,9 +443,7 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
         ui->pushButtonAppointmentsClearSearch->setEnabled(true);
         int rowCount = ui->tableWidgetAppointments->rowCount();
         for(int i = 0; i < rowCount; i++)
-        {
             ui->tableWidgetAppointments->hideRow(i);
-        }
         ui->statusbar->showMessage("Записи - Найдено 0 элемент(ов).");
     }
     else
@@ -440,14 +453,11 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
 
         auto *head = valueList->getHead();
         auto *curr = head;
-
         if (curr != nullptr)
         {
             int rowCount = ui->tableWidgetAppointments->rowCount();
             for(int i = 0; i < rowCount; i++)
-            {
                 ui->tableWidgetAppointments->hideRow(i);
-            }
 
             int indexCount = 0;
             do
@@ -468,6 +478,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
     if(fieldIndex == 0)
     {
         // ФИО
+
         auto *node = doctors.fullNameTree.findNode(record.fullName);
         if(node != nullptr)
             valueList = node->valueList;
@@ -518,9 +529,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
         ui->pushButtonDoctorsClearSearch->setEnabled(true);
         int rowCount = ui->tableWidgetDoctors->rowCount();
         for(int i = 0; i < rowCount; i++)
-        {
             ui->tableWidgetDoctors->hideRow(i);
-        }
         ui->statusbar->showMessage("Доктора - Найдено 0 элемент(ов).");
     }
     else
@@ -528,16 +537,12 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
         // Включаем кнопку Очистить поиск
         ui->pushButtonDoctorsClearSearch->setEnabled(true);
 
-        auto *head = valueList->getHead();
-        auto *curr = head;
-
+        auto *curr = valueList->getHead();
         if (curr != nullptr)
         {
             int rowCount = ui->tableWidgetDoctors->rowCount();
             for(int i = 0; i < rowCount; i++)
-            {
                 ui->tableWidgetDoctors->hideRow(i);
-            }
 
             int indexCount = 0;
             do
@@ -552,15 +557,98 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
     }
 }
 
+void MainWindow::showPatientSearchResult(table2::Record record, int fieldIndex)
+{
+    table2::SingleLinkedList *valueList = nullptr;
+
+    if(fieldIndex == 0)
+    {
+        // ФИО
+
+        auto *node = patients.fullNameTree.findNode(record.fullName);
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 1)
+    {
+        // Адрес
+
+        auto *node = patients.addressTree.findNode(table2::Address(record.region, record.district));
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 2)
+    {
+        // Возраст
+
+        auto *node = patients.ageTree.findNode(record.age);
+        if(node != nullptr)
+            valueList = node->valueList;
+    }
+    else if(fieldIndex == 3)
+    {
+        // Номер телефона
+
+        int tableIndex = patients.phoneNumberHashTable.find(record.phoneNumber);
+
+        // Скрываем все строки таблицы
+        int rowCount = ui->tableWidgetPatients->rowCount();
+        for(int i = 0; i < rowCount; i++)
+            ui->tableWidgetPatients->hideRow(i);
+
+        int indexCount = 0;
+        if(tableIndex != -1)
+        {
+            auto entry = patients.phoneNumberHashTable.getEntry(tableIndex);
+            ui->tableWidgetPatients->showRow(entry.value);
+            indexCount++;
+        }
+
+        ui->statusbar->showMessage(QString("Пациенты - Найдено %1 элемент(ов).").arg(indexCount));
+        ui->pushButtonPatientsClearSearch->setEnabled(true);
+        return;
+    }
+
+    // Отображение поиска
+    if(valueList == nullptr)
+    {
+        ui->pushButtonPatientsClearSearch->setEnabled(true);
+        int rowCount = ui->tableWidgetDoctors->rowCount();
+        for(int i = 0; i < rowCount; i++)
+            ui->tableWidgetPatients->hideRow(i);
+        ui->statusbar->showMessage("Пациенты - Найдено 0 элемент(ов).");
+    }
+    else
+    {
+        // Включаем кнопку Очистить поиск
+        ui->pushButtonPatientsClearSearch->setEnabled(true);
+
+        auto *curr = valueList->getHead();
+        if (curr != nullptr)
+        {
+            int rowCount = ui->tableWidgetPatients->rowCount();
+            for(int i = 0; i < rowCount; i++)
+                ui->tableWidgetPatients->hideRow(i);
+
+            int indexCount = 0;
+            while (curr != nullptr)
+            {
+                indexCount++;
+                ui->tableWidgetPatients->showRow(curr->value);
+                curr = curr->next;
+            }
+            ui->statusbar->showMessage(QString("Пациенты - Найдено %1 элемент(ов).").arg(indexCount));
+        }
+    }
+}
+
 void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
 {
     // Выключаем кнопку Очистить поиск
     ui->pushButtonAppointmentsClearSearch->setEnabled(false);
     int rowCount = ui->tableWidgetAppointments->rowCount();
     for(int i = 0; i < rowCount; i++)
-    {
         ui->tableWidgetAppointments->showRow(i);
-    }
     ui->statusbar->showMessage("Записи - Поиск очищен.");
 }
 
@@ -640,9 +728,26 @@ void MainWindow::on_pushButtonDoctorsClearSearch_clicked()
     ui->pushButtonDoctorsClearSearch->setEnabled(false);
     int rowCount = ui->tableWidgetDoctors->rowCount();
     for(int i = 0; i < rowCount; i++)
-    {
         ui->tableWidgetDoctors->showRow(i);
-    }
+    ui->statusbar->showMessage("Доктора - Поиск очищен.");
+}
+
+
+void MainWindow::on_pushButtonPatientsSeatch_clicked()
+{
+    SearchPatientDialog searchPatientDialog(this);
+    searchPatientDialog.setMainWindow(this);
+    searchPatientDialog.exec();
+}
+
+
+void MainWindow::on_pushButtonPatientsClearSearch_clicked()
+{
+    // Выключаем кнопку Очистить поиск
+    ui->pushButtonPatientsClearSearch->setEnabled(false);
+    int rowCount = ui->tableWidgetPatients->rowCount();
+    for(int i = 0; i < rowCount; i++)
+        ui->tableWidgetPatients->showRow(i);
     ui->statusbar->showMessage("Доктора - Поиск очищен.");
 }
 

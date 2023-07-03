@@ -23,10 +23,11 @@ public:
     ~MainWindow();
 
     bool addRecordToDoctors(table1::Record record);
+    bool addRecordToPatients(table2::Record record);
     void addRecordToAppointments(table3::Record record);
-    void addRecordToPatients(table2::Record record);
 
     void showDoctorSearchResult(table1::Record record, int fieldIndex);
+    void showPatientSearchResult(table2::Record record, int fieldIndex);
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
 private slots:
@@ -59,6 +60,10 @@ private slots:
     void on_pushButtonDoctorsSearch_clicked();
 
     void on_pushButtonDoctorsClearSearch_clicked();
+
+    void on_pushButtonPatientsSeatch_clicked();
+
+    void on_pushButtonPatientsClearSearch_clicked();
 
 private:
     Ui::MainWindow *ui;
