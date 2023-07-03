@@ -4,6 +4,11 @@
 #include <QString>
 #include <QVector>
 #include <QVariant>
+#include <QtMath>
+#include <QTableWidget>
+
+// Константа начальной размерности динамической хеш-таблицы
+#define HASHTABLE_SIZE 10
 
 namespace table3
 {
@@ -17,6 +22,7 @@ namespace table3
 
         operator QString() const;
     };
+
     bool operator<(const Datetime &a, const Datetime &b);
     bool operator>(const Datetime &a, const Datetime &b);
     bool operator==(const Datetime &a, const Datetime &b);
@@ -28,6 +34,55 @@ namespace table3
         long long patientPhoneNumber;
         Datetime appointmentDatetime;
         unsigned appointmentCost;
+    };
+
+    struct PhoneNumberAndDatetime
+    {
+        long long doctorPhoneNumber;
+        long long patientPhoneNumber;
+        Datetime appointmentDatetime;
+
+        operator QString() const;
+        operator int() const;
+    };
+
+    bool operator==(const PhoneNumberAndDatetime &a, const PhoneNumberAndDatetime &b);
+    bool operator!=(const PhoneNumberAndDatetime &a, const PhoneNumberAndDatetime &b);
+
+    template<typename Key>
+    class HashTable
+    {
+    public:
+        struct Entry
+        {
+            Key* key = nullptr;
+            int value = -1;
+            int status = 0;    // 1: занят, 0: удален
+            int hash1 = -1;
+            int hash2 = -1;
+        };
+
+        HashTable(int initialSize);
+        ~HashTable();
+        bool insert(Key key, int value);
+        int find(Key key);
+        bool remove(Key key);
+        void printToQTableWidget(QTableWidget *tableWidget);
+        void clear();
+
+    private:
+        QVector<Entry> table;
+        int size;
+        int initialSize;
+        int primeSize;
+        int count;
+
+        bool isPrime(int number);
+        void calculatePrimeSize();
+        int hash1(Key &key);
+        int hash2(int hash1, int key, int j);
+        void resize(double factor);
+        int findEmptySlot(QVector<Entry> &table, Key key);
     };
 
     struct DoublyLinkedRingListNode
@@ -106,7 +161,332 @@ namespace table3
         RBTree<long long> patientPhoneNumberTree;
         RBTree<Datetime> appointmentDatetimeTree;
         RBTree<unsigned> appointmentCostTree;
+        HashTable<PhoneNumberAndDatetime> phoneNumberAndDatetimeHashTable;
+
+        Appointments();
     };
+}
+
+template <typename Key>
+table3::HashTable<Key>::HashTable(int initialSize) : size(initialSize), initialSize(initialSize), count(0)
+{
+    table.resize(size);
+    calculatePrimeSize();
+}
+
+template <typename Key>
+table3::HashTable<Key>::~HashTable()
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        if (table[i].key)
+            delete table[i].key;
+    }
+}
+
+template <typename Key>
+void table3::HashTable<Key>::clear()
+{
+    for(int i = 0; i < size; i++)
+    {
+        if(table[i].key)
+            delete table[i].key;
+    }
+    size = initialSize;
+    count = 0;
+    table = QVector<Entry>(size);
+}
+
+template <typename Key>
+void table3::HashTable<Key>::printToQTableWidget(QTableWidget *tableWidget)
+{
+    for(int i = 0; i < size; i++)
+    {
+        // Строки элементов таблицы
+        QString indexString = QString::number(i);
+        QString hash1String = ((table[i].hash1 != -1) ? QString::number(table[i].hash1) : "");
+        QString hash2String = ((table[i].hash2 != -1) ? QString::number(table[i].hash2) : "");
+        QString keyString = ((table[i].key != nullptr) ? QString(*table[i].key) : "");
+        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value) : "");
+        QString statusString = QString::number(table[i].status);
+
+        // Элементы строки
+        QTableWidgetItem *indexItem = new QTableWidgetItem(indexString);
+        QTableWidgetItem *hash1Item = new QTableWidgetItem(hash1String);
+        QTableWidgetItem *hash2Item = new QTableWidgetItem(hash2String);
+        QTableWidgetItem *keyItem = new QTableWidgetItem(keyString);
+        QTableWidgetItem *valueItem = new QTableWidgetItem(valueString);
+        QTableWidgetItem *statusItem = new QTableWidgetItem(statusString);
+
+        // Устанавливаем флаг запрета редактирования для каждого элемента
+        indexItem->setFlags(indexItem->flags() & ~Qt::ItemIsEditable);
+        hash1Item->setFlags(hash1Item->flags() & ~Qt::ItemIsEditable);
+        hash2Item->setFlags(hash2Item->flags() & ~Qt::ItemIsEditable);
+        keyItem->setFlags(keyItem->flags() & ~Qt::ItemIsEditable);
+        valueItem->setFlags(valueItem->flags() & ~Qt::ItemIsEditable);
+        statusItem->setFlags(statusItem->flags() & ~Qt::ItemIsEditable);
+
+        // Заносим строку в таблицу
+        int rowIndex = tableWidget->rowCount();
+        tableWidget->insertRow(rowIndex);
+        tableWidget->setItem(rowIndex, 0, indexItem);
+        tableWidget->setItem(rowIndex, 1, hash1Item);
+        tableWidget->setItem(rowIndex, 2, hash2Item);
+        tableWidget->setItem(rowIndex, 3, keyItem);
+        tableWidget->setItem(rowIndex, 4, valueItem);
+        tableWidget->setItem(rowIndex, 5, statusItem);
+    }
+}
+
+template <typename Key>
+bool table3::HashTable<Key>::remove(Key key)
+{
+    int hash = hash1(key);
+    int index = hash;
+
+    int j = 1;
+    while (table[index].status == 1 && table[index].key && *table[index].key != key)
+    {
+        if (j >= size)
+            return false;
+        index = hash2(hash, key, j);
+        j++;
+    }
+
+    if (table[index].status == 1)
+    {
+        int remIndex = index;
+        int lastIndex = -1;
+        bool flag = true;
+        while (flag && table[index].key)
+        {
+            if (j >= size)
+                return false;
+            index = hash2(hash, key, j);
+            j++;
+            if (table[index].status == 1)
+            {
+
+                if (remIndex == index)
+                    flag = false;
+                else if(hash1(*table[remIndex].key) == hash1(*table[index].key))
+                    lastIndex = index;
+            }
+
+        }
+
+        if (lastIndex == -1)
+            table[remIndex].status = 0;
+        else
+        {
+            delete table[remIndex].key;
+            table[remIndex].status = table[lastIndex].status;
+            table[remIndex].key = new Key(*table[lastIndex].key);
+            table[remIndex].value = table[lastIndex].value;
+            table[lastIndex].status = 0;
+        }
+
+        count--;
+        if (static_cast<double>(count) / size <= 0.3)
+            resize(0.5);
+
+        return true;
+    }
+
+    return false;
+}
+
+template <typename Key>
+bool table3::HashTable<Key>::insert(Key key, int value)
+{
+    if (static_cast<double>(count) / size >= 0.7)
+        resize(2);
+
+    int hash = hash1(key);
+    int index = hash;
+
+    int j = 1;
+    while (table[index].status == 1 && table[index].key && *table[index].key != key)
+    {
+        if (j >= size)
+        {
+            resize(2);
+            j = 1;
+            hash = hash1(key);
+            index = hash;
+            continue;
+        }
+        index = hash2(hash, key, j);
+        j++;
+    }
+
+    if (table[index].status == 0)
+    {
+        if (table[index].key)
+        {
+            int searchIndex = index;
+            while (table[searchIndex].key)
+            {
+                searchIndex = hash2(hash, key, j);
+                j++;
+                if (table[searchIndex].status == 1 && *table[searchIndex].key == key)
+                    return false;
+            }
+
+            if(table[index].key)
+                delete table[index].key;
+        }
+
+        Key* pkey = new Key(key);
+        table[index].key = pkey;
+        table[index].value = value;
+        table[index].status = 1;
+        table[index].hash1 = hash;  // Запоминаем hash1
+        if(hash != index)
+            table[index].hash2 = index; // Запоминаем hash2, если первычных хеш не равен вторичному
+        count++;
+        return true;
+    }
+}
+
+template <typename Key>
+int table3::HashTable<Key>::find(Key key)
+{
+    int hash = hash1(key);
+    int index = hash;
+
+    int j = 1;
+    if (table[index].status == 1 && *table[index].key == key)
+        return index;
+    else
+    {
+        while (table[index].key && j < size)
+        {
+            index = hash2(hash, key, j);
+            j++;
+            if (table[index].status == 1 && *table[index].key == key)
+                return index;
+        }
+    }
+
+    return -1; // Ключ не найден
+}
+
+template <typename Key>
+bool table3::HashTable<Key>::isPrime(int number)
+{
+    if (number <= 1)
+        return false;
+
+    for (int i = 2; i * i <= number; ++i)
+    {
+        if (number % i == 0)
+            return false;
+    }
+
+    return true;
+}
+
+template <typename Key>
+void table3::HashTable<Key>::calculatePrimeSize()
+{
+    primeSize = size - 1;
+    while (primeSize > 0 && !isPrime(primeSize))
+        primeSize--;
+}
+
+template <typename Key>
+int table3::HashTable<Key>::hash1(Key &key)
+{
+    int intKey = int(key);
+    int sum = 0;
+    while (intKey != 0)
+    {
+        sum += intKey % 10;
+        intKey /= 10;
+    }
+
+    int sizeNumCount = 0;
+    int sizeTmp = size;
+    while (sizeTmp != 0)
+    {
+        sizeNumCount++;
+        sizeTmp /= 10;
+    }
+
+    int hash = (sum * sum / 10) % ((int) pow(10, sizeNumCount));
+    return hash % size;
+}
+
+template <typename Key>
+int table3::HashTable<Key>::hash2(int hash1, int key, int j)
+{
+    return (hash1 + j * (1 + key % (primeSize))) % size;
+}
+
+template <typename Key>
+void table3::HashTable<Key>::resize(double factor)
+{
+    if (size * factor >= initialSize)
+    {
+        int oldSize = size;
+        size = size * factor;
+        calculatePrimeSize();
+
+        QVector<Entry> newTable(size);
+
+        for (int i = 0; i < oldSize; ++i) {
+            if (table[i].status == 1) {
+                Key* key = table[i].key;
+                int value = table[i].value;
+                int hash = hash1(*key);
+                int index = findEmptySlot(newTable, *key);
+                newTable[index].key = key;
+                newTable[index].value = value;
+                newTable[index].hash1 = hash;  // Запоминаем hash1
+                if(hash != index)
+                    newTable[index].hash2 = index; // Запоминаем hash2, если первычных хеш не равен вторичному
+                newTable[index].status = 1;
+            }
+            else if (table[i].status == 0 && table[i].key)
+                delete table[i].key;
+        }
+
+        table = std::move(newTable);
+    }
+}
+
+template <typename Key>
+int table3::HashTable<Key>::findEmptySlot(QVector<Entry> &table, Key key)
+{
+    int hash = hash1(key);
+    int index = hash;
+
+    int j = 1;
+    while (table[index].status == 1 && table[index].key && *table[index].key != key)
+    {
+        if (j >= size)
+            return -1;
+        index = hash2(hash, key, j);
+        j++;
+    }
+
+    if (table[index].status == 0)
+    {
+        if (table[index].key)
+        {
+            int searchIndex = index;
+            while (table[searchIndex].key)
+            {
+                searchIndex = hash2(hash, key, j);
+                j++;
+                if (table[searchIndex].status == 1 && *table[searchIndex].key == key)
+                    return -1;
+            }
+        }
+
+        return index;
+    }
 }
 
 template <typename Key>

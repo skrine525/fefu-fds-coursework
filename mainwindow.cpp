@@ -99,6 +99,7 @@ void MainWindow::resetViewAndData()
     appointments.patientPhoneNumberTree.clear();
     appointments.appointmentDatetimeTree.clear();
     appointments.appointmentCostTree.clear();
+    appointments.phoneNumberAndDatetimeHashTable.clear();
 }
 
 int MainWindow::addRecordToAppointments(table3::Record record)
@@ -114,9 +115,17 @@ int MainWindow::addRecordToAppointments(table3::Record record)
     if(patients.phoneNumberHashTable.find(record.patientPhoneNumber) == -1)
         return 3;
 
+    // Вставляем в хеш-таблицу
+    int appendedIndex = appointments.records.count();
+    table3::PhoneNumberAndDatetime pnd;
+    pnd.doctorPhoneNumber = record.doctorPhoneNumber;
+    pnd.patientPhoneNumber = record.patientPhoneNumber;
+    pnd.appointmentDatetime = record.appointmentDatetime;
+    if(!appointments.phoneNumberAndDatetimeHashTable.insert(pnd, appendedIndex))
+        return 1;
+
     // Заносим запись в вектор и добавляем в структуры данных
     appointments.records.append(record);
-    int appendedIndex = appointments.records.count() - 1;
     appointments.doctorPhoneNumberTree.insertNode(record.doctorPhoneNumber, appendedIndex);
     appointments.patientPhoneNumberTree.insertNode(record.patientPhoneNumber, appendedIndex);
     appointments.appointmentDatetimeTree.insertNode(record.appointmentDatetime, appendedIndex);
@@ -327,7 +336,6 @@ void MainWindow::on_menuFileOpen_triggered()
                 }
                 else if(tableNumber == 3 && splittedLine.count() == 8)
                 {
-                    lineCountToRead--;
                     table3::Record record;
                     record.doctorPhoneNumber = splittedLine[0].toLongLong();
                     record.patientPhoneNumber = splittedLine[1].toLongLong();

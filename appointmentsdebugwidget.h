@@ -27,6 +27,8 @@ private slots:
 
     void on_pushButtonShowAppointmentCostTree_clicked();
 
+    void on_pushButtonShowHashTable_clicked();
+
 private:
     Ui::AppointmentsDebugWidget *ui;
     table3::Appointments *appointmentsPointer;
