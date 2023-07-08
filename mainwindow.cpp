@@ -13,6 +13,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QMessageBox>
+#include <QLocale>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -763,4 +764,59 @@ void MainWindow::on_pushButtonPatientsClearSearch_clicked()
     for(int i = 0; i < rowCount; i++)
         ui->tableWidgetPatients->showRow(i);
     ui->statusbar->showMessage("Доктора - Поиск очищен.");
+}
+
+void MainWindow::on_pushButtonDoctorsDelete_clicked()
+{
+    int rowIndex = ui->tableWidgetDoctors->currentRow();
+    if(rowIndex != -1)
+    {
+        QString fullnameString = doctors.records[rowIndex].fullName;
+        QString phoneNumberString = QString::number(doctors.records[rowIndex].phoneNumber);
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Доктора - Удаление");
+        msgBox.setText("Вы точно хотите удалить доктора?\n\nФИО: " + fullnameString
+                       + "\nНомер телефона: " + phoneNumberString);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.addButton(QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        if(msgBox.exec() == QMessageBox::Yes)
+        {
+            if(removeRecordFromDoctors(rowIndex))
+                ui->tableWidgetDoctors->setCurrentCell(-1, -1);
+            else
+                QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка.");
+        }
+    }
+    else
+        QMessageBox::warning(this, "Внимание", "Для удаления Доктора необходимо выбрать строку.");
+}
+
+bool MainWindow::removeRecordFromDoctors(int index)
+{
+    if(doctors.records.length() > 0)
+    {
+        int lastIndex = doctors.records.length() - 1;
+        if(0 <= index && index < lastIndex)
+        {
+            return false;
+        }
+        else if(index == lastIndex)
+        {
+            table1::Record record = doctors.records[index];
+            doctors.experienceTree.deleteNode(record.experience, index);
+            doctors.fullNameTree.deleteNode(record.fullName, index);
+            doctors.specialityTree.deleteNode(record.speciality, index);
+            doctors.phoneNumberHashTable.remove(table1::HashTableEntry(record.phoneNumber, index));
+            doctors.records.remove(index);
+            ui->tableWidgetDoctors->removeRow(index);
+
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
 }

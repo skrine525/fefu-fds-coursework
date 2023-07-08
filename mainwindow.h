@@ -26,6 +26,10 @@ public:
     bool addRecordToPatients(table2::Record record);
     int addRecordToAppointments(table3::Record record);
 
+    bool removeRecordFromDoctors(int index);
+    bool removeRecordFromPatients(int index);
+    bool removeRecordFromAppointments(int index);
+
     void showDoctorSearchResult(table1::Record record, int fieldIndex);
     void showPatientSearchResult(table2::Record record, int fieldIndex);
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
@@ -64,6 +68,8 @@ private slots:
     void on_pushButtonPatientsSeatch_clicked();
 
     void on_pushButtonPatientsClearSearch_clicked();
+
+    void on_pushButtonDoctorsDelete_clicked();
 
 private:
     Ui::MainWindow *ui;

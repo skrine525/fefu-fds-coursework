@@ -363,12 +363,12 @@ void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNod
     {
         currentNode->key = nq->key;
         currentNode = nq;
-        nq = nq->right;
+        nq = nq->childR;
         h = true;
     }
     else
     {
-        replaceMinR(currentNode, nq->left, h);
+        replaceMinR(currentNode, nq->childL, h);
         if (h)
             balanceL(nq, h);
     }
