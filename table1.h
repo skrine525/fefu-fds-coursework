@@ -81,12 +81,12 @@ namespace table1
     template <typename Key>
     struct AVLTreeNode
     {
-        AVLTreeNode *childR;
-        AVLTreeNode *childL;
+        AVLTreeNode *right;
+        AVLTreeNode *left;
         Key key;
         DoubleLinkedList *valueList;
         int balance;
-        AVLTreeNode(Key k, DoubleLinkedList *v) : key(k), valueList(v), childL(nullptr), childR(nullptr), balance(0) {}
+        AVLTreeNode(Key k, DoubleLinkedList *v) : key(k), valueList(v), left(nullptr), right(nullptr), balance(0) {}
     };
 
     template <typename Key>
@@ -106,7 +106,7 @@ namespace table1
         void insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
         void clear(AVLTreeNode<Key> *&node);
         void deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
-        void deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h);
+        void replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h);
         void balanceR(AVLTreeNode<Key> *&currentNode, bool &h);
         void balanceL(AVLTreeNode<Key> *&currentNode, bool &h);
         QString getPrintableHtml(AVLTreeNode<Key> *node, int h, int l) const;
@@ -129,8 +129,8 @@ void table1::AVLTree<Key>::clear(AVLTreeNode<Key> *&node)
 {
     if (node != nullptr)
     {
-        clear(node->childL);
-        clear(node->childR);
+        clear(node->left);
+        clear(node->right);
         node->valueList->clear();
         delete node;
     }
@@ -141,8 +141,8 @@ void table1::AVLTree<Key>::clear()
 {
     if (root != nullptr)
     {
-        clear(root->childL);
-        clear(root->childR);
+        clear(root->left);
+        clear(root->right);
         root->valueList->clear();
         delete root;
         root = nullptr;
@@ -162,7 +162,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
     }
     else if (currentNode->key > key)
     {
-        insertNode(key, value, h, currentNode->childL);
+        insertNode(key, value, h, currentNode->left);
         if (h)
         {
             if (currentNode->balance == 1)
@@ -174,21 +174,21 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 currentNode->balance = -1;
             else
             {
-                AVLTreeNode<Key> *node1 = currentNode->childL;
+                AVLTreeNode<Key> *node1 = currentNode->left;
                 if (node1->balance == -1)
                 {
-                    currentNode->childL = node1->childR;
-                    node1->childR = currentNode;
+                    currentNode->left = node1->right;
+                    node1->right = currentNode;
                     currentNode->balance = 0;
                     currentNode = node1;
                 }
                 else
                 {
-                    AVLTreeNode<Key> *node2 = node1->childR;
-                    node1->childR = node2->childL;
-                    node2->childL = node1;
-                    currentNode->childL = node2->childR;
-                    node2->childR = currentNode;
+                    AVLTreeNode<Key> *node2 = node1->right;
+                    node1->right = node2->left;
+                    node2->left = node1;
+                    currentNode->left = node2->right;
+                    node2->right = currentNode;
                     if (node2->balance == -1)
                         currentNode->balance = 1;
                     else currentNode->balance = 0;
@@ -204,7 +204,7 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
     }
     else if (currentNode->key < key)
     {
-        insertNode(key, value, h, currentNode->childR);
+        insertNode(key, value, h, currentNode->right);
         if (h)
         {
             if (currentNode->balance == -1)
@@ -216,21 +216,21 @@ void table1::AVLTree<Key>::insertNode(Key key, int value, bool &h, AVLTreeNode<K
                 currentNode->balance = 1;
             else
             {
-                AVLTreeNode<Key> *node1 = currentNode->childR;
+                AVLTreeNode<Key> *node1 = currentNode->right;
                 if (node1->balance == 1)
                 {
-                    currentNode->childR = node1->childL;
-                    node1->childL = currentNode;
+                    currentNode->right = node1->left;
+                    node1->left = currentNode;
                     currentNode->balance = 0;
                     currentNode = node1;
                 }
                 else
                 {
-                    AVLTreeNode<Key> *node2 = node1->childL;
-                    node1->childL = node2->childR;
-                    node2->childR = node1;
-                    currentNode->childR = node2->childL;
-                    node2->childL = currentNode;
+                    AVLTreeNode<Key> *node2 = node1->left;
+                    node1->left = node2->right;
+                    node2->right = node1;
+                    currentNode->right = node2->left;
+                    node2->left = currentNode;
                     if (node2->balance == 1)
                         currentNode->balance = -1;
                     else currentNode->balance = 0;
@@ -269,11 +269,11 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
     }
     else
     {
-        AVLTreeNode<Key> *node1 = currentNode->childL;
+        AVLTreeNode<Key> *node1 = currentNode->left;
         if (node1->balance <= 0)
         {
-            currentNode->childL = node1->childR;
-            node1->childR = currentNode;
+            currentNode->left = node1->right;
+            node1->right = currentNode;
             if (node1->balance == 0)
             {
                 currentNode->balance = -1;
@@ -289,11 +289,11 @@ void table1::AVLTree<Key>::balanceR(AVLTreeNode<Key> *&currentNode, bool &h)
         }
         else
         {
-            AVLTreeNode<Key> *node2 = node1->childR;
-            node1->childR = node2->childL;
-            node2->childL = node1;
-            currentNode->childL = node2->childR;
-            node2->childR = currentNode;
+            AVLTreeNode<Key> *node2 = node1->right;
+            node1->right = node2->left;
+            node2->left = node1;
+            currentNode->left = node2->right;
+            node2->right = currentNode;
             if (node2->balance == -1)
                 currentNode->balance = 1;
             else currentNode->balance = 0;
@@ -319,11 +319,11 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
     }
     else
     {
-        AVLTreeNode<Key> *node1 = currentNode->childR;
+        AVLTreeNode<Key> *node1 = currentNode->right;
         if (node1->balance >= 0)
         {
-            currentNode->childR = node1->childL;
-            node1->childL = currentNode;
+            currentNode->right = node1->left;
+            node1->left = currentNode;
             if (node1->balance == 0)
             {
                 currentNode->balance = 1;
@@ -339,11 +339,11 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
         }
         else
         {
-            AVLTreeNode<Key> *node2 = node1->childL;
-            node1->childL = node2->childR;
-            node2->childR = node1;
-            currentNode->childR = node2->childL;
-            node2->childL = currentNode;
+            AVLTreeNode<Key> *node2 = node1->left;
+            node1->left = node2->right;
+            node2->right = node1;
+            currentNode->right = node2->left;
+            node2->left = currentNode;
             if (node2->balance == 1)
                 currentNode->balance = -1;
             else currentNode->balance = 0;
@@ -357,18 +357,18 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::deleteMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h)
+void table1::AVLTree<Key>::replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h)
 {
-    if (nq->childL == nullptr)
+    if (nq->left == nullptr)
     {
         currentNode->key = nq->key;
         currentNode = nq;
-        nq = nq->childR;
+        nq = nq->right;
         h = true;
     }
     else
     {
-        replaceMinR(currentNode, nq->childL, h);
+        replaceMinR(currentNode, nq->left, h);
         if (h)
             balanceL(nq, h);
     }
@@ -381,12 +381,12 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
     {
         if (currentNode->key > key)
         {
-            deleteNode(key, value, h, currentNode->childL);
+            deleteNode(key, value, h, currentNode->left);
             if (h) balanceL(currentNode, h);
         }
         else if (currentNode->key < key)
         {
-            deleteNode(key, value, h, currentNode->childR);
+            deleteNode(key, value, h, currentNode->right);
             if (h) balanceR(currentNode, h);
         }
         else
@@ -398,19 +398,19 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
             else
             {
                 AVLTreeNode<Key> *nq = currentNode;
-                if (nq->childR == nullptr)
+                if (nq->right == nullptr)
                 {
-                    currentNode = nq->childL;
+                    currentNode = nq->left;
                     h = true;
                 }
-                else if (nq->childL == nullptr)
+                else if (nq->left == nullptr)
                 {
-                    currentNode = nq->childR;
+                    currentNode = nq->right;
                     h = true;
                 }
                 else
                 {
-                    deleteMinR(nq->childL, nq, h);
+                    replaceMinR(nq->left, nq, h);
                     if (h) balanceL(currentNode, h);
                 }
                 delete nq;
@@ -439,13 +439,13 @@ QString table1::AVLTree<Key>::getPrintableHtml(AVLTreeNode<Key> *node,
 {
     if (node != nullptr)
     {
-        QString outputStr = getPrintableHtml(node->childR, h + l, l);
+        QString outputStr = getPrintableHtml(node->right, h + l, l);
         QString spaceSymbol(" ");
         QString listPrintableString = node->valueList->getPrintableString();
         outputStr+= "<p style=\"white-space:pre\">" +
                 spaceSymbol.repeated(h) + QVariant(node->key).toString() +
                 " [" + listPrintableString + "]</p>";
-        outputStr += getPrintableHtml(node->childL, h + l, l);
+        outputStr += getPrintableHtml(node->left, h + l, l);
         return outputStr;
     }
     return "";
@@ -461,9 +461,9 @@ table1::AVLTreeNode<Key> *table1::AVLTree<Key>::findNode(Key key)
         do
         {
             if (key < curr->key)
-                curr = curr->childL;
+                curr = curr->left;
             else if (key > curr->key)
-                curr = curr->childR;
+                curr = curr->right;
             else
                 desired = curr;
         } while (curr != nullptr && desired == nullptr);
