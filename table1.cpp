@@ -37,11 +37,6 @@ table1::HashTable::HashTable(int maxN)
     }
 }
 
-table1::HashTableEntry &table1::HashTable::getEntry(int index)
-{
-    return table[index];
-}
-
 int table1::HashTable::solveInsertCollision(HashTableEntry key)
 {
     int insertIndex = firstHash(key.key, size);
@@ -150,26 +145,26 @@ bool table1::HashTable::solveDeleteCollision(HashTableEntry key)
 bool table1::HashTable::remove(HashTableEntry key)
 {
     int i = firstHash(key.key, size);
-            if (table[i].status == 1)
-            {
-                if (table[i] == key)
-                {
-                    table[i].status = 2;
-                    return true;
-                }
-                else
-                    return solveDeleteCollision(key);
-            }
-            else if (table[i].status == 2)
-                return solveDeleteCollision(key);
+    if (table[i].status == 1)
+    {
+        if (table[i] == key)
+        {
+            table[i].status = 2;
+            return true;
+        }
+        else
+            return solveDeleteCollision(key);
+    }
+    else if (table[i].status == 2)
+        return solveDeleteCollision(key);
 }
 
-int table1::HashTable::find(long long key)
+table1::HashTableEntry *table1::HashTable::find(long long key)
 {
     int i = firstHash(key, size);
     int firstHash = i;
     if (table[i].status == 1 && table[i].key == key)
-        return i;
+        return &table[i];
     else
     {
         int j = 1;
@@ -177,12 +172,12 @@ int table1::HashTable::find(long long key)
         {
             i = secondHash(firstHash, 1, j);
             if (table[i].key == key && table[i].status == 1)
-                return i;
+                return &table[i];
             j++;
         }
     }
 
-    return -1;
+    return nullptr;
 }
 
 void table1::HashTable::printToQTableWidget(QTableWidget *tableWidget)
@@ -194,7 +189,7 @@ void table1::HashTable::printToQTableWidget(QTableWidget *tableWidget)
         QString firstHashString = ((table[i].firstHash != -1) ? QString::number(table[i].firstHash) : "");
         QString secondHashString = ((table[i].secondHash != -1) ? QString::number(table[i].secondHash) : "");
         QString keyString = ((table[i].key != -1) ? QString::number(table[i].key) : "");
-        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value) : "");
+        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value + 1) : "");
         QString statusString = QString::number(table[i].status);
 
         // Элементы строки
@@ -309,7 +304,7 @@ int table1::DoubleLinkedList::countNodes()
     return count;
 }
 
-void table1::DoubleLinkedList::deleteNode(int value)
+void table1::DoubleLinkedList::removeNode(int value)
 {
     DoubleLinkedListNode *currentNode = head;
 

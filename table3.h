@@ -98,7 +98,7 @@ namespace table3
         DoublyLinkedRingList() : head(nullptr) {}
         ~DoublyLinkedRingList();
         void insertNode(int value);
-        void deleteNode(int value);
+        void removeNode(int value);
         QString getPrintableString();
         bool isEmpty();
         void clear();
@@ -132,7 +132,7 @@ namespace table3
         RBTree() : root(nullptr) {}
 
         void insertNode(Key key, int value);
-        void deleteNode(Key key, int value);
+        void removeNode(Key key, int value);
         RBTreeNode<Key> *findNode(Key key);
         QString getPrintableHtml(int l) const;
         void clear();
@@ -144,7 +144,7 @@ namespace table3
         void rotateLeft(RBTreeNode<Key> *node);
         void rotateRight(RBTreeNode<Key> *node);
         RBTreeNode<Key> *minimumNode(RBTreeNode<Key> *node);
-        void deleteNode(RBTreeNode<Key> *node,
+        void removeNode(RBTreeNode<Key> *node,
                         RBTreeNode<Key> *parent,
                         RBTreeNode<Key> *grandparent, RBTree<Key> &tree);
         void deleteNodeFixup(RBTreeNode<Key> *node,
@@ -207,7 +207,7 @@ void table3::HashTable<Key>::printToQTableWidget(QTableWidget *tableWidget)
         QString hash1String = ((table[i].hash1 != -1) ? QString::number(table[i].hash1) : "");
         QString hash2String = ((table[i].hash2 != -1) ? QString::number(table[i].hash2) : "");
         QString keyString = ((table[i].key != nullptr) ? QString(*table[i].key) : "");
-        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value) : "");
+        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value + 1) : "");
         QString statusString = QString::number(table[i].status);
 
         // Элементы строки
@@ -576,13 +576,13 @@ void table3::RBTree<Key>::insertNode(Key key, int value)
 }
 
 template <typename Key>
-void table3::RBTree<Key>::deleteNode(Key key, int value)
+void table3::RBTree<Key>::removeNode(Key key, int value)
 {
     RBTreeNode<Key> *current = root;
     RBTreeNode<Key> *parent = nullptr;
     RBTreeNode<Key> *grandparent = nullptr;
 
-    // Find the node to deleteNode
+    // Find the node to removeNode
     while (current != nullptr && current->key != key)
     {
         grandparent = parent;
@@ -599,7 +599,7 @@ void table3::RBTree<Key>::deleteNode(Key key, int value)
         return;
 
     // Удаление элемента из списка
-    current->valueList->deleteNode(value);
+    current->valueList->removeNode(value);
     if(current->valueList->isEmpty())
         delete current->valueList;
     else
@@ -632,7 +632,7 @@ void table3::RBTree<Key>::deleteNode(Key key, int value)
         }
     }
 
-    deleteNode(current, parent, grandparent, *this);
+    removeNode(current, parent, grandparent, *this);
 }
 
 template <typename Key>
@@ -742,7 +742,7 @@ table3::RBTreeNode<Key> *table3::RBTree<Key>::minimumNode(
 }
 
 template <typename Key>
-void table3::RBTree<Key>::deleteNode(RBTreeNode<Key> *node,
+void table3::RBTree<Key>::removeNode(RBTreeNode<Key> *node,
                                             RBTreeNode<Key> *parent,
                                             RBTreeNode<Key> *grandparent,
                                             RBTree<Key> &tree)
@@ -785,8 +785,8 @@ void table3::RBTree<Key>::deleteNode(RBTreeNode<Key> *node,
     node->key = successor->key;
     node->valueList = successor->valueList;
 
-    // Recursively deleteNode the successor node
-    deleteNode(successor, successor->parent, grandparent, tree);
+    // Recursively removeNode the successor node
+    removeNode(successor, successor->parent, grandparent, tree);
 }
 
 template <typename Key>

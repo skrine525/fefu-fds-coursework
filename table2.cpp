@@ -191,26 +191,26 @@ bool table2::HashTable::solveDeleteCollision(HashTableEntry key)
 bool table2::HashTable::remove(HashTableEntry key)
 {
     int i = firstHash(key.key, size);
-            if (table[i].status == 1)
-            {
-                if (table[i] == key)
-                {
-                    table[i].status = 2;
-                    return true;
-                }
-                else
-                    return solveDeleteCollision(key);
-            }
-            else if (table[i].status == 2)
-                return solveDeleteCollision(key);
+    if (table[i].status == 1)
+    {
+        if (table[i] == key)
+        {
+            table[i].status = 2;
+            return true;
+        }
+        else
+            return solveDeleteCollision(key);
+    }
+    else if (table[i].status == 2)
+        return solveDeleteCollision(key);
 }
 
-int table2::HashTable::find(long long key)
+table2::HashTableEntry *table2::HashTable::find(long long key)
 {
     int i = firstHash(key, size);
     int firstHash = i;
     if (table[i].status == 1 && table[i].key == key)
-        return i;
+        return &table[i];
     else
     {
         int j = 1;
@@ -218,17 +218,12 @@ int table2::HashTable::find(long long key)
         {
             i = secondHash(firstHash, 1, 1, j);
             if (table[i].key == key && table[i].status == 1)
-                return i;
+                return &table[i];
             j++;
         }
     }
 
-    return -1;
-}
-
-table2::HashTableEntry &table2::HashTable::getEntry(int index)
-{
-    return table[index];
+    return nullptr;
 }
 
 void table2::HashTable::printToQTableWidget(QTableWidget *tableWidget)
@@ -240,7 +235,7 @@ void table2::HashTable::printToQTableWidget(QTableWidget *tableWidget)
         QString firstHashString = ((table[i].firstHash != -1) ? QString::number(table[i].firstHash) : "");
         QString secondHashString = ((table[i].secondHash != -1) ? QString::number(table[i].secondHash) : "");
         QString keyString = ((table[i].key != -1) ? QString::number(table[i].key) : "");
-        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value) : "");
+        QString valueString = ((table[i].value != -1) ? QString::number(table[i].value + 1) : "");
         QString statusString = QString::number(table[i].status);
 
         // Элементы строки
@@ -325,7 +320,7 @@ int table2::SingleLinkedList::countNodes()
     return count;
 }
 
-void table2::SingleLinkedList::deleteNode(int value)
+void table2::SingleLinkedList::removeNode(int value)
 {
     SingleLinkedListNode *currentNode = head;
     if (head != nullptr)

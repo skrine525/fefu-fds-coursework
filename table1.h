@@ -49,8 +49,7 @@ namespace table1
         HashTable(int maxN);
         int insert(HashTableEntry key);
         bool remove(HashTableEntry key);
-        int find(long long key);
-        HashTableEntry &getEntry(int index);
+        HashTableEntry *find(long long key);
         void printToQTableWidget(QTableWidget *tableWidget);
         void clear();
         ~HashTable();
@@ -68,7 +67,7 @@ namespace table1
     public:
         DoubleLinkedList() : head(nullptr), tail(nullptr) {}
         void insertNode(int value);
-        void deleteNode(int value);
+        void removeNode(int value);
         int countNodes();
         void clear();
         QString getPrintableString();
@@ -95,7 +94,7 @@ namespace table1
     public:
         AVLTree() : root(nullptr) {}
         void insertNode(Key key, int value);
-        void deleteNode(Key key, int value);
+        void removeNode(Key key, int value);
         AVLTreeNode<Key> *findNode(Key key);
         QString getPrintableHtml(int l) const;
         void clear();
@@ -105,7 +104,7 @@ namespace table1
         void print(AVLTreeNode<Key> *&node, unsigned h);
         void insertNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
         void clear(AVLTreeNode<Key> *&node);
-        void deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
+        void removeNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode);
         void replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h);
         void balanceR(AVLTreeNode<Key> *&currentNode, bool &h);
         void balanceL(AVLTreeNode<Key> *&currentNode, bool &h);
@@ -362,6 +361,8 @@ void table1::AVLTree<Key>::replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNo
     if (nq->left == nullptr)
     {
         currentNode->key = nq->key;
+        delete currentNode->valueList;
+        currentNode->valueList = nq->valueList;
         currentNode = nq;
         nq = nq->right;
         h = true;
@@ -375,25 +376,25 @@ void table1::AVLTree<Key>::replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNo
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
+void table1::AVLTree<Key>::removeNode(Key key, int value, bool &h, AVLTreeNode<Key> *&currentNode)
 {
     if (currentNode != nullptr)
     {
         if (currentNode->key > key)
         {
-            deleteNode(key, value, h, currentNode->left);
+            removeNode(key, value, h, currentNode->left);
             if (h) balanceL(currentNode, h);
         }
         else if (currentNode->key < key)
         {
-            deleteNode(key, value, h, currentNode->right);
+            removeNode(key, value, h, currentNode->right);
             if (h) balanceR(currentNode, h);
         }
         else
         {
             if (currentNode->valueList->head->next != nullptr)
             {
-                currentNode->valueList->deleteNode(value);
+                currentNode->valueList->removeNode(value);
             }
             else
             {
@@ -410,8 +411,8 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
                 }
                 else
                 {
-                    replaceMinR(nq->left, nq, h);
-                    if (h) balanceL(currentNode, h);
+                    replaceMinR(nq, nq->right, h);
+                    if (h) balanceR(currentNode, h);
                 }
                 delete nq;
             }
@@ -420,10 +421,10 @@ void table1::AVLTree<Key>::deleteNode(Key key, int value, bool &h, AVLTreeNode<K
 }
 
 template <typename Key>
-void table1::AVLTree<Key>::deleteNode(Key key, int value)
+void table1::AVLTree<Key>::removeNode(Key key, int value)
 {
     bool height = false;
-    deleteNode(key, value, height, root);
+    removeNode(key, value, height, root);
 }
 
 template <typename Key>

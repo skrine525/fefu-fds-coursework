@@ -71,6 +71,8 @@ private slots:
 
     void on_pushButtonDoctorsDelete_clicked();
 
+    void on_pushButtonPatientsDelete_clicked();
+
 private:
     Ui::MainWindow *ui;
     table1::Doctors doctors;

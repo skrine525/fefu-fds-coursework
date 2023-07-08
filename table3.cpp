@@ -145,7 +145,7 @@ QString table3::DoublyLinkedRingList::getPrintableString()
     return str;
 }
 
-void table3::DoublyLinkedRingList::deleteNode(int value)
+void table3::DoublyLinkedRingList::removeNode(int value)
 {
     table3::DoublyLinkedRingListNode *curr = head;
     if (curr != nullptr)
