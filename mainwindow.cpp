@@ -907,6 +907,7 @@ bool MainWindow::removeRecordFromPatients(int index)
             patients.addressTree.removeNode(table2::Address(record.region, record.district), index);
             patients.fullNameTree.removeNode(record.fullName, index);
             patients.phoneNumberHashTable.remove(table2::HashTableEntry(record.phoneNumber, index));
+            patients.ageTree.removeNode(record.age, index);
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
             patients.records[index] = patients.records[lastIndex];
@@ -960,6 +961,7 @@ bool MainWindow::removeRecordFromPatients(int index)
             table2::Record record = patients.records[index];
             patients.addressTree.removeNode(table2::Address(record.region, record.district), index);
             patients.ageTree.removeNode(record.age, index);
+            patients.fullNameTree.removeNode(record.fullName, index);
             patients.phoneNumberHashTable.remove(table2::HashTableEntry(record.phoneNumber, index));
             patients.records.remove(index);
             ui->tableWidgetPatients->removeRow(index);
