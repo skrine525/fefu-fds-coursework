@@ -301,23 +301,11 @@ void table2::SingleLinkedList::insertNode(int value)
     {
         while (currentNode->next != nullptr)
             currentNode = currentNode->next;
-        currentNode->next = new SingleLinkedListNode;
-        currentNode = currentNode->next;
-        currentNode->value = value;
-        currentNode->next = nullptr;
+        SingleLinkedListNode* newNode = new SingleLinkedListNode;
+        newNode->value = value;
+        newNode->next = nullptr;
+        currentNode->next = newNode;
     }
-}
-
-int table2::SingleLinkedList::countNodes()
-{
-    int count = 0;
-    SingleLinkedListNode *currentNode = head;
-    while (currentNode != nullptr)
-    {
-        count++;
-        currentNode = currentNode->next;
-    }
-    return count;
 }
 
 void table2::SingleLinkedList::removeNode(int value)
@@ -325,13 +313,33 @@ void table2::SingleLinkedList::removeNode(int value)
     SingleLinkedListNode *currentNode = head;
     if (head != nullptr)
     {
-        while (currentNode->next != nullptr && currentNode->next->value != value)
-            currentNode = currentNode->next;
-        if (currentNode->next != nullptr)
+        if (currentNode->value == value)
+            if (currentNode->next != nullptr)
+            {
+                head = currentNode->next;
+                delete currentNode;
+                currentNode = nullptr;
+            }
+            else
+            {
+                delete currentNode;
+                currentNode = nullptr;
+                head = nullptr;
+            }
+        else
         {
-            SingleLinkedListNode *temp = currentNode->next->next;
-            delete currentNode->next;
-            currentNode->next = temp;
+            while (currentNode->next != nullptr && currentNode->next->value != value)
+                currentNode = currentNode->next;
+            if (currentNode->next != nullptr)
+            {
+                SingleLinkedListNode* temp = currentNode->next;
+                if (temp->next == nullptr)
+                    currentNode->next = nullptr;
+                else
+                    currentNode->next = temp->next;
+                delete temp;
+                temp = nullptr; // Если что убрать
+            }
         }
     }
 }

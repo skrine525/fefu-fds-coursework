@@ -68,7 +68,6 @@ namespace table1
         DoubleLinkedList() : head(nullptr), tail(nullptr) {}
         void insertNode(int value);
         void removeNode(int value);
-        int countNodes();
         void clear();
         QString getPrintableString();
         DoubleLinkedListNode *getHead();
@@ -358,20 +357,20 @@ void table1::AVLTree<Key>::balanceL(AVLTreeNode<Key> *&currentNode, bool &h)
 template <typename Key>
 void table1::AVLTree<Key>::replaceMinR(AVLTreeNode<Key> *&currentNode, AVLTreeNode<Key> *&nq, bool &h)
 {
-    if (nq->left == nullptr)
+    if (currentNode->left != nullptr)
     {
-        currentNode->key = nq->key;
-        delete currentNode->valueList;
-        currentNode->valueList = nq->valueList;
-        currentNode = nq;
-        nq = nq->right;
-        h = true;
+        replaceMinR(currentNode->left, nq, h);
+        if (h)
+            balanceL(currentNode, h);
     }
     else
     {
-        replaceMinR(currentNode, nq->left, h);
-        if (h)
-            balanceL(nq, h);
+        nq->key = currentNode->key;
+        delete nq->valueList;
+        nq->valueList = currentNode->valueList;
+        nq = currentNode;
+        currentNode = currentNode->right;
+        h = true;
     }
 }
 
@@ -411,7 +410,7 @@ void table1::AVLTree<Key>::removeNode(Key key, int value, bool &h, AVLTreeNode<K
                 }
                 else
                 {
-                    replaceMinR(nq, nq->right, h);
+                    replaceMinR(nq->right, nq, h);
                     if (h) balanceR(currentNode, h);
                 }
                 delete nq;

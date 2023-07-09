@@ -58,6 +58,7 @@ int table1::HashTable::solveInsertCollision(HashTableEntry key)
 
         if (canInsert)
         {
+            key.secondHash = i;
             key.status = 1;
             table[insertIndex] = key;
             return 0; // Ключ вставлен
@@ -91,6 +92,7 @@ int table1::HashTable::solveInsertCollision(HashTableEntry key)
 
         if (insertIndex != -1)
         {
+            key.secondHash = i;
             key.status = 1;
             table[insertIndex] = key;
             return 0; // Ключ вставлен
@@ -290,18 +292,6 @@ void table1::DoubleLinkedList::insertNode(int value)
         }
         while (currentNode != nullptr && ((currentNode != head && value > currentNode->prev->value) || (currentNode == head && value > currentNode->value)));
     }
-}
-
-int table1::DoubleLinkedList::countNodes()
-{
-    int count = 0;
-    DoubleLinkedListNode *currentNode = head;
-    while (currentNode != nullptr)
-    {
-        count++;
-        currentNode = currentNode->next;
-    }
-    return count;
 }
 
 void table1::DoubleLinkedList::removeNode(int value)

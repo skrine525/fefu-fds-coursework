@@ -83,7 +83,6 @@ namespace table2
         SingleLinkedList() : head(nullptr) {}
         void insertNode(int value);
         void removeNode(int value);
-        int countNodes();
         void clear();
         QString getPrintableString();
         SingleLinkedListNode *getHead();
