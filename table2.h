@@ -130,9 +130,7 @@ namespace table2
         AVLTree<Address> addressTree;
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> ageTree;
-        HashTable phoneNumberHashTable;
-
-        Patients() : phoneNumberHashTable(HASHTABLE_SIZE) {}
+        HashTable *phoneNumberHashTable = nullptr;
     };
 }
 

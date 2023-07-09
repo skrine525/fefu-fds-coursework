@@ -34,6 +34,8 @@ public:
     void showPatientSearchResult(table2::Record record, int fieldIndex);
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
 
+    void resetViewAndData(int doctorsHashTableCapacity, int patientsHashTableCapacity);
+
 private slots:
     void on_menuFileOpen_triggered();
 
@@ -82,7 +84,5 @@ private:
     DoctorsDebugWidget doctorsDebugWidget;
     PatientsDebugWidget patientsDebugWidget;
     AppointmentsDebugWidget appointmentsDebugWidget;
-
-    void resetViewAndData();
 };
 #endif // MAINWINDOW_H

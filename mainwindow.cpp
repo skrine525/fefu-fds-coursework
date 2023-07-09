@@ -6,6 +6,7 @@
 #include "searchdoctordialog.h"
 #include "searchpatientdialog.h"
 #include "searchappointmentdialog.h"
+#include "hashtablecapacitydialog.h"
 
 #include <QFileDialog>
 #include <QDir>
@@ -55,13 +56,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableWidgetAppointments->setHorizontalHeaderLabels(appointmentLabels);
     ui->tableWidgetAppointments->resizeColumnsToContents();
 
-    // Делаем перезагрузку интерфейса и данных
-    this->resetViewAndData();
-
     // Передаем ссылки на таблицы в соответствующие меню отладки
     doctorsDebugWidget.setDoctors(&doctors);
     patientsDebugWidget.setPatients(&patients);
     appointmentsDebugWidget.setAppointments(&appointments);
+
+    // Делаем перезагрузку интерфейса и данных
+    //this->resetViewAndData();
 }
 
 MainWindow::~MainWindow()
@@ -69,8 +70,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::resetViewAndData()
+void MainWindow::resetViewAndData(int doctorsHashTableCapacity, int patientsHashTableCapacity)
 {
+    // Включаем таблицы, их функции и отладку
+    ui->groupBoxDoctors->setEnabled(true);
+    //ui->tableWidgetDoctors->setEnabled(true);
+    ui->groupBoxPatients->setEnabled(true);
+    ui->groupBoxAppointments->setEnabled(true);
+    ui->menuDebug->setEnabled(true);
+    ui->menuFileSave->setEnabled(true);
+
     // Очищаем визуальную часть
     ui->tableWidgetDoctors->clearContents();
     ui->tableWidgetDoctors->setRowCount(0);
@@ -89,12 +98,16 @@ void MainWindow::resetViewAndData()
     doctors.experienceTree.clear();
     doctors.fullNameTree.clear();
     doctors.specialityTree.clear();
-    doctors.phoneNumberHashTable.clear();
+    if(doctors.phoneNumberHashTable)
+        delete doctors.phoneNumberHashTable;
+    doctors.phoneNumberHashTable = new table1::HashTable(doctorsHashTableCapacity);
     patients.records.clear();
     patients.addressTree.clear();
     patients.ageTree.clear();
     patients.fullNameTree.clear();
-    patients.phoneNumberHashTable.clear();
+    if(patients.phoneNumberHashTable)
+        delete patients.phoneNumberHashTable;
+    patients.phoneNumberHashTable = new table2::HashTable(patientsHashTableCapacity);
     appointments.records.clear();
     appointments.doctorPhoneNumberTree.clear();
     appointments.patientPhoneNumberTree.clear();
@@ -111,9 +124,9 @@ int MainWindow::addRecordToAppointments(table3::Record record)
     // Возвращает 3, если не найден пациент в ХТ
 
     // Проверка целостности
-    if(!doctors.phoneNumberHashTable.find(record.doctorPhoneNumber))
+    if(!doctors.phoneNumberHashTable->find(record.doctorPhoneNumber))
         return 2;
-    if(!patients.phoneNumberHashTable.find(record.patientPhoneNumber))
+    if(!patients.phoneNumberHashTable->find(record.patientPhoneNumber))
         return 3;
 
     // Вставляем в хеш-таблицу
@@ -160,7 +173,7 @@ bool MainWindow::addRecordToPatients(table2::Record record)
 {
     // Вставляем в хеш-таблицу
     int appendedIndex = patients.records.count();
-    int hashTableResult = patients.phoneNumberHashTable.insert(table2::HashTableEntry(record.phoneNumber, appendedIndex));
+    int hashTableResult = patients.phoneNumberHashTable->insert(table2::HashTableEntry(record.phoneNumber, appendedIndex));
     if(hashTableResult == 1)
     {
         QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
@@ -219,7 +232,7 @@ bool MainWindow::addRecordToDoctors(table1::Record record)
 {
     // Вставляем в хеш-таблицу
     int appendedIndex = doctors.records.count();
-    int hashTableResult = doctors.phoneNumberHashTable.insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
+    int hashTableResult = doctors.phoneNumberHashTable->insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
     if(hashTableResult == 1)
     {
         QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
@@ -283,78 +296,86 @@ void MainWindow::on_menuFileOpen_triggered()
             QFileDialog::getOpenFileName(this, "Откройте текстовый файл",
                                          QDir::homePath(), "Текстовый файл (*.txt)");
 
-    // Создаем объект класса QFile и открываем файл для чтения
-    QFile file(fileName);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        this->resetViewAndData();
-        // Создаем объект класса QTextStream и связываем его с файлом
-        QTextStream stream(&file);
+    HashTableCapacityDialog hashTableCapacityDialog(this);
+    hashTableCapacityDialog.setMainWindow(this);
+    hashTableCapacityDialog.exec();
 
-        // Читаем данные из потока и выводим их на консоль
-        QStringList splittedLine;
-        int tableNumber = 0;
-        unsigned lineCountToRead;
-        while (!stream.atEnd()) {
-            splittedLine = stream.readLine().split(" ");
+    // Если пользователь установил размерность хеш-таблиц
+    if(hashTableCapacityDialog.getResult())
+    {
+        // Создаем объект класса QFile и открываем файл для чтения
+        QFile file(fileName);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            //this->resetViewAndData();
+            // Создаем объект класса QTextStream и связываем его с файлом
+            QTextStream stream(&file);
 
-            if(splittedLine.count() == 2)
-            {
-                if(splittedLine[0] == "__TABLE1__")
-                    tableNumber = 1;
-                else if(splittedLine[0] == "__TABLE2__")
-                    tableNumber = 2;
-                else if(splittedLine[0] == "__TABLE3__")
-                    tableNumber = 3;
-                lineCountToRead = splittedLine[1].toUInt();
+            // Читаем данные из потока и выводим их на консоль
+            QStringList splittedLine;
+            int tableNumber = 0;
+            unsigned lineCountToRead;
+            while (!stream.atEnd()) {
+                splittedLine = stream.readLine().split(" ");
+
+                if(splittedLine.count() == 2)
+                {
+                    if(splittedLine[0] == "__TABLE1__")
+                        tableNumber = 1;
+                    else if(splittedLine[0] == "__TABLE2__")
+                        tableNumber = 2;
+                    else if(splittedLine[0] == "__TABLE3__")
+                        tableNumber = 3;
+                    lineCountToRead = splittedLine[1].toUInt();
+                }
+                else if(lineCountToRead > 0)
+                {
+                    lineCountToRead--;
+
+                    if(tableNumber == 1 && splittedLine.count() == 6)
+                    {
+                        table1::Record record;
+                        record.fullName = QString("%1 %2 %3").arg(
+                                    splittedLine[0], splittedLine[1], splittedLine[2]);
+                        record.speciality = splittedLine[3];
+                        record.experience = splittedLine[4].toUInt();
+                        record.phoneNumber = splittedLine[5].toLongLong();
+
+                        this->addRecordToDoctors(record);
+
+                    }
+                    else if(tableNumber == 2 && splittedLine.count() == 7)
+                    {
+                        table2::Record record;
+                        record.fullName = QString("%1 %2 %3").arg(
+                                    splittedLine[0], splittedLine[1], splittedLine[2]);
+                        record.region = splittedLine[3];
+                        record.district = splittedLine[4];
+                        record.age = splittedLine[5].toUInt();
+                        record.phoneNumber = splittedLine[6].toLongLong();
+
+                        this->addRecordToPatients(record);
+                    }
+                    else if(tableNumber == 3 && splittedLine.count() == 8)
+                    {
+                        table3::Record record;
+                        record.doctorPhoneNumber = splittedLine[0].toLongLong();
+                        record.patientPhoneNumber = splittedLine[1].toLongLong();
+                        record.appointmentDatetime.year = splittedLine[2].toUInt();
+                        record.appointmentDatetime.month = splittedLine[3].toUInt();
+                        record.appointmentDatetime.day = splittedLine[4].toUInt();
+                        record.appointmentDatetime.hour = splittedLine[5].toUInt();
+                        record.appointmentDatetime.minute = splittedLine[6].toUInt();
+                        record.appointmentCost = splittedLine[7].toUInt();
+
+                        this->addRecordToAppointments(record);
+                    }
+                }
             }
-            else if(lineCountToRead > 0)
-            {
-                lineCountToRead--;
 
-                if(tableNumber == 1 && splittedLine.count() == 6)
-                {
-                    table1::Record record;
-                    record.fullName = QString("%1 %2 %3").arg(
-                                splittedLine[0], splittedLine[1], splittedLine[2]);
-                    record.speciality = splittedLine[3];
-                    record.experience = splittedLine[4].toUInt();
-                    record.phoneNumber = splittedLine[5].toLongLong();
-
-                    this->addRecordToDoctors(record);
-
-                }
-                else if(tableNumber == 2 && splittedLine.count() == 7)
-                {
-                    table2::Record record;
-                    record.fullName = QString("%1 %2 %3").arg(
-                                splittedLine[0], splittedLine[1], splittedLine[2]);
-                    record.region = splittedLine[3];
-                    record.district = splittedLine[4];
-                    record.age = splittedLine[5].toUInt();
-                    record.phoneNumber = splittedLine[6].toLongLong();
-
-                    this->addRecordToPatients(record);
-                }
-                else if(tableNumber == 3 && splittedLine.count() == 8)
-                {
-                    table3::Record record;
-                    record.doctorPhoneNumber = splittedLine[0].toLongLong();
-                    record.patientPhoneNumber = splittedLine[1].toLongLong();
-                    record.appointmentDatetime.year = splittedLine[2].toUInt();
-                    record.appointmentDatetime.month = splittedLine[3].toUInt();
-                    record.appointmentDatetime.day = splittedLine[4].toUInt();
-                    record.appointmentDatetime.hour = splittedLine[5].toUInt();
-                    record.appointmentDatetime.minute = splittedLine[6].toUInt();
-                    record.appointmentCost = splittedLine[7].toUInt();
-
-                    this->addRecordToAppointments(record);
-                }
-            }
+            // Закрываем файл
+            file.close();
+            ui->statusbar->showMessage("Файл успешно прочитан.");
         }
-
-        // Закрываем файл
-        file.close();
-        ui->statusbar->showMessage("Файл успешно прочитан.");
     }
 }
 
@@ -527,7 +548,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
     {
         // Номер телефона
 
-        auto entry = doctors.phoneNumberHashTable.find(record.phoneNumber);
+        auto entry = doctors.phoneNumberHashTable->find(record.phoneNumber);
 
         // Скрываем все строки таблицы
         int rowCount = ui->tableWidgetDoctors->rowCount();
@@ -612,7 +633,7 @@ void MainWindow::showPatientSearchResult(table2::Record record, int fieldIndex)
     {
         // Номер телефона
 
-        auto entry = patients.phoneNumberHashTable.find(record.phoneNumber);
+        auto entry = patients.phoneNumberHashTable->find(record.phoneNumber);
 
         // Скрываем все строки таблицы
         int rowCount = ui->tableWidgetPatients->rowCount();
@@ -676,7 +697,9 @@ void MainWindow::on_pushButtonAppointmentsClearSearch_clicked()
 
 void MainWindow::on_menuFileCreate_triggered()
 {
-    this->resetViewAndData();
+    HashTableCapacityDialog hashTableCapacityDialog(this);
+    hashTableCapacityDialog.setMainWindow(this);
+    hashTableCapacityDialog.exec();
 }
 
 void MainWindow::on_pushButtonAppointmentsDelete_clicked()
@@ -803,7 +826,7 @@ bool MainWindow::removeRecordFromDoctors(int index)
             doctors.experienceTree.removeNode(record.experience, index);
             doctors.fullNameTree.removeNode(record.fullName, index);
             doctors.specialityTree.removeNode(record.speciality, index);
-            doctors.phoneNumberHashTable.remove(table1::HashTableEntry(record.phoneNumber, index));
+            doctors.phoneNumberHashTable->remove(table1::HashTableEntry(record.phoneNumber, index));
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
             doctors.records[index] = doctors.records[lastIndex];
@@ -820,7 +843,7 @@ bool MainWindow::removeRecordFromDoctors(int index)
             auto specialityTreeNode = doctors.specialityTree.findNode(record.speciality);
             specialityTreeNode->valueList->removeNode(lastIndex);
             specialityTreeNode->valueList->insertNode(index);
-            auto hashTableEntry = doctors.phoneNumberHashTable.find(record.phoneNumber);
+            auto hashTableEntry = doctors.phoneNumberHashTable->find(record.phoneNumber);
             hashTableEntry->value = index;
 
             // Обновляем интерфейс
@@ -855,7 +878,7 @@ bool MainWindow::removeRecordFromDoctors(int index)
             doctors.experienceTree.removeNode(record.experience, index);
             doctors.fullNameTree.removeNode(record.fullName, index);
             doctors.specialityTree.removeNode(record.speciality, index);
-            doctors.phoneNumberHashTable.remove(table1::HashTableEntry(record.phoneNumber, index));
+            doctors.phoneNumberHashTable->remove(table1::HashTableEntry(record.phoneNumber, index));
             doctors.records.remove(index);
             ui->tableWidgetDoctors->removeRow(index);
 
@@ -906,7 +929,7 @@ bool MainWindow::removeRecordFromPatients(int index)
             table2::Record record = patients.records[index];
             patients.addressTree.removeNode(table2::Address(record.region, record.district), index);
             patients.fullNameTree.removeNode(record.fullName, index);
-            patients.phoneNumberHashTable.remove(table2::HashTableEntry(record.phoneNumber, index));
+            patients.phoneNumberHashTable->remove(table2::HashTableEntry(record.phoneNumber, index));
             patients.ageTree.removeNode(record.age, index);
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
@@ -924,7 +947,7 @@ bool MainWindow::removeRecordFromPatients(int index)
             auto ageTreeNode = patients.ageTree.findNode(record.age);
             ageTreeNode->valueList->removeNode(lastIndex);
             ageTreeNode->valueList->insertNode(index);
-            auto hashTableEntry = patients.phoneNumberHashTable.find(record.phoneNumber);
+            auto hashTableEntry = patients.phoneNumberHashTable->find(record.phoneNumber);
             hashTableEntry->value = index;
 
             // Обновляем интерфейс
@@ -962,7 +985,7 @@ bool MainWindow::removeRecordFromPatients(int index)
             patients.addressTree.removeNode(table2::Address(record.region, record.district), index);
             patients.ageTree.removeNode(record.age, index);
             patients.fullNameTree.removeNode(record.fullName, index);
-            patients.phoneNumberHashTable.remove(table2::HashTableEntry(record.phoneNumber, index));
+            patients.phoneNumberHashTable->remove(table2::HashTableEntry(record.phoneNumber, index));
             patients.records.remove(index);
             ui->tableWidgetPatients->removeRow(index);
 

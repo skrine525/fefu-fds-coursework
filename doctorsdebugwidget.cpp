@@ -57,7 +57,7 @@ void DoctorsDebugWidget::on_pushButtonShowHashTable_clicked()
 {
     ui->tableWidgetHashTable->clearContents();
     ui->tableWidgetHashTable->setRowCount(0);
-    doctorsPointer->phoneNumberHashTable.printToQTableWidget(ui->tableWidgetHashTable);
+    doctorsPointer->phoneNumberHashTable->printToQTableWidget(ui->tableWidgetHashTable);
     ui->tableWidgetHashTable->resizeColumnsToContents();
     ui->tableWidgetHashTable->horizontalHeader()->setStretchLastSection(true);
 }

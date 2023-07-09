@@ -6,9 +6,6 @@
 #include <QVariant>
 #include <QTableWidget>
 
-// Константа размерности статической хеш-таблицы
-#define HASHTABLE_SIZE 100
-
 namespace table1
 {
     struct Record
@@ -116,9 +113,7 @@ namespace table1
         AVLTree<QString> specialityTree;
         AVLTree<QString> fullNameTree;
         AVLTree<unsigned> experienceTree;
-        HashTable phoneNumberHashTable;
-
-        Doctors() : phoneNumberHashTable(HASHTABLE_SIZE) {}
+        HashTable *phoneNumberHashTable = nullptr;
     };
 }
 

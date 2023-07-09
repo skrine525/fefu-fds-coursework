@@ -16,11 +16,17 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QGroupBox" name="groupDoctors">
+     <widget class="QGroupBox" name="groupBoxDoctors">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="title">
        <string>Доктора</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QTableWidget" name="tableWidgetDoctors"/>
+       </item>
        <item row="1" column="0">
         <layout class="QGridLayout" name="gridLayoutDoctorsActions">
          <item row="0" column="0">
@@ -56,18 +62,14 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QTableWidget" name="tableWidgetDoctors">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
     <item>
      <widget class="QGroupBox" name="groupBoxPatients">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="title">
        <string>Пациенты</string>
       </property>
@@ -115,6 +117,9 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBoxAppointments">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="title">
        <string>Записи</string>
       </property>
@@ -168,7 +173,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -182,6 +187,9 @@
     <addaction name="menuFileExit"/>
    </widget>
    <widget class="QMenu" name="menuDebug">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Отладка</string>
     </property>
@@ -199,6 +207,9 @@
    </property>
   </action>
   <action name="menuFileSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Сохранить</string>
    </property>
@@ -214,16 +225,25 @@
    </property>
   </action>
   <action name="menuDebugDoctors">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Доктора</string>
    </property>
   </action>
   <action name="menuDebugPatients">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Пациенты</string>
    </property>
   </action>
   <action name="menuDebugAppointments">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Записи</string>
    </property>

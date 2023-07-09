@@ -14,6 +14,7 @@ SOURCES += \
     addpatientdialog.cpp \
     appointmentsdebugwidget.cpp \
     doctorsdebugwidget.cpp \
+    hashtablecapacitydialog.cpp \
     main.cpp \
     mainwindow.cpp \
     patientsdebugwidget.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     addpatientdialog.h \
     appointmentsdebugwidget.h \
     doctorsdebugwidget.h \
+    hashtablecapacitydialog.h \
     mainwindow.h \
     patientsdebugwidget.h \
     searchappointmentdialog.h \
@@ -45,6 +47,7 @@ FORMS += \
     addpatientdialog.ui \
     appointmentsdebugwidget.ui \
     doctorsdebugwidget.ui \
+    hashtablecapacitydialog.ui \
     mainwindow.ui \
     patientsdebugwidget.ui \
     searchappointmentdialog.ui \
