@@ -147,6 +147,7 @@ bool table1::HashTable::solveDeleteCollision(HashTableEntry key)
 bool table1::HashTable::remove(HashTableEntry key)
 {
     int i = firstHash(key.key, size);
+    key.firstHash = i;
     if (table[i].status == 1)
     {
         if (table[i] == key)
