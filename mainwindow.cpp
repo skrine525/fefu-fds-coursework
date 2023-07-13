@@ -131,10 +131,7 @@ int MainWindow::addRecordToAppointments(table3::Record record)
 
     // Вставляем в хеш-таблицу
     int appendedIndex = appointments.records.count();
-    table3::PhoneNumberAndDatetime pnd;
-    pnd.doctorPhoneNumber = record.doctorPhoneNumber;
-    pnd.patientPhoneNumber = record.patientPhoneNumber;
-    pnd.appointmentDatetime = record.appointmentDatetime;
+    table3::PhoneNumberAndDatetime pnd(record.doctorPhoneNumber, record.appointmentDatetime);
     if(!appointments.phoneNumberAndDatetimeHashTable.insert(pnd, appendedIndex))
         return 1;
 
@@ -702,23 +699,6 @@ void MainWindow::on_menuFileCreate_triggered()
     hashTableCapacityDialog.exec();
 }
 
-void MainWindow::on_pushButtonAppointmentsDelete_clicked()
-{
-//    int rowIndex = ui->tableWidgetAppointments->currentRow();
-//    if(rowIndex != -1)
-//    {
-//        table3::Record record = appointments.records[rowIndex];
-//        appointments.doctorPhoneNumberTree.removeNode(record.doctorPhoneNumber, rowIndex);
-//        appointments.patientPhoneNumberTree.removeNode(record.patientPhoneNumber, rowIndex);
-//        appointments.appointmentDatetimeTree.removeNode(record.appointmentDatetime, rowIndex);
-//        appointments.appointmentCostTree.removeNode(record.appointmentCost, rowIndex);
-//        appointments.records.remove(rowIndex);
-//        ui->tableWidgetAppointments->removeRow(rowIndex);
-//    }
-//    else
-//        QMessageBox::warning(this, "Внимание", "Для удаления записи необходимо выбрать строку.");
-}
-
 void MainWindow::on_pushButtonPatientsAdd_clicked()
 {
     AddPatientDialog addPatientDialog(this);
@@ -872,7 +852,6 @@ bool MainWindow::removeRecordFromDoctors(int index)
         }
         else if(index == lastIndex)
         {
-            qDebug() << "Удаление последнего " << index;
             // Удаление записи
             table1::Record record = doctors.records[index];
             doctors.experienceTree.removeNode(record.experience, index);
@@ -979,7 +958,6 @@ bool MainWindow::removeRecordFromPatients(int index)
         }
         else if(index == lastIndex)
         {
-            qDebug() << "Удаление последнего " << index;
             // Удаление записи
             table2::Record record = patients.records[index];
             patients.addressTree.removeNode(table2::Address(record.region, record.district), index);
@@ -988,6 +966,119 @@ bool MainWindow::removeRecordFromPatients(int index)
             patients.phoneNumberHashTable->remove(table2::HashTableEntry(record.phoneNumber, index));
             patients.records.remove(index);
             ui->tableWidgetPatients->removeRow(index);
+
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
+}
+
+void MainWindow::on_pushButtonAppointmentsDelete_clicked()
+{
+    int rowIndex = ui->tableWidgetAppointments->currentRow();
+    if(rowIndex != -1)
+    {
+        QString doctorPhoneNumberString = QString::number(appointments.records[rowIndex].doctorPhoneNumber);
+        QString patientPhoneNumberString = QString::number(appointments.records[rowIndex].patientPhoneNumber);
+        QString appointmentDatetimeString = QString(appointments.records[rowIndex].appointmentDatetime);
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Записи - Удаление");
+        msgBox.setText("Вы точно хотите удалить запись?\n\nНомер доктора: " + doctorPhoneNumberString
+                       + "\nНомер пациента: " + patientPhoneNumberString
+                       + "\nДата и Время приёма: " + appointmentDatetimeString);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.addButton(QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        if(msgBox.exec() == QMessageBox::Yes)
+        {
+            if(removeRecordFromAppointments(rowIndex))
+                ui->tableWidgetAppointments->setCurrentCell(-1, -1);
+            else
+                QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка.");
+        }
+    }
+    else
+        QMessageBox::warning(this, "Внимание", "Для удаления Записи необходимо выбрать строку в таблице.");
+}
+
+bool MainWindow::removeRecordFromAppointments(int index)
+{
+    if(appointments.records.length() > 0)
+    {
+        int lastIndex = appointments.records.length() - 1;
+        if(0 <= index && index < lastIndex)
+        {
+            // Удаление записи
+            table3::Record record = appointments.records[index];
+            appointments.doctorPhoneNumberTree.removeNode(record.doctorPhoneNumber, index);
+            appointments.patientPhoneNumberTree.removeNode(record.patientPhoneNumber, index);
+            appointments.appointmentDatetimeTree.removeNode(record.appointmentDatetime, index);
+            appointments.appointmentCostTree.removeNode(record.appointmentCost, index);
+            appointments.phoneNumberAndDatetimeHashTable.remove(
+                        table3::PhoneNumberAndDatetime(record.doctorPhoneNumber, record.appointmentDatetime));
+
+            // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
+            appointments.records[index] = appointments.records[lastIndex];
+            appointments.records.remove(lastIndex);
+            record = appointments.records[index];
+
+            // Обновляем структуры данных для замены
+            auto doctorPhoneNumberTreeNode = appointments.doctorPhoneNumberTree.findNode(record.doctorPhoneNumber);
+            doctorPhoneNumberTreeNode->valueList->removeNode(lastIndex);
+            doctorPhoneNumberTreeNode->valueList->insertNode(index);
+            auto patientPhoneNumberTreeNode = appointments.patientPhoneNumberTree.findNode(record.patientPhoneNumber);
+            patientPhoneNumberTreeNode->valueList->removeNode(lastIndex);
+            patientPhoneNumberTreeNode->valueList->insertNode(index);
+            auto appointmentDatetimeTreeNode = appointments.appointmentDatetimeTree.findNode(record.appointmentDatetime);
+            appointmentDatetimeTreeNode->valueList->removeNode(lastIndex);
+            appointmentDatetimeTreeNode->valueList->insertNode(index);
+            auto appointmentCostTreeNode = appointments.appointmentCostTree.findNode(record.appointmentCost);
+            appointmentCostTreeNode->valueList->removeNode(lastIndex);
+            appointmentCostTreeNode->valueList->insertNode(index);
+            auto hashTableEntry = appointments.phoneNumberAndDatetimeHashTable.find(
+                        table3::PhoneNumberAndDatetime(record.doctorPhoneNumber, record.appointmentDatetime));
+            hashTableEntry->value = index;
+
+            // Обновляем интерфейс
+            ui->tableWidgetAppointments->removeRow(lastIndex);
+
+            // Элементы строки
+            QTableWidgetItem *doctorPhoneNumberItem = new QTableWidgetItem(QString::number(record.doctorPhoneNumber));
+            QTableWidgetItem *patientPhoneNumberItem = new QTableWidgetItem(QString::number(record.patientPhoneNumber));
+            QTableWidgetItem *appointmentDatetimeItem = new QTableWidgetItem(QString(record.appointmentDatetime));
+            QTableWidgetItem *appointmentCostItem = new QTableWidgetItem(QString::number(record.appointmentCost));
+
+            // Устанавливаем флаг запрета редактирования для каждого элемента
+            doctorPhoneNumberItem->setFlags(doctorPhoneNumberItem->flags() & ~Qt::ItemIsEditable);
+            patientPhoneNumberItem->setFlags(patientPhoneNumberItem->flags() & ~Qt::ItemIsEditable);
+            appointmentDatetimeItem->setFlags(appointmentDatetimeItem->flags() & ~Qt::ItemIsEditable);
+            appointmentCostItem->setFlags(appointmentCostItem->flags() & ~Qt::ItemIsEditable);
+
+            // Заносим строку в таблицу
+            ui->tableWidgetAppointments->setItem(index, 0, doctorPhoneNumberItem);
+            ui->tableWidgetAppointments->setItem(index, 1, patientPhoneNumberItem);
+            ui->tableWidgetAppointments->setItem(index, 2, appointmentDatetimeItem);
+            ui->tableWidgetAppointments->setItem(index, 3, appointmentCostItem);
+            ui->tableWidgetPatients->resizeColumnsToContents();
+
+            return true;
+        }
+        else if(index == lastIndex)
+        {
+            // Удаление записи
+            table3::Record record = appointments.records[index];
+            appointments.doctorPhoneNumberTree.removeNode(record.doctorPhoneNumber, index);
+            appointments.patientPhoneNumberTree.removeNode(record.patientPhoneNumber, index);
+            appointments.appointmentDatetimeTree.removeNode(record.appointmentDatetime, index);
+            appointments.appointmentCostTree.removeNode(record.appointmentCost, index);
+            appointments.phoneNumberAndDatetimeHashTable.remove(
+                        table3::PhoneNumberAndDatetime(record.doctorPhoneNumber, record.appointmentDatetime));
+            appointments.records.remove(index);
+            ui->tableWidgetAppointments->removeRow(index);
 
             return true;
         }

@@ -6,9 +6,6 @@
 #include <QVariant>
 #include <QTableWidget>
 
-// Константа размерности статической хеш-таблицы
-#define HASHTABLE_SIZE 100
-
 namespace table2
 {
     

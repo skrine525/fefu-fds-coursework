@@ -65,8 +65,8 @@ bool table3::operator!=(const table3::Datetime& a, const table3::Datetime& b)
 
 bool table3::operator==(const table3::PhoneNumberAndDatetime &a, const table3::PhoneNumberAndDatetime &b)
 {
-    return a.appointmentDatetime == b.appointmentDatetime
-            && (a.doctorPhoneNumber == b.doctorPhoneNumber || a.patientPhoneNumber == b.patientPhoneNumber);
+    return a.phoneNumber == b.phoneNumber
+            && a.datetime == b.datetime;
 }
 
 bool table3::operator!=(const table3::PhoneNumberAndDatetime &a, const table3::PhoneNumberAndDatetime &b)
@@ -78,23 +78,14 @@ table3::Appointments::Appointments() : phoneNumberAndDatetimeHashTable(HASHTABLE
 
 table3::PhoneNumberAndDatetime::operator QString() const
 {
-    return "[" + QString::number(doctorPhoneNumber) + "] [" + QString::number(patientPhoneNumber)
-            + "] [" + appointmentDatetime + "]";
+    return "[" + QString::number(phoneNumber) + "] [" + datetime + "]";
 }
 
 table3::PhoneNumberAndDatetime::operator int() const
 {
-//    QString str = *this;
-//    int size = str.size();
-//    long long hash = 0;
-//    for (int i = 0; i < size; i++) {
-//        hash += str[i].unicode();
-//    }
-//    return hash;
-
-    return pow(appointmentDatetime.day, 2) + pow(appointmentDatetime.hour, 2)
-            + pow(appointmentDatetime.minute, 2) + pow(appointmentDatetime.month, 2)
-            + pow(appointmentDatetime.year, 2);
+    return pow(datetime.day, 2) + pow(datetime.hour, 2)
+            + pow(datetime.minute, 2) + pow(datetime.month, 2)
+            + pow(datetime.year, 2) + phoneNumber % 1000;
 }
 
 table3::DoublyLinkedRingList::~DoublyLinkedRingList()
@@ -218,4 +209,10 @@ void table3::DoublyLinkedRingList::insertNode(int value)
                 curr = curr->next;
         } while (curr->prev->value < value);
     }
+}
+
+table3::PhoneNumberAndDatetime::PhoneNumberAndDatetime (long long phoneNumber, Datetime datetime)
+{
+    this->phoneNumber = phoneNumber;
+    this->datetime = datetime;
 }

@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QtMath>
 #include <QTableWidget>
+#include <QDebug>
 
 // Константа начальной размерности динамической хеш-таблицы
 #define HASHTABLE_SIZE 10
@@ -38,9 +39,11 @@ namespace table3
 
     struct PhoneNumberAndDatetime
     {
-        long long doctorPhoneNumber;
-        long long patientPhoneNumber;
-        Datetime appointmentDatetime;
+        long long phoneNumber;
+        Datetime datetime;
+
+        PhoneNumberAndDatetime () {}
+        PhoneNumberAndDatetime (long long phoneNumber, Datetime datetime);
 
         operator QString() const;
         operator int() const;
@@ -65,7 +68,7 @@ namespace table3
         HashTable(int initialSize);
         ~HashTable();
         bool insert(Key key, int value);
-        int find(Key key);
+        Entry *find(Key key);
         bool remove(Key key);
         void printToQTableWidget(QTableWidget *tableWidget);
         void clear();
@@ -194,7 +197,8 @@ void table3::HashTable<Key>::clear()
     }
     size = initialSize;
     count = 0;
-    table = QVector<Entry>(size);
+    QVector<Entry> newTable(size);
+    table = std::move(newTable);
 }
 
 template <typename Key>
@@ -245,7 +249,7 @@ bool table3::HashTable<Key>::remove(Key key)
     int index = hash;
 
     int j = 1;
-    while (table[index].status == 1 && table[index].key && *table[index].key != key)
+    while (table[index].key && *table[index].key != key)
     {
         if (j >= size)
             return false;
@@ -255,36 +259,7 @@ bool table3::HashTable<Key>::remove(Key key)
 
     if (table[index].status == 1)
     {
-        int remIndex = index;
-        int lastIndex = -1;
-        bool flag = true;
-        while (flag && table[index].key)
-        {
-            if (j >= size)
-                return false;
-            index = hash2(hash, key, j);
-            j++;
-            if (table[index].status == 1)
-            {
-
-                if (remIndex == index)
-                    flag = false;
-                else if(hash1(*table[remIndex].key) == hash1(*table[index].key))
-                    lastIndex = index;
-            }
-
-        }
-
-        if (lastIndex == -1)
-            table[remIndex].status = 0;
-        else
-        {
-            delete table[remIndex].key;
-            table[remIndex].status = table[lastIndex].status;
-            table[remIndex].key = new Key(*table[lastIndex].key);
-            table[remIndex].value = table[lastIndex].value;
-            table[lastIndex].status = 0;
-        }
+        table[index].status = 0;
 
         count--;
         if (static_cast<double>(count) / size <= 0.3)
@@ -350,14 +325,14 @@ bool table3::HashTable<Key>::insert(Key key, int value)
 }
 
 template <typename Key>
-int table3::HashTable<Key>::find(Key key)
+typename table3::HashTable<Key>::Entry *table3::HashTable<Key>::find(Key key)
 {
     int hash = hash1(key);
     int index = hash;
 
     int j = 1;
     if (table[index].status == 1 && *table[index].key == key)
-        return index;
+        return &table[index];
     else
     {
         while (table[index].key && j < size)
@@ -365,11 +340,11 @@ int table3::HashTable<Key>::find(Key key)
             index = hash2(hash, key, j);
             j++;
             if (table[index].status == 1 && *table[index].key == key)
-                return index;
+                return &table[index];
         }
     }
 
-    return -1; // Ключ не найден
+    return nullptr; // Ключ не найден
 }
 
 template <typename Key>
@@ -427,16 +402,19 @@ int table3::HashTable<Key>::hash2(int hash1, int key, int j)
 template <typename Key>
 void table3::HashTable<Key>::resize(double factor)
 {
-    if (size * factor >= initialSize)
+    int newSize = size * factor;
+    if (newSize >= initialSize)
     {
         int oldSize = size;
-        size = size * factor;
+        size = newSize;
         calculatePrimeSize();
 
         QVector<Entry> newTable(size);
 
-        for (int i = 0; i < oldSize; ++i) {
-            if (table[i].status == 1) {
+        for (int i = 0; i < oldSize; ++i)
+        {
+            if (table[i].status == 1)
+            {
                 Key* key = table[i].key;
                 int value = table[i].value;
                 int hash = hash1(*key);
@@ -449,7 +427,10 @@ void table3::HashTable<Key>::resize(double factor)
                 newTable[index].status = 1;
             }
             else if (table[i].status == 0 && table[i].key)
+            {
                 delete table[i].key;
+                table[i].key = nullptr;
+            }
         }
 
         table = std::move(newTable);
