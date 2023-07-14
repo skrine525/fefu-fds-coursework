@@ -81,12 +81,22 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    // Структуры данных
     table1::Doctors doctors;
     table2::Patients patients;
     table3::Appointments appointments;
 
+    // Окна отладки
     DoctorsDebugWidget doctorsDebugWidget;
     PatientsDebugWidget patientsDebugWidget;
     AppointmentsDebugWidget appointmentsDebugWidget;
+
+    // Для работы с сохранениями
+    QString fileName;               // Путь к файлу
+    QString initialWindowTitle;     // Начальное название окна
+    bool isChangesSaved;            // Показывает, были ли сохранены изменения в файл
+    void setChangesSavingState(bool state);
+    void openFile(QString fileName);
 };
 #endif // MAINWINDOW_H

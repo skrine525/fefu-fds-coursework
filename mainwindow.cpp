@@ -61,8 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     patientsDebugWidget.setPatients(&patients);
     appointmentsDebugWidget.setAppointments(&appointments);
 
-    // Делаем перезагрузку интерфейса и данных
-    //this->resetViewAndData();
+    initialWindowTitle = windowTitle();
 }
 
 MainWindow::~MainWindow()
@@ -269,94 +268,178 @@ void MainWindow::on_pushButtonAppointmentsAdd_clicked()
     addAppointmentDialog.exec();
 }
 
+void MainWindow::openFile(QString fileName)
+{
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        // Создаем объект класса QTextStream и связываем его с файлом
+        QTextStream stream(&file);
+
+        // Переменные для статистики считывания файла
+        unsigned doctorTotalCount = 0;
+        unsigned doctorExistsCount = 0;
+        unsigned doctorOverflowCount = 0;
+        unsigned doctorSuccessCount = 0;
+        unsigned patientTotalCount = 0;
+        unsigned patientExistsCount = 0;
+        unsigned patientOverflowCount = 0;
+        unsigned patientSuccessCount = 0;
+        unsigned appointmentTotalCount = 0;
+        unsigned appointmentExistsCount = 0;
+        unsigned appointmentDoctorFailureCount = 0;
+        unsigned appointmentPatientFailureCount = 0;
+        unsigned appointmentSuccessCount = 0;
+
+        // Читаем данные из потока и выводим их на консоль
+        QStringList splittedLine;
+        int tableNumber = 0;
+        unsigned lineCountToRead;
+        while (!stream.atEnd())
+        {
+            splittedLine = stream.readLine().split(" ");
+
+            if(splittedLine.count() == 2)
+            {
+                if(splittedLine[0] == "__TABLE1__")
+                    tableNumber = 1;
+                else if(splittedLine[0] == "__TABLE2__")
+                    tableNumber = 2;
+                else if(splittedLine[0] == "__TABLE3__")
+                    tableNumber = 3;
+                lineCountToRead = splittedLine[1].toUInt();
+            }
+            else if(lineCountToRead > 0)
+            {
+                lineCountToRead--;
+
+                if(tableNumber == 1 && splittedLine.count() == 6)
+                {
+                    table1::Record record;
+                    record.fullName = QString("%1 %2 %3").arg(
+                                splittedLine[0], splittedLine[1], splittedLine[2]);
+                    record.speciality = splittedLine[3];
+                    record.experience = splittedLine[4].toUInt();
+                    record.phoneNumber = splittedLine[5].toLongLong();
+
+                    doctorTotalCount++;
+                    auto result = this->insertRecordToDoctors(record);
+                    if(result == InsertionResult::Success)
+                        doctorSuccessCount++;
+                    else if(result == InsertionResult::Overflow)
+                        doctorOverflowCount++;
+                    else if(result == InsertionResult::Exists)
+                        doctorExistsCount++;
+
+                }
+                else if(tableNumber == 2 && splittedLine.count() == 7)
+                {
+                    table2::Record record;
+                    record.fullName = QString("%1 %2 %3").arg(
+                                splittedLine[0], splittedLine[1], splittedLine[2]);
+                    record.region = splittedLine[3];
+                    record.district = splittedLine[4];
+                    record.age = splittedLine[5].toUInt();
+                    record.phoneNumber = splittedLine[6].toLongLong();
+
+                    patientTotalCount++;
+                    auto result = this->insertRecordToPatients(record);
+                    if(result == InsertionResult::Success)
+                        patientSuccessCount++;
+                    else if(result == InsertionResult::Overflow)
+                        patientOverflowCount++;
+                    else if(result == InsertionResult::Exists)
+                        patientExistsCount++;
+                }
+                else if(tableNumber == 3 && splittedLine.count() == 8)
+                {
+                    table3::Record record;
+                    record.doctorPhoneNumber = splittedLine[0].toLongLong();
+                    record.patientPhoneNumber = splittedLine[1].toLongLong();
+                    record.appointmentDatetime.year = splittedLine[2].toUInt();
+                    record.appointmentDatetime.month = splittedLine[3].toUInt();
+                    record.appointmentDatetime.day = splittedLine[4].toUInt();
+                    record.appointmentDatetime.hour = splittedLine[5].toUInt();
+                    record.appointmentDatetime.minute = splittedLine[6].toUInt();
+                    record.appointmentCost = splittedLine[7].toUInt();
+
+                    appointmentTotalCount++;
+                    auto result = this->insertRecordToAppointments(record);
+                    if(result == InsertionResult::Success)
+                        appointmentSuccessCount++;
+                    else if(result == InsertionResult::Exists)
+                        appointmentExistsCount++;
+                    else if(result == InsertionResult::DoctorFailure)
+                        appointmentDoctorFailureCount++;
+                    else if(result == InsertionResult::PatientFailure)
+                        appointmentPatientFailureCount++;
+                }
+            }
+        }
+
+        if(doctorSuccessCount == 0 && patientSuccessCount == 0
+                && appointmentSuccessCount == 0)
+        {
+            // Если данных в файле нет
+
+            QMessageBox::warning(this, "Внимание", "Ошибка чтения файла - файл не содержит данные.");
+            ui->statusbar->showMessage("Ошибка чтения файла - файл не содержит данные.");
+        }
+        else
+        {
+            // Если было успешно прочитано хоть какое то количество данных
+
+            QString infoMessage;
+
+            if(doctorSuccessCount != doctorTotalCount)
+            {
+                infoMessage = "Файл прочитан, но не все данные были добавлены.\n";
+                infoMessage += "\nЗаписей справочника \"Врачи\" прочитано: "
+                        + QString::number(doctorSuccessCount) + " из "
+                        + QString::number(doctorTotalCount);
+                infoMessage += "\nОшибка \"Таблица переполнена\": "
+                        + QString::number(doctorOverflowCount);
+                infoMessage += "\nОшибка \"Такой номер телефона уже добавлен\": "
+                        + QString::number(doctorExistsCount);
+            }
+
+            if(infoMessage.length() > 0)
+            {
+                QMessageBox::information(this, "Чтение файла", infoMessage);
+                ui->statusbar->showMessage("Файл прочитан, но не все данные были добавлены.");
+            }
+            else
+                ui->statusbar->showMessage("Файл успешно прочитан.");
+        }
+
+        // Закрываем файл
+        file.close();
+    }
+}
+
 void MainWindow::on_menuFileOpen_triggered()
 {
     // Получение пути к текстовому файлу
-    QString fileName =
-            QFileDialog::getOpenFileName(this, "Откройте текстовый файл",
-                                         QDir::homePath(), "Текстовый файл (*.txt)");
+    QString openedFileName =
+            QFileDialog::getOpenFileName(
+                this, "Откройте текстовый файл", QDir::homePath(),
+                "Текстовый файл (*.txt)");
 
-    HashTableCapacityDialog hashTableCapacityDialog(this);
-    hashTableCapacityDialog.setMainWindow(this);
-    hashTableCapacityDialog.exec();
-
-    // Если пользователь установил размерность хеш-таблиц
-    if(hashTableCapacityDialog.getResult())
+    // Если файл выбран, запускаем окно выбора размера для хеш-таблиц
+    if(openedFileName.length() > 0)
     {
-        // Создаем объект класса QFile и открываем файл для чтения
-        QFile file(fileName);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            //this->resetViewAndData();
-            // Создаем объект класса QTextStream и связываем его с файлом
-            QTextStream stream(&file);
+        HashTableCapacityDialog hashTableCapacityDialog(this);
+        hashTableCapacityDialog.setMainWindow(this);
+        hashTableCapacityDialog.exec();
 
-            // Читаем данные из потока и выводим их на консоль
-            QStringList splittedLine;
-            int tableNumber = 0;
-            unsigned lineCountToRead;
-            while (!stream.atEnd()) {
-                splittedLine = stream.readLine().split(" ");
-
-                if(splittedLine.count() == 2)
-                {
-                    if(splittedLine[0] == "__TABLE1__")
-                        tableNumber = 1;
-                    else if(splittedLine[0] == "__TABLE2__")
-                        tableNumber = 2;
-                    else if(splittedLine[0] == "__TABLE3__")
-                        tableNumber = 3;
-                    lineCountToRead = splittedLine[1].toUInt();
-                }
-                else if(lineCountToRead > 0)
-                {
-                    lineCountToRead--;
-
-                    if(tableNumber == 1 && splittedLine.count() == 6)
-                    {
-                        table1::Record record;
-                        record.fullName = QString("%1 %2 %3").arg(
-                                    splittedLine[0], splittedLine[1], splittedLine[2]);
-                        record.speciality = splittedLine[3];
-                        record.experience = splittedLine[4].toUInt();
-                        record.phoneNumber = splittedLine[5].toLongLong();
-
-                        this->insertRecordToDoctors(record);
-
-                    }
-                    else if(tableNumber == 2 && splittedLine.count() == 7)
-                    {
-                        table2::Record record;
-                        record.fullName = QString("%1 %2 %3").arg(
-                                    splittedLine[0], splittedLine[1], splittedLine[2]);
-                        record.region = splittedLine[3];
-                        record.district = splittedLine[4];
-                        record.age = splittedLine[5].toUInt();
-                        record.phoneNumber = splittedLine[6].toLongLong();
-
-                        this->insertRecordToPatients(record);
-                    }
-                    else if(tableNumber == 3 && splittedLine.count() == 8)
-                    {
-                        table3::Record record;
-                        record.doctorPhoneNumber = splittedLine[0].toLongLong();
-                        record.patientPhoneNumber = splittedLine[1].toLongLong();
-                        record.appointmentDatetime.year = splittedLine[2].toUInt();
-                        record.appointmentDatetime.month = splittedLine[3].toUInt();
-                        record.appointmentDatetime.day = splittedLine[4].toUInt();
-                        record.appointmentDatetime.hour = splittedLine[5].toUInt();
-                        record.appointmentDatetime.minute = splittedLine[6].toUInt();
-                        record.appointmentCost = splittedLine[7].toUInt();
-
-                        this->insertRecordToAppointments(record);
-                    }
-                }
-            }
-
-            // Закрываем файл
-            file.close();
-            ui->statusbar->showMessage("Файл успешно прочитан.");
-        }
+        // Если размер не выбран - выходим из метода
+        if(!hashTableCapacityDialog.getResult())
+            return;
     }
+    else
+        return;
+
+    openFile(openedFileName);
 }
 
 void MainWindow::on_menuFileSave_triggered()
@@ -1235,4 +1318,20 @@ bool MainWindow::removeRecordFromAppointments(int index)
 QStatusBar *MainWindow::getStatusBar()
 {
     return ui->statusbar;
+}
+
+void MainWindow::setChangesSavingState(bool state)
+{
+    isChangesSaved = state;
+
+    QString screenFileName;
+    if(fileName.length() > 0)
+        screenFileName = fileName;
+    else
+        screenFileName = "Новый файл";
+
+    QString windowTitle = screenFileName + " - " + initialWindowTitle;
+    if(!isChangesSaved)
+        windowTitle = "*" + windowTitle;
+    setWindowTitle(windowTitle);
 }
