@@ -21,7 +21,7 @@
        <bool>false</bool>
       </property>
       <property name="title">
-       <string>Доктора</string>
+       <string>Врачи</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
@@ -173,7 +173,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -229,7 +229,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Доктора</string>
+    <string>Врачи</string>
    </property>
   </action>
   <action name="menuDebugPatients">

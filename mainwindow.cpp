@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Инициализация таблицы Доктора
+    // Инициализация таблицы Врача
     ui->tableWidgetDoctors->setColumnCount(4);
     QStringList doctorLabels;
     doctorLabels.append("ФИО");
@@ -48,8 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Инициализация таблицы Записи
     ui->tableWidgetAppointments->setColumnCount(4);
     QStringList appointmentLabels;
-    appointmentLabels.append("Номер врача");
-    appointmentLabels.append("Номер пациента");
+    appointmentLabels.append("Номер Врача");
+    appointmentLabels.append("Номер Пациента");
     appointmentLabels.append("Дата и Время приема");
     appointmentLabels.append("Стоимость");
     ui->tableWidgetAppointments->horizontalHeader()->setStretchLastSection(true);
@@ -120,7 +120,7 @@ int MainWindow::addRecordToAppointments(table3::Record record)
 {
     // Возвращает 0, если вставка прошла успешно
     // Возвращает 1, если не удалось вставить ключ в ХТ
-    // Возвращает 2, если не найден доктор в ХТ
+    // Возвращает 2, если не найден врач в ХТ
     // Возвращает 3, если не найден пациент в ХТ
 
     // Проверка целостности
@@ -389,7 +389,7 @@ void MainWindow::on_menuFileSave_triggered()
         // Создаем объект класса QTextStream и связываем его с файлом
         QTextStream stream(&file);
 
-        // Записываем данные в поток из таблицы Доктора
+        // Записываем данные в поток из таблицы Врачи
         int doctorsCount = doctors.records.count();
         stream << "__TABLE1__ " << doctorsCount;
         for(int i = 0; i < doctorsCount; i++)
@@ -586,7 +586,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
             indexCount++;
         }
 
-        ui->statusbar->showMessage(QString("Доктора - Найдено %1 элемент(ов).").arg(indexCount));
+        ui->statusbar->showMessage(QString("Врачи - Найдено %1 элемент(ов).").arg(indexCount));
         ui->pushButtonDoctorsClearSearch->setEnabled(true);
         return;
     }
@@ -598,7 +598,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
         int rowCount = ui->tableWidgetDoctors->rowCount();
         for(int i = 0; i < rowCount; i++)
             ui->tableWidgetDoctors->hideRow(i);
-        ui->statusbar->showMessage("Доктора - Найдено 0 элемент(ов).");
+        ui->statusbar->showMessage("Врачи - Найдено 0 элемент(ов).");
     }
     else
     {
@@ -620,7 +620,7 @@ void MainWindow::showDoctorSearchResult(table1::Record record, int fieldIndex)
                 curr = curr->next;
             }
             while (curr != nullptr);
-            ui->statusbar->showMessage(QString("Доктора - Найдено %1 элемент(ов).").arg(indexCount));
+            ui->statusbar->showMessage(QString("Врачи - Найдено %1 элемент(ов).").arg(indexCount));
         }
     }
 }
@@ -774,7 +774,7 @@ void MainWindow::on_pushButtonDoctorsClearSearch_clicked()
     int rowCount = ui->tableWidgetDoctors->rowCount();
     for(int i = 0; i < rowCount; i++)
         ui->tableWidgetDoctors->showRow(i);
-    ui->statusbar->showMessage("Доктора - Поиск очищен.");
+    ui->statusbar->showMessage("Врачи - Поиск очищен.");
 }
 
 void MainWindow::on_pushButtonPatientsSeatch_clicked()
@@ -791,7 +791,7 @@ void MainWindow::on_pushButtonPatientsClearSearch_clicked()
     int rowCount = ui->tableWidgetPatients->rowCount();
     for(int i = 0; i < rowCount; i++)
         ui->tableWidgetPatients->showRow(i);
-    ui->statusbar->showMessage("Доктора - Поиск очищен.");
+    ui->statusbar->showMessage("Пациенты - Поиск очищен.");
 }
 
 void MainWindow::on_pushButtonDoctorsDelete_clicked()
@@ -818,15 +818,12 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
         QString infoMessage = "ФИО: " + doctors.records[rowIndex].fullName
                 + "\nНомер телефона: " + QString::number(doctors.records[rowIndex].phoneNumber);
         if(appointmentRecordCount > 0)
-        {
-            mainMessage = "Вы точно хотите удалить ДОКТОРА и все его ЗАПИСИ?";
-            infoMessage += QString("\nСтрок в ЗАПИСИ: %1").arg(appointmentRecordCount);
-        }
+            mainMessage = QString("Вы точно хотите удалить Врача и все его Записи (%1)?").arg(appointmentRecordCount);
         else
-            mainMessage = "Вы точно хотите удалить ДОКТОРА?";
+            mainMessage = "Вы точно хотите удалить Врача?";
 
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Доктора - Удаление");
+        msgBox.setWindowTitle("Врачи - Удаление");
         msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
         msgBox.addButton(QMessageBox::No);
@@ -840,7 +837,7 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
         }
     }
     else
-        QMessageBox::warning(this, "Внимание", "Для удаления Доктора необходимо выбрать строку.");
+        QMessageBox::warning(this, "Внимание", "Для удаления Врача необходимо выбрать строку в справочнике.");
 }
 
 bool MainWindow::removeRecordFromDoctors(int index)
@@ -861,23 +858,21 @@ bool MainWindow::removeRecordFromDoctors(int index)
             auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(record.phoneNumber);
             if(appointmentNode)
             {
-                // Считаем количество
-                int appointmentRecordCount = 0;
+                // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
-                auto curr = head;
-                do
-                {
-                    appointmentRecordCount++;
-                    curr = curr->next;
-                }
-                while (curr != head);
 
-                // Удаляем, получая голову списка appointmentRecordCount раз
-                for(int i = 0; i < appointmentRecordCount; i++)
+                // Удаляем все элементы, кроме головы
+                int cascadeIndex;
+                auto curr = head->next;
+                while(curr != head)
                 {
-                    head = appointmentNode->valueList->getHead();
-                    removeRecordFromAppointments(head->value);
+                    cascadeIndex = curr->value;
+                    curr = curr->next;
+                    removeRecordFromAppointments(cascadeIndex);
                 }
+
+                // Удаляем голову списка
+                removeRecordFromAppointments(head->value);
             }
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
@@ -937,23 +932,21 @@ bool MainWindow::removeRecordFromDoctors(int index)
             auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(record.phoneNumber);
             if(appointmentNode)
             {
-                // Считаем количество
-                int appointmentRecordCount = 0;
+                // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
-                auto curr = head;
-                do
-                {
-                    appointmentRecordCount++;
-                    curr = curr->next;
-                }
-                while (curr != head);
 
-                // Удаляем, получая голову списка appointmentRecordCount раз
-                for(int i = 0; i < appointmentRecordCount; i++)
+                // Удаляем все элементы, кроме головы
+                int cascadeIndex;
+                auto curr = head->next;
+                while(curr != head)
                 {
-                    head = appointmentNode->valueList->getHead();
-                    removeRecordFromAppointments(head->value);
+                    cascadeIndex = curr->value;
+                    curr = curr->next;
+                    removeRecordFromAppointments(cascadeIndex);
                 }
+
+                // Удаляем голову списка
+                removeRecordFromAppointments(head->value);
             }
 
             return true;
@@ -970,26 +963,45 @@ void MainWindow::on_pushButtonPatientsDelete_clicked()
     int rowIndex = ui->tableWidgetPatients->currentRow();
     if(rowIndex != -1)
     {
-        QString fullnameString = patients.records[rowIndex].fullName;
-        QString phoneNumberString = QString::number(patients.records[rowIndex].phoneNumber);
+        int appointmentRecordCount = 0;
+        auto appointmentNode = appointments.patientPhoneNumberTree.findNode(
+                    patients.records[rowIndex].phoneNumber);
+        if(appointmentNode)
+        {
+            auto head = appointmentNode->valueList->getHead();
+            auto curr = head;
+            do
+            {
+                appointmentRecordCount++;
+                curr = curr->next;
+            }
+            while (curr != head);
+        }
+
+        QString mainMessage;
+        QString infoMessage = "ФИО: " + patients.records[rowIndex].fullName
+                + "\nНомер телефона: " + QString::number(patients.records[rowIndex].phoneNumber);
+        if(appointmentRecordCount > 0)
+            mainMessage = QString("Вы точно хотите удалить Пациента и все его Записи (%1)?").arg(appointmentRecordCount);
+        else
+            mainMessage = "Вы точно хотите удалить Пациента?";
 
         QMessageBox msgBox;
         msgBox.setWindowTitle("Пациенты - Удаление");
-        msgBox.setText("Вы точно хотите удалить пациента?\n\nФИО: " + fullnameString
-                       + "\nНомер телефона: " + phoneNumberString);
+        msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
         msgBox.addButton(QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         if(msgBox.exec() == QMessageBox::Yes)
         {
             if(removeRecordFromPatients(rowIndex))
-                ui->tableWidgetDoctors->setCurrentCell(-1, -1);
+                ui->tableWidgetPatients->setCurrentCell(-1, -1);
             else
                 QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка.");
         }
     }
     else
-        QMessageBox::warning(this, "Внимание", "Для удаления Пациента необходимо выбрать строку в таблице.");
+        QMessageBox::warning(this, "Внимание", "Для удаления Пациента необходимо выбрать строку в справочнике.");
 }
 
 bool MainWindow::removeRecordFromPatients(int index)
@@ -1005,6 +1017,27 @@ bool MainWindow::removeRecordFromPatients(int index)
             patients.fullNameTree.removeNode(record.fullName, index);
             patients.phoneNumberHashTable->remove(table2::HashTableEntry(record.phoneNumber, index));
             patients.ageTree.removeNode(record.age, index);
+
+            // Каскадное удаление
+            auto appointmentNode = appointments.patientPhoneNumberTree.findNode(record.phoneNumber);
+            if(appointmentNode)
+            {
+                // Получаем голову списка
+                auto head = appointmentNode->valueList->getHead();
+
+                // Удаляем все элементы, кроме головы
+                int cascadeIndex;
+                auto curr = head->next;
+                while(curr != head)
+                {
+                    cascadeIndex = curr->value;
+                    curr = curr->next;
+                    removeRecordFromAppointments(cascadeIndex);
+                }
+
+                // Удаляем голову списка
+                removeRecordFromAppointments(head->value);
+            }
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
             patients.records[index] = patients.records[lastIndex];
@@ -1062,6 +1095,27 @@ bool MainWindow::removeRecordFromPatients(int index)
             patients.records.remove(index);
             ui->tableWidgetPatients->removeRow(index);
 
+            // Каскадное удаление
+            auto appointmentNode = appointments.patientPhoneNumberTree.findNode(record.phoneNumber);
+            if(appointmentNode)
+            {
+                // Получаем голову списка
+                auto head = appointmentNode->valueList->getHead();
+
+                // Удаляем все элементы, кроме головы
+                int cascadeIndex;
+                auto curr = head->next;
+                while(curr != head)
+                {
+                    cascadeIndex = curr->value;
+                    curr = curr->next;
+                    removeRecordFromAppointments(cascadeIndex);
+                }
+
+                // Удаляем голову списка
+                removeRecordFromAppointments(head->value);
+            }
+
             return true;
         }
         else
@@ -1082,7 +1136,7 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
 
         QMessageBox msgBox;
         msgBox.setWindowTitle("Записи - Удаление");
-        msgBox.setText("Вы точно хотите удалить запись?\n\nНомер доктора: " + doctorPhoneNumberString
+        msgBox.setText("Вы точно хотите удалить запись?\n\nНомер врача: " + doctorPhoneNumberString
                        + "\nНомер пациента: " + patientPhoneNumberString
                        + "\nДата и Время приёма: " + appointmentDatetimeString);
         msgBox.setStandardButtons(QMessageBox::Yes);
@@ -1097,7 +1151,7 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
         }
     }
     else
-        QMessageBox::warning(this, "Внимание", "Для удаления Записи необходимо выбрать строку в таблице.");
+        QMessageBox::warning(this, "Внимание", "Для удаления Записи необходимо выбрать строку в справочнике.");
 }
 
 bool MainWindow::removeRecordFromAppointments(int index)
