@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
+#include <QStatusBar>
 
 AddDoctorDialog::AddDoctorDialog(QWidget *parent) :
     QDialog(parent),
@@ -36,7 +37,7 @@ void AddDoctorDialog::on_pushButtonAdd_clicked()
     // Проверка наличия данных в lineEdit полях
     if(ui->lineEditFullname->text().count(" ") != 2)
     {
-        QMessageBox::warning(this, "Внимание", "Поле \"ФИО пациента\" должно содержать 3 слова.");
+        QMessageBox::warning(this, "Внимание", "Поле \"ФИО\" должно содержать 3 слова.");
         return;
     }
     else if(ui->lineEditSpeciality->text().length() == 0)
@@ -56,8 +57,16 @@ void AddDoctorDialog::on_pushButtonAdd_clicked()
     newRecord.experience = ui->spinBoxExperience->value();
     newRecord.phoneNumber = ui->lineEditPhone->text().toLongLong();
 
-    if(mainWindow->addRecordToDoctors(newRecord))
+    MainWindow::InsertionResult result = mainWindow->insertRecordToDoctors(newRecord);
+    if(result == MainWindow::InsertionResult::Success)
+    {
+        mainWindow->getStatusBar()->showMessage("Врачи - Запись добавлена.");
         this->close();
+    }
+    else if(result == MainWindow::InsertionResult::Overflow)
+        QMessageBox::warning(this, "Внимание", "Справочник переполнен.");
+    else if(result == MainWindow::InsertionResult::Exists)
+        QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
 }
 
 void AddDoctorDialog::setMainWindow(MainWindow *mainWindow)

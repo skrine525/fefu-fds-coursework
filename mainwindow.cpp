@@ -116,24 +116,19 @@ void MainWindow::resetViewAndData(int doctorsHashTableCapacity, int patientsHash
     appointments.phoneNumberAndDatetimeHashTable.clear();
 }
 
-int MainWindow::addRecordToAppointments(table3::Record record)
+MainWindow::InsertionResult MainWindow::insertRecordToAppointments(table3::Record record)
 {
-    // Возвращает 0, если вставка прошла успешно
-    // Возвращает 1, если не удалось вставить ключ в ХТ
-    // Возвращает 2, если не найден врач в ХТ
-    // Возвращает 3, если не найден пациент в ХТ
-
     // Проверка целостности
     if(!doctors.phoneNumberHashTable->find(record.doctorPhoneNumber))
-        return 2;
+        return InsertionResult::DoctorFailure;
     if(!patients.phoneNumberHashTable->find(record.patientPhoneNumber))
-        return 3;
+        return InsertionResult::PatientFailure;
 
     // Вставляем в хеш-таблицу
     int appendedIndex = appointments.records.count();
     table3::PhoneNumberAndDatetime pnd(record.doctorPhoneNumber, record.appointmentDatetime);
     if(!appointments.phoneNumberAndDatetimeHashTable.insert(pnd, appendedIndex))
-        return 1;
+        return InsertionResult::Exists;
 
     // Заносим запись в вектор и добавляем в структуры данных
     appointments.records.append(record);
@@ -163,24 +158,18 @@ int MainWindow::addRecordToAppointments(table3::Record record)
     ui->tableWidgetAppointments->setItem(rowIndex, 3, appointmentCostItem);
     ui->tableWidgetPatients->resizeColumnsToContents();
 
-    return 0;
+    return InsertionResult::Success;
 }
 
-bool MainWindow::addRecordToPatients(table2::Record record)
+MainWindow::InsertionResult MainWindow::insertRecordToPatients(table2::Record record)
 {
     // Вставляем в хеш-таблицу
     int appendedIndex = patients.records.count();
     int hashTableResult = patients.phoneNumberHashTable->insert(table2::HashTableEntry(record.phoneNumber, appendedIndex));
     if(hashTableResult == 1)
-    {
-        QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
-        return false;
-    }
+        return InsertionResult::Exists;
     else if(hashTableResult == 2)
-    {
-        QMessageBox::warning(this, "Внимание", "Таблица переполнена.");
-        return false;
-    }
+        return InsertionResult::Overflow;
 
     // Форматирование строковых данных
     QStringList fullnameList = record.fullName.split(" ");
@@ -222,24 +211,18 @@ bool MainWindow::addRecordToPatients(table2::Record record)
     ui->tableWidgetPatients->setItem(rowIndex, 4, phoneNumberItem);
     ui->tableWidgetPatients->resizeColumnsToContents();
 
-    return true;
+    return InsertionResult::Success;
 }
 
-bool MainWindow::addRecordToDoctors(table1::Record record)
+MainWindow::InsertionResult MainWindow::insertRecordToDoctors(table1::Record record)
 {
     // Вставляем в хеш-таблицу
     int appendedIndex = doctors.records.count();
     int hashTableResult = doctors.phoneNumberHashTable->insert(table1::HashTableEntry(record.phoneNumber, appendedIndex));
     if(hashTableResult == 1)
-    {
-        QMessageBox::warning(this, "Внимание", "Такой номер телефона уже добавлен.");
-        return false;
-    }
+        return InsertionResult::Exists;
     else if(hashTableResult == 2)
-    {
-        QMessageBox::warning(this, "Внимание", "Таблица переполнена.");
-        return false;
-    }
+        return InsertionResult::Overflow;
 
     // Форматирование строковых данных
     QStringList fullnameList = record.fullName.split(" ");
@@ -276,7 +259,7 @@ bool MainWindow::addRecordToDoctors(table1::Record record)
     ui->tableWidgetDoctors->setItem(rowIndex, 3, phoneNumberItem);
     ui->tableWidgetDoctors->resizeColumnsToContents();
 
-    return true;
+    return InsertionResult::Success;
 }
 
 void MainWindow::on_pushButtonAppointmentsAdd_clicked()
@@ -337,7 +320,7 @@ void MainWindow::on_menuFileOpen_triggered()
                         record.experience = splittedLine[4].toUInt();
                         record.phoneNumber = splittedLine[5].toLongLong();
 
-                        this->addRecordToDoctors(record);
+                        this->insertRecordToDoctors(record);
 
                     }
                     else if(tableNumber == 2 && splittedLine.count() == 7)
@@ -350,7 +333,7 @@ void MainWindow::on_menuFileOpen_triggered()
                         record.age = splittedLine[5].toUInt();
                         record.phoneNumber = splittedLine[6].toLongLong();
 
-                        this->addRecordToPatients(record);
+                        this->insertRecordToPatients(record);
                     }
                     else if(tableNumber == 3 && splittedLine.count() == 8)
                     {
@@ -364,7 +347,7 @@ void MainWindow::on_menuFileOpen_triggered()
                         record.appointmentDatetime.minute = splittedLine[6].toUInt();
                         record.appointmentCost = splittedLine[7].toUInt();
 
-                        this->addRecordToAppointments(record);
+                        this->insertRecordToAppointments(record);
                     }
                 }
             }
@@ -799,9 +782,11 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
     int rowIndex = ui->tableWidgetDoctors->currentRow();
     if(rowIndex != -1)
     {
+        auto record = doctors.records[rowIndex];
+
         int appointmentRecordCount = 0;
         auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(
-                    doctors.records[rowIndex].phoneNumber);
+                    record.phoneNumber);
         if(appointmentNode)
         {
             auto head = appointmentNode->valueList->getHead();
@@ -815,14 +800,14 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
         }
 
         QString mainMessage;
-        QString infoMessage = "ФИО: " + doctors.records[rowIndex].fullName
-                + "\nНомер телефона: " + QString::number(doctors.records[rowIndex].phoneNumber);
+        QString infoMessage = "ФИО: " + record.fullName
+                + "\nНомер телефона: " + QString::number(record.phoneNumber);
         if(appointmentRecordCount > 0)
             mainMessage = QString("Вы точно хотите удалить Врача и все его Записи (%1)?").arg(appointmentRecordCount);
         else
             mainMessage = "Вы точно хотите удалить Врача?";
 
-        QMessageBox msgBox;
+        QMessageBox msgBox(this);
         msgBox.setWindowTitle("Врачи - Удаление");
         msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
@@ -831,7 +816,10 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
         if(msgBox.exec() == QMessageBox::Yes)
         {
             if(removeRecordFromDoctors(rowIndex))
+            {
                 ui->tableWidgetDoctors->setCurrentCell(-1, -1);
+                ui->statusbar->showMessage("Врачи - Запись удалена.");
+            }
             else
                 QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка в таблице.");
         }
@@ -861,17 +849,16 @@ bool MainWindow::removeRecordFromDoctors(int index)
                 // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
 
-                // Удаляем все элементы, кроме головы
+                // Удаляем первые элементы списка, пока голова не замкнется сама на себе
                 int cascadeIndex;
-                auto curr = head->next;
-                while(curr != head)
+                while(head->next != head)
                 {
-                    cascadeIndex = curr->value;
-                    curr = curr->next;
+                    cascadeIndex = head->value;
                     removeRecordFromAppointments(cascadeIndex);
+                    head = appointmentNode->valueList->getHead();
                 }
 
-                // Удаляем голову списка
+                // Удаляем последний элемент списка
                 removeRecordFromAppointments(head->value);
             }
 
@@ -935,17 +922,16 @@ bool MainWindow::removeRecordFromDoctors(int index)
                 // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
 
-                // Удаляем все элементы, кроме головы
+                // Удаляем первые элементы списка, пока голова не замкнется сама на себе
                 int cascadeIndex;
-                auto curr = head->next;
-                while(curr != head)
+                while(head->next != head)
                 {
-                    cascadeIndex = curr->value;
-                    curr = curr->next;
+                    cascadeIndex = head->value;
                     removeRecordFromAppointments(cascadeIndex);
+                    head = appointmentNode->valueList->getHead();
                 }
 
-                // Удаляем голову списка
+                // Удаляем последний элемент списка
                 removeRecordFromAppointments(head->value);
             }
 
@@ -963,9 +949,11 @@ void MainWindow::on_pushButtonPatientsDelete_clicked()
     int rowIndex = ui->tableWidgetPatients->currentRow();
     if(rowIndex != -1)
     {
+        auto record = patients.records[rowIndex];
+
         int appointmentRecordCount = 0;
         auto appointmentNode = appointments.patientPhoneNumberTree.findNode(
-                    patients.records[rowIndex].phoneNumber);
+                    record.phoneNumber);
         if(appointmentNode)
         {
             auto head = appointmentNode->valueList->getHead();
@@ -979,14 +967,14 @@ void MainWindow::on_pushButtonPatientsDelete_clicked()
         }
 
         QString mainMessage;
-        QString infoMessage = "ФИО: " + patients.records[rowIndex].fullName
-                + "\nНомер телефона: " + QString::number(patients.records[rowIndex].phoneNumber);
+        QString infoMessage = "ФИО: " + record.fullName
+                + "\nНомер телефона: " + QString::number(record.phoneNumber);
         if(appointmentRecordCount > 0)
             mainMessage = QString("Вы точно хотите удалить Пациента и все его Записи (%1)?").arg(appointmentRecordCount);
         else
             mainMessage = "Вы точно хотите удалить Пациента?";
 
-        QMessageBox msgBox;
+        QMessageBox msgBox(this);
         msgBox.setWindowTitle("Пациенты - Удаление");
         msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
@@ -995,7 +983,10 @@ void MainWindow::on_pushButtonPatientsDelete_clicked()
         if(msgBox.exec() == QMessageBox::Yes)
         {
             if(removeRecordFromPatients(rowIndex))
+            {
                 ui->tableWidgetPatients->setCurrentCell(-1, -1);
+                ui->statusbar->showMessage("Пациенты - Запись удалена.");
+            }
             else
                 QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка.");
         }
@@ -1025,17 +1016,16 @@ bool MainWindow::removeRecordFromPatients(int index)
                 // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
 
-                // Удаляем все элементы, кроме головы
+                // Удаляем первые элементы списка, пока голова не замкнется сама на себе
                 int cascadeIndex;
-                auto curr = head->next;
-                while(curr != head)
+                while(head->next != head)
                 {
-                    cascadeIndex = curr->value;
-                    curr = curr->next;
+                    cascadeIndex = head->value;
                     removeRecordFromAppointments(cascadeIndex);
+                    head = appointmentNode->valueList->getHead();
                 }
 
-                // Удаляем голову списка
+                // Удаляем последний элемент списка
                 removeRecordFromAppointments(head->value);
             }
 
@@ -1102,17 +1092,16 @@ bool MainWindow::removeRecordFromPatients(int index)
                 // Получаем голову списка
                 auto head = appointmentNode->valueList->getHead();
 
-                // Удаляем все элементы, кроме головы
+                // Удаляем первые элементы списка, пока голова не замкнется сама на себе
                 int cascadeIndex;
-                auto curr = head->next;
-                while(curr != head)
+                while(head->next != head)
                 {
-                    cascadeIndex = curr->value;
-                    curr = curr->next;
+                    cascadeIndex = head->value;
                     removeRecordFromAppointments(cascadeIndex);
+                    head = appointmentNode->valueList->getHead();
                 }
 
-                // Удаляем голову списка
+                // Удаляем последний элемент списка
                 removeRecordFromAppointments(head->value);
             }
 
@@ -1130,22 +1119,26 @@ void MainWindow::on_pushButtonAppointmentsDelete_clicked()
     int rowIndex = ui->tableWidgetAppointments->currentRow();
     if(rowIndex != -1)
     {
-        QString doctorPhoneNumberString = QString::number(appointments.records[rowIndex].doctorPhoneNumber);
-        QString patientPhoneNumberString = QString::number(appointments.records[rowIndex].patientPhoneNumber);
-        QString appointmentDatetimeString = QString(appointments.records[rowIndex].appointmentDatetime);
+        auto record = appointments.records[rowIndex];
 
-        QMessageBox msgBox;
+        QString mainMessage = "Вы точно хотите удалить Запись?";
+        QString infoMessage = "Номер врача: " + QString::number(record.doctorPhoneNumber)
+                + "\nНомер пациента: " + QString::number(record.patientPhoneNumber)
+                + "\nДата и Время приёма: " + QString(record.appointmentDatetime);
+
+        QMessageBox msgBox(this);
         msgBox.setWindowTitle("Записи - Удаление");
-        msgBox.setText("Вы точно хотите удалить запись?\n\nНомер врача: " + doctorPhoneNumberString
-                       + "\nНомер пациента: " + patientPhoneNumberString
-                       + "\nДата и Время приёма: " + appointmentDatetimeString);
+        msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
         msgBox.addButton(QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         if(msgBox.exec() == QMessageBox::Yes)
         {
             if(removeRecordFromAppointments(rowIndex))
+            {
                 ui->tableWidgetAppointments->setCurrentCell(-1, -1);
+                ui->statusbar->showMessage("Записи - Запись удалена.");
+            }
             else
                 QMessageBox::warning(this, "Внимание", "Во время удаления произошла ошибка.");
         }
@@ -1159,6 +1152,7 @@ bool MainWindow::removeRecordFromAppointments(int index)
     if(appointments.records.length() > 0)
     {
         int lastIndex = appointments.records.length() - 1;
+        //qDebug() << index << lastIndex;
         if(0 <= index && index < lastIndex)
         {
             // Удаление записи
@@ -1236,4 +1230,9 @@ bool MainWindow::removeRecordFromAppointments(int index)
     }
     else
         return false;
+}
+
+QStatusBar *MainWindow::getStatusBar()
+{
+    return ui->statusbar;
 }

@@ -33,7 +33,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="labelFullname">
        <property name="text">
-        <string>ФИО Пациента</string>
+        <string>ФИО</string>
        </property>
       </widget>
      </item>

@@ -374,7 +374,6 @@ template <typename Key>
 int table3::HashTable<Key>::hash1(Key &key)
 {
     unsigned numberKey = unsigned(key);
-    qDebug() << QString(key) << " " << numberKey;
     int sum = 0;
     while (numberKey != 0)
     {

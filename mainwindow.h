@@ -22,9 +22,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    bool addRecordToDoctors(table1::Record record);
-    bool addRecordToPatients(table2::Record record);
-    int addRecordToAppointments(table3::Record record);
+    enum class InsertionResult { Success, Exists, Overflow, DoctorFailure, PatientFailure };
+
+    InsertionResult insertRecordToDoctors(table1::Record record);
+    InsertionResult insertRecordToPatients(table2::Record record);
+    InsertionResult insertRecordToAppointments(table3::Record record);
 
     bool removeRecordFromDoctors(int index);
     bool removeRecordFromPatients(int index);
@@ -33,6 +35,8 @@ public:
     void showDoctorSearchResult(table1::Record record, int fieldIndex);
     void showPatientSearchResult(table2::Record record, int fieldIndex);
     void showAppointmentSearchResult(table3::Record record, int fieldIndex);
+
+    QStatusBar *getStatusBar();
 
     void resetViewAndData(int doctorsHashTableCapacity, int patientsHashTableCapacity);
 

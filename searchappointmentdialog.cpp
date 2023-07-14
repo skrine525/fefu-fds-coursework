@@ -95,7 +95,7 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
             searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
         else
         {
-            QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер Врача\" должно содержать 11 цифр.");
             return;
         }
     }
@@ -107,7 +107,7 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
             searchRecord.patientPhoneNumber = ui->lineEditPatientPhone->text().toLongLong();
         else
         {
-            QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер Пациента\" должно содержать 11 цифр.");
             return;
         }
     }
@@ -132,7 +132,7 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
             searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
         else
         {
-            QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер Врача\" должно содержать 11 цифр.");
             return;
         }
 

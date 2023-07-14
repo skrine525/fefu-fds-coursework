@@ -36,7 +36,7 @@
      <item row="0" column="0">
       <widget class="QRadioButton" name="radioButtonDoctorPhone">
        <property name="text">
-        <string>Номер врача</string>
+        <string>Номер Врача</string>
        </property>
       </widget>
      </item>
@@ -57,7 +57,7 @@
      <item row="1" column="0">
       <widget class="QRadioButton" name="radioButtonPatientPhone">
        <property name="text">
-        <string>Номер пациента</string>
+        <string>Номер Пациента</string>
        </property>
       </widget>
      </item>
@@ -152,7 +152,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Номер врача, Дата и Время приёма</string>
+        <string>Номер Врача, Дата и Время приёма</string>
        </property>
       </widget>
      </item>

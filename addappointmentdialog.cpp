@@ -5,6 +5,7 @@
 #include <QString>
 #include <QDebug>
 #include <QMessageBox>
+#include <QStatusBar>
 
 AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
     QDialog(parent),
@@ -40,12 +41,12 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     // Проверка наличия данных в lineEdit полях
     if(ui->lineEditDoctorPhone->text().length() < 11)
     {
-        QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер Врача\" должно содержать 11 цифр.");
         return;
     }
     else if(ui->lineEditPatientPhone->text().length() == 0)
     {
-        QMessageBox::warning(this, "Внимание", "Поле \"Номер пациента\" должно содержать 11 цифр.");
+        QMessageBox::warning(this, "Внимание", "Поле \"Номер Пациента\" должно содержать 11 цифр.");
         return;
     }
 
@@ -62,15 +63,18 @@ void AddAppointmentDialog::on_pushButtonAdd_clicked()
     appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
     newRecord.appointmentDatetime = appointmentDatetime;
 
-    int result = mainWindow->addRecordToAppointments(newRecord);
-    if(result == 1)
-        QMessageBox::warning(this, "Внимание", "У врача или пациента уже существует запись на это время.");
-    else if(result == 2)
-        QMessageBox::warning(this, "Внимание", "Доктора с указанным номером телефона не существует.");
-    else if(result == 3)
+    auto result = mainWindow->insertRecordToAppointments(newRecord);
+    if(result == MainWindow::InsertionResult::Exists)
+        QMessageBox::warning(this, "Внимание", "У Врача уже существует запись на указанную Дату и Время.");
+    else if(result == MainWindow::InsertionResult::DoctorFailure)
+        QMessageBox::warning(this, "Внимание", "Врача с указанным номером телефона не существует.");
+    else if(result == MainWindow::InsertionResult::PatientFailure)
         QMessageBox::warning(this, "Внимание", "Пациента с указанным номером телефона не существует.");
     else
+    {
+        mainWindow->getStatusBar()->showMessage("Записи - Запись добавлена.");
         this->close();
+    }
 }
 
 

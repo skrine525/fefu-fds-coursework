@@ -98,7 +98,7 @@ void SearchPatientDialog::on_pushButtonSearch_clicked()
             searchRecord.fullName = ui->lineEditFullname->text();
         else
         {
-            QMessageBox::warning(this, "Внимание", "Поле \"ФИО пациента\" должно содержать 3 слова.");
+            QMessageBox::warning(this, "Внимание", "Поле \"ФИО\" должно содержать 3 слова.");
             return;
         }
     }
