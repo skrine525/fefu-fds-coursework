@@ -799,13 +799,35 @@ void MainWindow::on_pushButtonDoctorsDelete_clicked()
     int rowIndex = ui->tableWidgetDoctors->currentRow();
     if(rowIndex != -1)
     {
-        QString fullnameString = doctors.records[rowIndex].fullName;
-        QString phoneNumberString = QString::number(doctors.records[rowIndex].phoneNumber);
+        int appointmentRecordCount = 0;
+        auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(
+                    doctors.records[rowIndex].phoneNumber);
+        if(appointmentNode)
+        {
+            auto head = appointmentNode->valueList->getHead();
+            auto curr = head;
+            do
+            {
+                appointmentRecordCount++;
+                curr = curr->next;
+            }
+            while (curr != head);
+        }
+
+        QString mainMessage;
+        QString infoMessage = "ФИО: " + doctors.records[rowIndex].fullName
+                + "\nНомер телефона: " + QString::number(doctors.records[rowIndex].phoneNumber);
+        if(appointmentRecordCount > 0)
+        {
+            mainMessage = "Вы точно хотите удалить ДОКТОРА и все его ЗАПИСИ?";
+            infoMessage += QString("\nСтрок в ЗАПИСИ: %1").arg(appointmentRecordCount);
+        }
+        else
+            mainMessage = "Вы точно хотите удалить ДОКТОРА?";
 
         QMessageBox msgBox;
         msgBox.setWindowTitle("Доктора - Удаление");
-        msgBox.setText("Вы точно хотите удалить доктора?\n\nФИО: " + fullnameString
-                       + "\nНомер телефона: " + phoneNumberString);
+        msgBox.setText(mainMessage + "\n\n" + infoMessage);
         msgBox.setStandardButtons(QMessageBox::Yes);
         msgBox.addButton(QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
@@ -834,6 +856,29 @@ bool MainWindow::removeRecordFromDoctors(int index)
             doctors.fullNameTree.removeNode(record.fullName, index);
             doctors.specialityTree.removeNode(record.speciality, index);
             doctors.phoneNumberHashTable->remove(table1::HashTableEntry(record.phoneNumber, index));
+
+            // Каскадное удаление
+            auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(record.phoneNumber);
+            if(appointmentNode)
+            {
+                // Считаем количество
+                int appointmentRecordCount = 0;
+                auto head = appointmentNode->valueList->getHead();
+                auto curr = head;
+                do
+                {
+                    appointmentRecordCount++;
+                    curr = curr->next;
+                }
+                while (curr != head);
+
+                // Удаляем, получая голову списка appointmentRecordCount раз
+                for(int i = 0; i < appointmentRecordCount; i++)
+                {
+                    head = appointmentNode->valueList->getHead();
+                    removeRecordFromAppointments(head->value);
+                }
+            }
 
             // Ставим поледнюю запись на место удаляемой, и удаляем последнюю из вектора и UI
             doctors.records[index] = doctors.records[lastIndex];
@@ -887,6 +932,29 @@ bool MainWindow::removeRecordFromDoctors(int index)
             doctors.phoneNumberHashTable->remove(table1::HashTableEntry(record.phoneNumber, index));
             doctors.records.remove(index);
             ui->tableWidgetDoctors->removeRow(index);
+
+            // Каскадное удаление
+            auto appointmentNode = appointments.doctorPhoneNumberTree.findNode(record.phoneNumber);
+            if(appointmentNode)
+            {
+                // Считаем количество
+                int appointmentRecordCount = 0;
+                auto head = appointmentNode->valueList->getHead();
+                auto curr = head;
+                do
+                {
+                    appointmentRecordCount++;
+                    curr = curr->next;
+                }
+                while (curr != head);
+
+                // Удаляем, получая голову списка appointmentRecordCount раз
+                for(int i = 0; i < appointmentRecordCount; i++)
+                {
+                    head = appointmentNode->valueList->getHead();
+                    removeRecordFromAppointments(head->value);
+                }
+            }
 
             return true;
         }
