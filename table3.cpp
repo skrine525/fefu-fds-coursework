@@ -81,11 +81,15 @@ table3::PhoneNumberAndDatetime::operator QString() const
     return "[" + QString::number(phoneNumber) + "] [" + datetime + "]";
 }
 
-table3::PhoneNumberAndDatetime::operator int() const
+#include <QDebug>
+
+table3::PhoneNumberAndDatetime::operator unsigned() const
 {
+    unsigned phoneNumberLowerBits = static_cast<unsigned>(phoneNumber);
+    unsigned phoneNumberUpperBits = static_cast<unsigned>(phoneNumber >> 32);
     return pow(datetime.day, 2) + pow(datetime.hour, 2)
             + pow(datetime.minute, 2) + pow(datetime.month, 2)
-            + pow(datetime.year, 2) + phoneNumber % 1000;
+            + pow(datetime.year, 2) + phoneNumberLowerBits + phoneNumberUpperBits;
 }
 
 table3::DoublyLinkedRingList::~DoublyLinkedRingList()

@@ -46,7 +46,7 @@ namespace table3
         PhoneNumberAndDatetime (long long phoneNumber, Datetime datetime);
 
         operator QString() const;
-        operator int() const;
+        operator unsigned() const;
     };
 
     bool operator==(const PhoneNumberAndDatetime &a, const PhoneNumberAndDatetime &b);
@@ -83,7 +83,7 @@ namespace table3
         bool isPrime(int number);
         void calculatePrimeSize();
         int hash1(Key &key);
-        int hash2(int hash1, int key, int j);
+        int hash2(int hash1, unsigned key, int j);
         void resize(double factor);
         int findEmptySlot(QVector<Entry> &table, Key key);
     };
@@ -373,12 +373,13 @@ void table3::HashTable<Key>::calculatePrimeSize()
 template <typename Key>
 int table3::HashTable<Key>::hash1(Key &key)
 {
-    int intKey = int(key);
+    unsigned numberKey = unsigned(key);
+    qDebug() << QString(key) << " " << numberKey;
     int sum = 0;
-    while (intKey != 0)
+    while (numberKey != 0)
     {
-        sum += intKey % 10;
-        intKey /= 10;
+        sum += numberKey % 10;
+        numberKey /= 10;
     }
 
     int sizeNumCount = 0;
@@ -394,7 +395,7 @@ int table3::HashTable<Key>::hash1(Key &key)
 }
 
 template <typename Key>
-int table3::HashTable<Key>::hash2(int hash1, int key, int j)
+int table3::HashTable<Key>::hash2(int hash1, unsigned key, int j)
 {
     return (hash1 + j * (1 + key % (primeSize))) % size;
 }
