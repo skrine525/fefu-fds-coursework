@@ -453,6 +453,7 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     if(fieldIndex == 0)
     {
         // Номер врача
+
         auto *node = appointments.doctorPhoneNumberTree.findNode(record.doctorPhoneNumber);
         if(node != nullptr)
             valueList = node->valueList;
@@ -460,6 +461,7 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     else if(fieldIndex == 1)
     {
         // Номер пациента
+
         auto *node = appointments.patientPhoneNumberTree.findNode(record.patientPhoneNumber);
         if(node != nullptr)
             valueList = node->valueList;
@@ -467,6 +469,7 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     else if(fieldIndex == 2)
     {
         // Дата и Время приёма
+
         auto *node = appointments.appointmentDatetimeTree.findNode(record.appointmentDatetime);
         if(node != nullptr)
             valueList = node->valueList;
@@ -474,9 +477,33 @@ void MainWindow::showAppointmentSearchResult(table3::Record record, int fieldInd
     else if(fieldIndex == 3)
     {
         // Стоимость
+
         auto *node = appointments.appointmentCostTree.findNode(record.appointmentCost);
         if(node != nullptr)
             valueList = node->valueList;
+    }
+    else if(fieldIndex == 4)
+    {
+        // Составное поле
+
+        auto entry = appointments.phoneNumberAndDatetimeHashTable.find(
+                    table3::PhoneNumberAndDatetime(record.doctorPhoneNumber, record.appointmentDatetime));
+
+        // Скрываем все строки таблицы
+        int rowCount = ui->tableWidgetAppointments->rowCount();
+        for(int i = 0; i < rowCount; i++)
+            ui->tableWidgetAppointments->hideRow(i);
+
+        int indexCount = 0;
+        if(entry)
+        {
+            ui->tableWidgetAppointments->showRow(entry->value);
+            indexCount++;
+        }
+
+        ui->statusbar->showMessage(QString("Записи - Найдено %1 элемент(ов).").arg(indexCount));
+        ui->pushButtonAppointmentsClearSearch->setEnabled(true);
+        return;
     }
 
     // Отображение поиска

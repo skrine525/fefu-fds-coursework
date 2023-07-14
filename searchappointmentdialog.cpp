@@ -124,6 +124,24 @@ void SearchAppointmentDialog::on_pushButtonSearch_clicked()
     else if(fieldIndex == 3)
         // Стоимость
         searchRecord.appointmentCost = ui->spinBoxCost->value();
+    else if(fieldIndex == 4)
+    {
+        // Составное поле
+
+        if(ui->lineEditDoctorPhone->text().length() == 11)
+            searchRecord.doctorPhoneNumber = ui->lineEditDoctorPhone->text().toLongLong();
+        else
+        {
+            QMessageBox::warning(this, "Внимание", "Поле \"Номер врача\" должно содержать 11 цифр.");
+            return;
+        }
+
+        searchRecord.appointmentDatetime.day = ui->spinBoxDateDay->value();
+        searchRecord.appointmentDatetime.month = ui->spinBoxDateMonth->value();
+        searchRecord.appointmentDatetime.year = ui->spinBoxDateYear->value();
+        searchRecord.appointmentDatetime.hour = ui->comboBoxTimeHour->currentData().toUInt();
+        searchRecord.appointmentDatetime.minute = ui->comboBoxTimeMinute->currentData().toUInt();
+    }
     else
         return;
 
@@ -136,3 +154,20 @@ void SearchAppointmentDialog::setMainWindow(MainWindow *mainWindow)
 {
     this->mainWindow = mainWindow;
 }
+
+void SearchAppointmentDialog::on_radioButtonCompositeField_toggled(bool checked)
+{
+    ui->spinBoxDateDay->setEnabled(checked);
+    ui->spinBoxDateMonth->setEnabled(checked);
+    ui->spinBoxDateYear->setEnabled(checked);
+    ui->comboBoxTimeHour->setEnabled(checked);
+    ui->comboBoxTimeMinute->setEnabled(checked);
+    ui->lineEditDoctorPhone->setEnabled(checked);
+    ui->labelCompositeField->setEnabled(checked);
+    if(checked)
+    {
+        ui->pushButtonSearch->setEnabled(true);
+        fieldIndex = 4;
+    }
+}
+

@@ -32,6 +32,8 @@ private slots:
 
     void on_radioButtonCost_toggled(bool checked);
 
+    void on_radioButtonCompositeField_toggled(bool checked);
+
 private:
     Ui::SearchAppointmentDialog *ui;
     MainWindow *mainWindow;

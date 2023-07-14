@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>205</height>
+    <height>204</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,41 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayoutDataForm">
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="radioButtonDatetime">
+       <property name="text">
+        <string>Дата и Время приёма</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QRadioButton" name="radioButtonCost">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Стоимость</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QRadioButton" name="radioButtonDoctorPhone">
        <property name="text">
         <string>Номер врача</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QRadioButton" name="radioButtonCompositeField">
+       <property name="text">
+        <string>Составное поле</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEditDoctorPhone">
+       <property name="enabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -95,31 +126,10 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEditDoctorPhone">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QRadioButton" name="radioButtonCost">
-       <property name="text">
-        <string>Стоимость</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="1">
       <widget class="QLineEdit" name="lineEditPatientPhone">
        <property name="enabled">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QRadioButton" name="radioButtonDatetime">
-       <property name="text">
-        <string>Дата и Время приёма</string>
        </property>
       </widget>
      </item>
@@ -133,6 +143,16 @@
        </property>
        <property name="maximum">
         <number>5000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="labelCompositeField">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Номер врача, Дата и Время приёма</string>
        </property>
       </widget>
      </item>
