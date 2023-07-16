@@ -196,6 +196,7 @@ void table3::HashTable<Key>::clear()
             delete table[i].key;
     }
     size = initialSize;
+    calculatePrimeSize();
     count = 0;
     QVector<Entry> newTable(size);
     table = std::move(newTable);
