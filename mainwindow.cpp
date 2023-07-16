@@ -60,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
     doctorsDebugWidget.setDoctors(&doctors);
     patientsDebugWidget.setPatients(&patients);
     appointmentsDebugWidget.setAppointments(&appointments);
-
-    initialWindowTitle = windowTitle();
 }
 
 MainWindow::~MainWindow()
@@ -278,17 +276,10 @@ void MainWindow::openFile(QString fileName)
 
         // Переменные для статистики считывания файла
         unsigned doctorTotalCount = 0;
-        unsigned doctorExistsCount = 0;
-        unsigned doctorOverflowCount = 0;
         unsigned doctorSuccessCount = 0;
         unsigned patientTotalCount = 0;
-        unsigned patientExistsCount = 0;
-        unsigned patientOverflowCount = 0;
         unsigned patientSuccessCount = 0;
         unsigned appointmentTotalCount = 0;
-        unsigned appointmentExistsCount = 0;
-        unsigned appointmentDoctorFailureCount = 0;
-        unsigned appointmentPatientFailureCount = 0;
         unsigned appointmentSuccessCount = 0;
 
         // Читаем данные из потока и выводим их на консоль
@@ -326,10 +317,6 @@ void MainWindow::openFile(QString fileName)
                     auto result = this->insertRecordToDoctors(record);
                     if(result == InsertionResult::Success)
                         doctorSuccessCount++;
-                    else if(result == InsertionResult::Overflow)
-                        doctorOverflowCount++;
-                    else if(result == InsertionResult::Exists)
-                        doctorExistsCount++;
 
                 }
                 else if(tableNumber == 2 && splittedLine.count() == 7)
@@ -346,10 +333,6 @@ void MainWindow::openFile(QString fileName)
                     auto result = this->insertRecordToPatients(record);
                     if(result == InsertionResult::Success)
                         patientSuccessCount++;
-                    else if(result == InsertionResult::Overflow)
-                        patientOverflowCount++;
-                    else if(result == InsertionResult::Exists)
-                        patientExistsCount++;
                 }
                 else if(tableNumber == 3 && splittedLine.count() == 8)
                 {
@@ -367,12 +350,6 @@ void MainWindow::openFile(QString fileName)
                     auto result = this->insertRecordToAppointments(record);
                     if(result == InsertionResult::Success)
                         appointmentSuccessCount++;
-                    else if(result == InsertionResult::Exists)
-                        appointmentExistsCount++;
-                    else if(result == InsertionResult::DoctorFailure)
-                        appointmentDoctorFailureCount++;
-                    else if(result == InsertionResult::PatientFailure)
-                        appointmentPatientFailureCount++;
                 }
             }
         }
@@ -382,7 +359,7 @@ void MainWindow::openFile(QString fileName)
         {
             // Если данных в файле нет
 
-            QMessageBox::warning(this, "Внимание", "Ошибка чтения файла - файл не содержит данные.");
+            QMessageBox::warning(this, "Ошибка", "Ошибка чтения файла - файл не содержит данные.");
             ui->statusbar->showMessage("Ошибка чтения файла - файл не содержит данные.");
         }
         else
@@ -392,15 +369,28 @@ void MainWindow::openFile(QString fileName)
             QString infoMessage;
 
             if(doctorSuccessCount != doctorTotalCount)
-            {
-                infoMessage = "Файл прочитан, но не все данные были добавлены.\n";
                 infoMessage += "\nЗаписей справочника \"Врачи\" прочитано: "
                         + QString::number(doctorSuccessCount) + " из "
                         + QString::number(doctorTotalCount);
-                infoMessage += "\nОшибка \"Таблица переполнена\": "
-                        + QString::number(doctorOverflowCount);
-                infoMessage += "\nОшибка \"Такой номер телефона уже добавлен\": "
-                        + QString::number(doctorExistsCount);
+
+            if(patientSuccessCount != patientTotalCount)
+            {
+                if(infoMessage.length() > 0)
+                    infoMessage += "\n";
+
+                infoMessage += "Записей справочника \"Пациенты\" прочитано: "
+                        + QString::number(patientSuccessCount) + " из "
+                        + QString::number(patientTotalCount);
+            }
+
+            if(appointmentSuccessCount != appointmentTotalCount)
+            {
+                if(infoMessage.length() > 0)
+                    infoMessage += "\n";
+
+                infoMessage += "Записей справочника \"Записи\" прочитано: "
+                        + QString::number(appointmentSuccessCount) + " из "
+                        + QString::number(appointmentTotalCount);
             }
 
             if(infoMessage.length() > 0)
@@ -809,11 +799,19 @@ void MainWindow::on_pushButtonDoctorsAdd_clicked()
 void MainWindow::on_menuDebugDoctors_triggered()
 {
     doctorsDebugWidget.show();
+    doctorsDebugWidget.activateWindow();
+    doctorsDebugWidget.raise();
+    if (doctorsDebugWidget.isMinimized())
+        doctorsDebugWidget.showNormal();
 }
 
 void MainWindow::on_menuDebugPatients_triggered()
 {
     patientsDebugWidget.show();
+    patientsDebugWidget.activateWindow();
+    patientsDebugWidget.raise();
+    if (patientsDebugWidget.isMinimized())
+        patientsDebugWidget.showNormal();
 }
 
 void MainWindow::on_menuFileExit_triggered()
@@ -824,6 +822,10 @@ void MainWindow::on_menuFileExit_triggered()
 void MainWindow::on_menuDebugAppointments_triggered()
 {
     appointmentsDebugWidget.show();
+    appointmentsDebugWidget.activateWindow();
+    appointmentsDebugWidget.raise();
+    if (appointmentsDebugWidget.isMinimized())
+        appointmentsDebugWidget.showNormal();
 }
 
 void MainWindow::on_pushButtonDoctorsSearch_clicked()
@@ -1318,20 +1320,4 @@ bool MainWindow::removeRecordFromAppointments(int index)
 QStatusBar *MainWindow::getStatusBar()
 {
     return ui->statusbar;
-}
-
-void MainWindow::setChangesSavingState(bool state)
-{
-    isChangesSaved = state;
-
-    QString screenFileName;
-    if(fileName.length() > 0)
-        screenFileName = fileName;
-    else
-        screenFileName = "Новый файл";
-
-    QString windowTitle = screenFileName + " - " + initialWindowTitle;
-    if(!isChangesSaved)
-        windowTitle = "*" + windowTitle;
-    setWindowTitle(windowTitle);
 }
