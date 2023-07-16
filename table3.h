@@ -262,7 +262,7 @@ bool table3::HashTable<Key>::remove(Key key)
         table[index].status = 0;
 
         count--;
-        if (static_cast<double>(count) / size <= 0.3)
+        if (static_cast<double>(count) / size <= 0.4)
             resize(0.5);
 
         return true;
@@ -274,7 +274,7 @@ bool table3::HashTable<Key>::remove(Key key)
 template <typename Key>
 bool table3::HashTable<Key>::insert(Key key, int value)
 {
-    if (static_cast<double>(count) / size >= 0.7)
+    if (static_cast<double>(count) / size >= 0.6)
         resize(2);
 
     int hash = hash1(key);
